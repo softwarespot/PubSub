@@ -1,3 +1,3 @@
 # PubSub
 
-Module can be found [here](https://gist.github.com/softwarespot/2c24e358f77a8c35bfc4)
+Deadline for documentation completion and the public API being frozen is 2015/08/31
