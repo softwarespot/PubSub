@@ -34,7 +34,6 @@ var PubSub = (function (Array, Object) {
     var ObjectStrings = {
         FUNCTION: '[object Function]',
         STRING: '[object String]'
-
     };
 
     // Fields
