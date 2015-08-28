@@ -54,21 +54,21 @@ var PubSub = (function (Array, Object) {
     // Methods
 
     // Check if a value is a function. Based on the idea by lodash
-    var isFunction = function (value) {
+    function isFunction(value) {
 
         return isObject(value) && _objectToString.call(value) === ObjectStrings.FUNCTION;
 
-    };
+    }
 
     // Check if an opaque 'PubSub' handle is valid
-    var isHandle = function (handle) {
+    function isHandle(handle) {
 
         return Array.isArray(handle) && handle.length === HANDLE_MAX && handle[HANDLE_ID] === _handleId;
 
-    };
+    }
 
     // Check if a value is an object. Based on the idea by lodash
-    var isObject = function (value) {
+    function isObject(value) {
 
         // Store the typeof
         var type = typeof value;
@@ -77,7 +77,7 @@ var PubSub = (function (Array, Object) {
         // So, !'Some test' is false and then inverting false is true. There if value contains 'something', continue
         return !!value && (type === 'object' || type === 'function');
 
-    };
+    }
 
     // Check if a value is a string datatype with a length greater than zero when whitespace is stripped. Based partially on the idea by lodash
     var isString = function (value) {
