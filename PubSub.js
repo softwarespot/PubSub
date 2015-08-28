@@ -18,7 +18,7 @@
 /**
  * PubSub module
  *
- * Modified: 2015/08/27
+ * Modified: 2015/08/28
  * @author softwarespot
  */
 var PubSub = (function (Array, Object) {
@@ -28,7 +28,10 @@ var PubSub = (function (Array, Object) {
     var VERSION = 0.1;
 
     // Array constant enumeration
-    var HANDLE_ID = 0, HANDLE_SUBSCRIPTION = 1, HANDLE_CALLBACK = 2, HANDLE_MAX = 3;
+    var HANDLE_ID = 0,
+        HANDLE_SUBSCRIPTION = 1,
+        HANDLE_CALLBACK = 2,
+        HANDLE_MAX = 3;
 
     // Return strings of toString() found on the Object prototype
     var ObjectStrings = {
@@ -82,7 +85,7 @@ var PubSub = (function (Array, Object) {
     // Check if a value is a string datatype with a length greater than zero when whitespace is stripped. Based partially on the idea by lodash
     function isString(value) {
 
-        return (typeof value  === 'string' || _objectToString.call(value) === ObjectStrings.STRING) && value.trim().length > 0;
+        return (typeof value === 'string' || _objectToString.call(value) === ObjectStrings.STRING) && value.trim().length > 0;
 
     }
 
@@ -115,7 +118,7 @@ var PubSub = (function (Array, Object) {
             var handles = [];
 
             // Iterate through all the subscriptions
-            for(var i = 0, subscriptionsLength = subscriptions.length; i < subscriptionsLength; i++) {
+            for (var i = 0, subscriptionsLength = subscriptions.length; i < subscriptionsLength; i++) {
                 // Store the subscription
                 subscription = subscriptions[i];
 
@@ -168,7 +171,7 @@ var PubSub = (function (Array, Object) {
                 // The value of callbacks will be ignored
                 callbacks = [subscriptions[HANDLE_CALLBACK]];
                 subscriptions = [subscriptions[HANDLE_SUBSCRIPTION]];
-            // If a string and a function datatype, then create an array for each
+                // If a string and a function datatype, then create an array for each
             } else if (isString(subscriptions) && isFunction(callbacks)) {
                 callbacks = [callbacks];
                 subscriptions = [subscriptions];
@@ -184,7 +187,7 @@ var PubSub = (function (Array, Object) {
             var index = 0;
 
             // Iterate through all the subscriptions
-            for(var i = 0, subscriptionsLength = subscriptions.length; i < subscriptionsLength; i++) {
+            for (var i = 0, subscriptionsLength = subscriptions.length; i < subscriptionsLength; i++) {
                 // Retrieve the callbacks for the subscription
                 functions = _subscribers[subscriptions[i]];
 
@@ -212,7 +215,7 @@ var PubSub = (function (Array, Object) {
             if (isHandle(subscriptions)) {
                 // Convert to an array datatype
                 subscriptions = [subscriptions[HANDLE_SUBSCRIPTION]];
-            // If a string has been passed, then convert to an array datatype
+                // If a string has been passed, then convert to an array datatype
             } else if (isString(subscriptions)) {
                 subscriptions = [subscriptions];
             }
@@ -256,7 +259,7 @@ var PubSub = (function (Array, Object) {
             var j = 0;
 
             // Iterate through all the subscriptions
-            for(i = 0, length = subscriptions.length; i < length; i++) {
+            for (i = 0, length = subscriptions.length; i < length; i++) {
                 // Retrieve the callbacks for the subscription
                 functions = _subscribers[subscriptions[i]];
 
