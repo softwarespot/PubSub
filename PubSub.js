@@ -80,11 +80,11 @@ var PubSub = (function (Array, Object) {
     }
 
     // Check if a value is a string datatype with a length greater than zero when whitespace is stripped. Based partially on the idea by lodash
-    var isString = function (value) {
+    function isString(value) {
 
         return (typeof value  === 'string' || _objectToString.call(value) === ObjectStrings.STRING) && value.trim().length > 0;
 
-    };
+    }
 
     // Public API
     return {
