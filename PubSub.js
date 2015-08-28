@@ -25,7 +25,7 @@ var PubSub = (function (Array, Object) {
     // Constants
 
     // Version number of the module
-    var VERSION = 0.1;
+    var VERSION = '0.1.0';
 
     // Array constant enumeration
     var HANDLE_ID = 0,
