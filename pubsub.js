@@ -226,6 +226,9 @@ let PubSub = ((Array, Object) => {
             // just in case it's required
             args.push(subscriptions.join(','));
 
+            // Error with babel changing this to undefined, therefore cache this
+            var _this = this;
+
             // Iterate through all the subscriptions
             for (let i = 0, length = subscriptions.length; i < length; i++) {
                 // Retrieve the callbacks for the subscription
@@ -239,7 +242,7 @@ let PubSub = ((Array, Object) => {
                 // For each callback function, call the function with the callback arguments
                 // by using apply() and passing the (new) array of arguments
                 for (let j = 0, functionsLength = functions.length; j < functionsLength; j++) {
-                    functions[j].apply(this, args);
+                    functions[j].apply(_this, args);
                     // Increase the number of publish subscriptions
                     published++;
                 }
