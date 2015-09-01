@@ -9,23 +9,21 @@ var del = require('del');
 
 // Assets for the project
 var Assets = {
-    main_es2015: 'pubsub-es2015.js',
+    dist: 'dist',
     main: 'pubsub.js',
     minified: 'pubsub.min.js'
 };
 
-// Clean the current directory
+// Clean the 'dist' directory
 gulp.task('clean', function (cb) {
-    del([Assets.minified], cb);
+    del([Assets.dist + '/*.js'], cb);
 });
 
 // Run the babel transpiler to convert ES2015 to ES5
-gulp.task('babel', ['clean'], function (cb) {
-    // Remove the main file before transpiling
-    del([Assets.main], cb);
-    return gulp.src('./' + Assets.main_es2015)
+gulp.task('es2015', ['clean'], function () {
+    return gulp.src('./' + Assets.main)
         .pipe(babel())
-        .pipe(gulp.dest('./' + Assets.main));
+        .pipe(gulp.dest('./' + Assets.dist));
 });
 
 // Check the code meets the following standards outlined in .jshintrc
@@ -36,8 +34,8 @@ gulp.task('jshint', function () {
 });
 
 // Uglify aka minify the main file
-gulp.task('uglify', ['clean'], function () {
-    return gulp.src('./' + Assets.main)
+gulp.task('uglify', ['clean', 'es2015'], function () {
+    return gulp.src('./' + Assets.dist + '/' + Assets.main)
         .pipe(uglify({
             // See the uglify documentation for more details
             compress: {
@@ -52,16 +50,16 @@ gulp.task('uglify', ['clean'], function () {
         .pipe(rename({
             suffix: '.min'
         }))
-        .pipe(gulp.dest('./'));
+        .pipe(gulp.dest('./' + Assets.dist));
 });
 
 // Watch for changes to the main file
 gulp.task('watch', function () {
-    gulp.watch('./' + Assets.main, ['jshint', 'babel', 'uglify']);
+    gulp.watch('./' + Assets.main, ['jshint', 'uglify']);
 });
 
 // Register the default task
-gulp.task('default', ['babel', 'jshint', 'uglify']);
+gulp.task('default', ['jshint', 'uglify']);
 
 // 'gulp jshint' to check the syntax
 // 'gulp uglify' to uglify the main file
