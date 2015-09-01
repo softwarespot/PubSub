@@ -9,21 +9,21 @@ var del = require('del');
 
 // Assets for the project
 var Assets = {
-    dist: 'dist',
+    dest: 'dist',
     main: 'pubsub.js',
     minified: 'pubsub.min.js'
 };
 
 // Clean the 'dist' directory
 gulp.task('clean', function (cb) {
-    del([Assets.dist + '/*.js'], cb);
+    del([Assets.dest + '/*.js'], cb);
 });
 
-// Run the babel transpiler to convert ES2015 to ES5
-gulp.task('es2015', ['clean'], function () {
+// Run the babel transpiler to convert from ES2015 to ES5
+gulp.task('es6to5', ['clean'], function () {
     return gulp.src('./' + Assets.main)
         .pipe(babel())
-        .pipe(gulp.dest('./' + Assets.dist));
+        .pipe(gulp.dest('./' + Assets.dest));
 });
 
 // Check the code meets the following standards outlined in .jshintrc
@@ -34,8 +34,8 @@ gulp.task('jshint', function () {
 });
 
 // Uglify aka minify the main file
-gulp.task('uglify', ['clean', 'es2015'], function () {
-    return gulp.src('./' + Assets.dist + '/' + Assets.main)
+gulp.task('uglify', ['clean', 'es6to5'], function () {
+    return gulp.src('./' + Assets.dest + '/' + Assets.main)
         .pipe(uglify({
             // See the uglify documentation for more details
             compress: {
@@ -50,7 +50,7 @@ gulp.task('uglify', ['clean', 'es2015'], function () {
         .pipe(rename({
             suffix: '.min'
         }))
-        .pipe(gulp.dest('./' + Assets.dist));
+        .pipe(gulp.dest('./' + Assets.dest));
 });
 
 // Watch for changes to the main file
