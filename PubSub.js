@@ -230,9 +230,6 @@ var PubSub = (function (Array, Object) {
                 return published;
             }
 
-            var i = 0;
-            var length = 0;
-
             // Construct new arguments to pass to the callback function
 
             // Convert the array-like object to an array
@@ -247,7 +244,11 @@ var PubSub = (function (Array, Object) {
             // skip the first parameter which is the subscription name
             // URL: https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Functions/arguments
             var callbackParams = [];
-            for (i = 1, length = arguments.length; i < length; i++) {
+
+            // Variables used with the loop(s)
+            var i = 1;
+            var length = arguments.length;
+            for (; i < length; i++) {
                 callbackParams.push(arguments[i]);
             }
 
@@ -260,8 +261,11 @@ var PubSub = (function (Array, Object) {
             var functions = null;
             var j = 0;
 
+            i = 0;
+            length = subscriptions.length;
+
             // Iterate through all the subscriptions
-            for (i = 0, length = subscriptions.length; i < length; i++) {
+            for (; i < length; i++) {
                 // Retrieve the callbacks for the subscription
                 functions = _subscribers[subscriptions[i]];
 
@@ -272,7 +276,11 @@ var PubSub = (function (Array, Object) {
 
                 // For each callback function, call the function with the callback arguments
                 // by using apply() and passing the (new) array of arguments
-                for (j = 0, functionsLength = functions.length; j < functionsLength; j++) {
+
+                j = 0;
+                functionsLength = functions.length;
+
+                for (; j < functionsLength; j++) {
                     functions[j].apply(this, callbackParams);
                     // Increase the number of publish subscriptions
                     published++;
@@ -304,8 +312,8 @@ function fireFirst() {
 }
 
 function fireSecond(arg1, arg2) {
-    console.log('fireSecond: %o', arguments);
-    // console.log('Arguments: %s, %s', arg1, arg2);
+    // console.log('fireSecond: %o', arguments);
+    console.log('Arguments Params: %s, %s', arg1, arg2);
 }
 
 console.log('!!! START PubSub DEMO');
