@@ -15,12 +15,14 @@
 //      shift-vs-splice: http://jsperf.com/shift-vs-splice
 //
 
-/**
- * PubSub module
- *
- * Modified: 2015/08/28
- * @author softwarespot
+/*
+ * PubSub modules
+ * https://github.com/softwarespot/PubSub
+ * Author: softwarespot
+ * Licensed under the MIT license
+ * Version: 0.1.0
  */
+; // jshint ignore:line
 var PubSub = (function (Array, Object) {
     // Constants
 
