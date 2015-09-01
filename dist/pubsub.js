@@ -43,11 +43,6 @@ var PubSub = (function (Array, Object) {
         STRING: '[object String]'
     };
 
-    // Fields
-
-    // Hold event names with an array of callbacks for each one
-    var _subscribers = {};
-
     // Unique identifier. Leet speak for PubSub_Module
     var _handleId = '|>|_|85|_|8_|\\/|0|)|_|13';
 
@@ -57,6 +52,11 @@ var PubSub = (function (Array, Object) {
 
     // Store the Object toString method
     var _objectToString = Object.prototype.toString;
+
+    // Fields
+
+    // Hold event names with an array of callbacks for each one
+    var _subscribers = {};
 
     // Methods
 
@@ -205,6 +205,10 @@ var PubSub = (function (Array, Object) {
         // Publish a subscription to all subscribers with an unlimited number of arguments. The subscription is the last argument i.e. arguments[arguments.length]
         // Returns number of subscriptions published
         publish: function publish(subscriptions) {
+            for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+                args[_key - 1] = arguments[_key];
+            }
+
             // emit()
             // Set the following variable(s), if it's an opaque 'PubSub' handle returned from subscribe()
             if (isHandle(subscriptions)) {
@@ -225,11 +229,6 @@ var PubSub = (function (Array, Object) {
 
             // Push the subscription to the end of the arguments array as a comma separated string,
             // just in case it's required
-
-            for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-                args[_key - 1] = arguments[_key];
-            }
-
             args.push(subscriptions.join(','));
 
             // Iterate through all the subscriptions
@@ -245,7 +244,7 @@ var PubSub = (function (Array, Object) {
                 // For each callback function, call the function with the callback arguments
                 // by using apply() and passing the (new) array of arguments
                 for (var j = 0, functionsLength = functions.length; j < functionsLength; j++) {
-                    functions[j].apply(this, args);
+                    functions[j].apply(undefined, args);
                     // Increase the number of publish subscriptions
                     published++;
                 }

@@ -23,7 +23,7 @@
  * Version: 0.1.0
  */
 ; // jshint ignore:line
-let PubSub = (function (Array, Object) {
+let PubSub = ((Array, Object) => {
     // Constants
 
     // Version number of the module
@@ -41,20 +41,20 @@ let PubSub = (function (Array, Object) {
         STRING: '[object String]'
     };
 
+    // Unique identifier. Leet speak for PubSub_Module
+    const _handleId = '|>|_|85|_|8_|\\/|0|)|_|13';
+
+    // Generic handle for an error. This is an array so the reference can be used as a
+    // way of verifying that it's an error
+    const _handleError = [_handleId];
+
+    // Store the Object toString method
+    const _objectToString = Object.prototype.toString;
+
     // Fields
 
     // Hold event names with an array of callbacks for each one
     let _subscribers = {};
-
-    // Unique identifier. Leet speak for PubSub_Module
-    let _handleId = '|>|_|85|_|8_|\\/|0|)|_|13';
-
-    // Generic handle for an error. This is an array so the reference can be used as a
-    // way of verifying that it's an error
-    let _handleError = [_handleId];
-
-    // Store the Object toString method
-    let _objectToString = Object.prototype.toString;
 
     // Methods
 
@@ -96,7 +96,7 @@ let PubSub = (function (Array, Object) {
         // Subscribe to a subscription with a callback function. It's best practice not to make this an anonymous function
         // as then you can't properly unsubscribe, since the callback function reference is required
         // Returns an opaque handle for use with unsubscribe(), though it's optional to use
-        subscribe: function (subscriptions, callbacks) { // on()
+        subscribe: (subscriptions, callbacks) => { // on()
             // Store whether the first param is a string
             let isStringTypes = isString(subscriptions) && isFunction(callbacks);
 
@@ -157,7 +157,7 @@ let PubSub = (function (Array, Object) {
         // Unsubscribe from a subscription. A string and callback function reference are expected OR
         // the handle returned from subscribe()
         // Returns true or false
-        unsubscribe: function (subscriptions, callbacks) { // off()
+        unsubscribe: (subscriptions, callbacks) => { // off()
             // If the reference is equal to the handle error array, then an error occurred with subscribing
             if (subscriptions === _handleError) {
                 return false;
@@ -204,7 +204,7 @@ let PubSub = (function (Array, Object) {
 
         // Publish a subscription to all subscribers with an unlimited number of arguments. The subscription is the last argument i.e. arguments[arguments.length]
         // Returns number of subscriptions published
-        publish: function (subscriptions, ...args) { // emit()
+        publish: (subscriptions, ...args) => { // emit()
             // Set the following variable(s), if it's an opaque 'PubSub' handle returned from subscribe()
             if (isHandle(subscriptions)) {
                 // Convert to an array datatype
@@ -249,12 +249,12 @@ let PubSub = (function (Array, Object) {
         },
 
         // Clear the internal subscribers store
-        clear: function () {
+        clear: () => {
             _subscribers = {};
         },
 
         // Get the version number of the module
-        getVersion: function () {
+        getVersion: () => {
             return VERSION;
         }
     };
