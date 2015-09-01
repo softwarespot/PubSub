@@ -1,0 +1,18 @@
+{
+  "name": "pubsub",
+  "homepage": "https://github.com/softwarespot/PubSub",
+  "description": "A publish-subscribe messaging pattern for JavaScript",
+  "main": "pubsub.js",
+  "keywords": [
+    "pubsub",
+    "publisher",
+    "subscriber"
+  ],
+  "license": "MIT",
+  "ignore": [
+  ],
+  "dependencies": {
+  },
+  "devDependencies": {
+  }
+}

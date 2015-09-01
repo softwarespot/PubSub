@@ -1,0 +1,14 @@
+{
+  "name": "pubsub",
+  "version": "0.1.0",
+  "license": "MIT",
+  "repository": "https://github.com/softwarespot/PubSub",
+  "devDependencies": {
+    "del": "~1.2.1",
+    "gulp": "~3.9.0",
+    "gulp-babel": "^5.2.1",
+    "gulp-jshint": "~1.11.2",
+    "gulp-rename": "~1.2.2",
+    "gulp-uglify": "~1.2.0"
+  }
+}
