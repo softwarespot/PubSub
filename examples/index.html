@@ -24,11 +24,11 @@
 <h1>Check the console for the output</h1>
 
     <!--Scripts-->
-    <script src="../dist/pubsub.js"></script>
+    <script src="../dist/pubsub.min.js"></script>
 
     <script>
         /* global PubSub */
-        $(function() {
+        (function() {
             // Note: Do not use anonymous functions if you would like to unsubscribe at a later stage
 
             function fireFirst() {
@@ -41,7 +41,7 @@
             }
 
             // Subscribe to the 'search/twitter' subscription using the first function as a reference
-            let handle = PubSub.subscribe('search/twitter', fireFirst);
+            var handle = PubSub.subscribe('search/twitter', fireFirst);
 
             // Subscribe to the 'search/twitter' subscription, using a different callback
             PubSub.subscribe('search/twitter', fireSecond);
@@ -76,7 +76,7 @@
             console.log('Events should NOT display below:');
             PubSub.publish(['search/github', 'search/js']);
 
-        });
+        })();
     </script>
 
 </body>
