@@ -1,29 +1,12 @@
-//
-// PubSub pattern in JavaScript
-//      By LearnCodeAcademy, URL: https://gist.github.com/learncodeacademy/777349747d8382bfb722
-//
-// Additional info:
-//      Tuts+, URL: https://www.youtube.com/watch?v=U4cigUpzW2U&list=PL15G0RGjxzGdBqDPF4DDrlOt9YmjampzO&index=8
-//      Peter Higgins, URL: https://github.com/phiggins42/bloody-jquery-plugins/blob/master/pubsub.js
-//      PubSubJS, handle/token concept, URL: https://github.com/mroderick/PubSubJS/blob/master/src/pubsub.js
-//      PubSub, subscription array concept, URL: https://github.com/drublic/PubSub/
-//      PubSub Wikipedia, URL: https://en.wikipedia.org/wiki/Publish%E2%80%93subscribe_pattern
-//
-// Performance tests:
-//      forEach-vs-for-loop: http://jsperf.com/array-foreach-vs-for-loop/5
-//      for-loop-vs-indexOf: http://jsperf.com/js-for-loop-vs-array-indexof/8
-//      shift-vs-splice: http://jsperf.com/shift-vs-splice
-//
-
 /*
- * PubSub modules
+ * PubSub module
  * https://github.com/softwarespot/PubSub
  * Author: softwarespot
  * Licensed under the MIT license
  * Version: 0.1.0
  */
 ; // jshint ignore:line
-let PubSub = ((Array, Object) => {
+let PubSub = ((Array, Object) => { // jshint ignore:line
     // Constants
 
     // Version number of the module
@@ -41,15 +24,15 @@ let PubSub = ((Array, Object) => {
         STRING: '[object String]'
     };
 
+    // Store the Object toString method
+    const _objectToString = Object.prototype.toString;
+
     // Unique identifier. Leet speak for PubSub_Module
     const _handleId = '|>|_|85|_|8_|\\/|0|)|_|13';
 
     // Generic handle for an error. This is an array so the reference can be used as a
     // way of verifying that it's an error
     const _handleError = [_handleId];
-
-    // Store the Object toString method
-    const _objectToString = Object.prototype.toString;
 
     // Fields
 
@@ -95,7 +78,7 @@ let PubSub = ((Array, Object) => {
     return {
         // Subscribe to a subscription with a callback function. It's best practice not to make this an anonymous function
         // as then you can't properly unsubscribe, since the callback function reference is required
-        // Returns an opaque handle for use with unsubscribe(), though it's optional to use
+        // Returns an opaque handle for use with unsubscribe(), though it's optional to use of course
         subscribe: (subscriptions, callbacks) => { // on()
             // Store whether the first param is a string
             let isStringTypes = isString(subscriptions) && isFunction(callbacks);
@@ -135,7 +118,7 @@ let PubSub = ((Array, Object) => {
                 }
 
                 // Check if the callback hasn't already been registered for the event name
-                // Could use include()
+                // Could use include() when ES2015 is widely available
                 if (functions.indexOf(callback) === -1) {
                     // Push the callback function to the event name array
                     functions.push(callback);
@@ -226,9 +209,6 @@ let PubSub = ((Array, Object) => {
             // just in case it's required
             args.push(subscriptions.join(','));
 
-            // Error with babel changing this to undefined, therefore cache this
-            var _this = this;
-
             // Iterate through all the subscriptions
             for (let i = 0, length = subscriptions.length; i < length; i++) {
                 // Retrieve the callbacks for the subscription
@@ -239,8 +219,11 @@ let PubSub = ((Array, Object) => {
                     continue;
                 }
 
+                // Error with babel changing 'this' to 'undefined', therefore cache 'this' instead
+                let _this = this;
+
                 // For each callback function, call the function with the callback arguments
-                // by using apply() and passing the (new) array of arguments
+                // by using apply() and passing the array of arguments
                 for (let j = 0, functionsLength = functions.length; j < functionsLength; j++) {
                     functions[j].apply(_this, args);
                     // Increase the number of publish subscriptions
@@ -248,6 +231,7 @@ let PubSub = ((Array, Object) => {
                 }
             }
 
+            // Return the number of subscribers published to
             return published;
         },
 
@@ -263,58 +247,19 @@ let PubSub = ((Array, Object) => {
     };
 })(Array, Object);
 
-// Demo
-
-// A simple demo of how to use the following PubSub module
-// DO NOT USE ANONYMOUS FUNCTIONS AS YOU WILL BE UNABLE TO UNSUBSCRIBE LATER ON
-
-function fireFirst() {
-    console.log('fireFirst: %o', arguments);
-}
-
-function fireSecond(arg1, arg2) {
-    // console.log('fireSecond: %o', arguments);
-    console.log('Arguments Params: %s, %s', arg1, arg2);
-}
-
-console.log('!!! START PubSub DEMO');
-
-// Subscribe to an event and bind a callback for each by passing a function reference
-let handle = PubSub.subscribe('search/twitter', fireFirst);
-
-// Display the handle returned by the subscription
-console.log('Handle: %o', handle);
-
-PubSub.subscribe('search/twitter', fireSecond);
-
-// Publish the event
-PubSub.publish('search/twitter', 'Example arg1', 'Example arg2');
-
-// Look in the browser's console
-
-// Destroy the event only for the second function by passing the event name and the function reference i.e. fireSecond (no parentheses)
-PubSub.unsubscribe('search/twitter', fireSecond);
-
-// Publish the event
-// Notice how there is only one console.log() displayed, which is for the fireFirst() function
-console.log('This should NOT show for the fireSecond function');
-PubSub.publish('search/twitter', 'Example arg1', 'Example arg2');
-
-// Destroy the event for the fist function by passing the handle
-PubSub.unsubscribe(handle);
-
-// Publish the event
-// Notice no event fired
-console.log('This should NOT show for any events, as all were unsubscribed previously');
-PubSub.publish('search/twitter', 'Example arg1', 'Example arg2');
-
-// Test subscribing to multiple subscriptions and unsubscribing
-console.log('Testing multiple subscriptions:');
-PubSub.subscribe(['search/github', 'search/js'], [fireFirst, fireSecond]);
-console.log('Events should display below:');
-PubSub.publish(['search/github', 'search/js']);
-PubSub.unsubscribe(['search/github', 'search/js'], [fireFirst, fireSecond]);
-console.log('Events should NOT display below:');
-PubSub.publish(['search/github', 'search/js']);
-
-console.log('!!! END PubSub DEMO');
+//
+// PubSub pattern in JavaScript
+//      By LearnCodeAcademy, URL: https://gist.github.com/learncodeacademy/777349747d8382bfb722
+//
+// Additional info:
+//      Tuts+, URL: https://www.youtube.com/watch?v=U4cigUpzW2U&list=PL15G0RGjxzGdBqDPF4DDrlOt9YmjampzO&index=8
+//      Peter Higgins, URL: https://github.com/phiggins42/bloody-jquery-plugins/blob/master/pubsub.js
+//      PubSubJS, handle/token concept, URL: https://github.com/mroderick/PubSubJS/blob/master/src/pubsub.js
+//      PubSub, subscription array concept, URL: https://github.com/drublic/PubSub/
+//      PubSub Wikipedia, URL: https://en.wikipedia.org/wiki/Publish%E2%80%93subscribe_pattern
+//
+// Performance tests:
+//      forEach-vs-for-loop: http://jsperf.com/array-foreach-vs-for-loop/5
+//      for-loop-vs-indexOf: http://jsperf.com/js-for-loop-vs-array-indexof/8
+//      shift-vs-splice: http://jsperf.com/shift-vs-splice
+//
