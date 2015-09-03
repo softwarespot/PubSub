@@ -219,13 +219,10 @@ let PubSub = ((Array, Object) => { // jshint ignore:line
                     continue;
                 }
 
-                // Error with babel changing 'this' to 'undefined', therefore cache 'this' instead
-                let _this = this;
-
                 // For each callback function, call the function with the callback arguments
                 // by using apply() and passing the array of arguments
                 for (let j = 0, functionsLength = functions.length; j < functionsLength; j++) {
-                    functions[j].apply(_this, args);
+                    functions[j](...args);
                     // Increase the number of publish subscriptions
                     published++;
                 }

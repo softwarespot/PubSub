@@ -225,13 +225,10 @@ var PubSub = (function (Array, Object) {
                     continue;
                 }
 
-                // Error with babel changing 'this' to 'undefined', therefore cache 'this' instead
-                var _this = undefined;
-
                 // For each callback function, call the function with the callback arguments
                 // by using apply() and passing the array of arguments
                 for (var j = 0, functionsLength = functions.length; j < functionsLength; j++) {
-                    functions[j].apply(_this, args);
+                    functions[j].apply(functions, args);
                     // Increase the number of publish subscriptions
                     published++;
                 }
