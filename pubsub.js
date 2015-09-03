@@ -44,14 +44,11 @@ let PubSub = ((Array, Object) => { // jshint ignore:line
 
     // Check if a value is a function. Based on the idea by lodash
     function isFunction(value) {
-
         return isObject(value) && _objectToString.call(value) === ObjectStrings.FUNCTION;
-
     }
 
     // Check if an opaque 'PubSub' handle is valid
     function isHandle(handle) {
-
         // The opaque 'PubSub' handle must be an array
         return Array.isArray(handle) &&
 
@@ -66,26 +63,21 @@ let PubSub = ((Array, Object) => { // jshint ignore:line
 
             // Contain a function at the 'callback position'
             isFunction(handle[HANDLE_CALLBACK]);
-
     }
 
     // Check if a value is an object. Based on the idea by lodash
     function isObject(value) {
-
         // Store the typeof value
         let type = typeof value;
 
         // !!value is basically checking if value is not 'truthy' e.g. null or zero and then inverts that boolean value
         // So, !'Some test' is false and then inverting false is true. There if value contains 'something', continue
         return !!value && (type === 'object' || type === 'function');
-
     }
 
     // Check if a value is a string datatype with a length greater than zero when whitespace is stripped. Based partially on the idea by lodash
     function isString(value) {
-
         return (typeof value === 'string' || _objectToString.call(value) === ObjectStrings.STRING) && value.trim().length > 0;
-
     }
 
     // Public API
@@ -104,7 +96,9 @@ let PubSub = ((Array, Object) => { // jshint ignore:line
             }
 
             // If either of the arguments are not an array or the lengths mismatch, then return a handle error
-            if (!Array.isArray(subscriptions) || !Array.isArray(callbacks) || subscriptions.length !== callbacks.length) {
+            if (!Array.isArray(subscriptions) ||
+                !Array.isArray(callbacks) ||
+                subscriptions.length !== callbacks.length) {
                 return _handleError;
             }
 
