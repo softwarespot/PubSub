@@ -1,6 +1,6 @@
 /*
  * PubSub module
- * https://github.com/softwarespot/PubSub
+ * https://github.com/softwarespot/pubsub
  * Author: softwarespot
  * Licensed under the MIT license
  * Version: 0.1.0
