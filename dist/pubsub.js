@@ -15,7 +15,7 @@ var PubSub = (function (Array, Object) {
     // Version number of the module
     var VERSION = '0.1.0';
 
-    // Array constant enumeration
+    // Array constants enumeration
     var HANDLE_ID = 0,
         HANDLE_SUBSCRIPTION = 1,
         HANDLE_CALLBACK = 2,
@@ -27,19 +27,20 @@ var PubSub = (function (Array, Object) {
         STRING: '[object String]'
     };
 
-    // Store the Object toString method
+    // Store the Object prototype toString method
     var _objectToString = Object.prototype.toString;
 
-    // Unique identifier. Leet speak for PubSub_Module
+    // Unique identifier (advanced leet speak for PubSub_Module)
     var _handleId = '|>|_|85|_|8_|\\/|0|)|_|13';
 
-    // Generic handle for an error. This is an array so the reference can be used as a
+    // Generic handle for an error
+    // This is an array so the reference can be used as a
     // way of verifying that it's an error
     var _handleError = [_handleId];
 
     // Fields
 
-    // Hold event names with an array of callbacks for each one
+    // Hold event names with an array of callback functions for each one
     var _subscribers = {};
 
     // Methods
@@ -53,13 +54,26 @@ var PubSub = (function (Array, Object) {
     // Check if an opaque 'PubSub' handle is valid
     function isHandle(handle) {
 
-        return Array.isArray(handle) && handle.length === HANDLE_MAX && handle[HANDLE_ID] === _handleId;
+        // The opaque 'PubSub' handle must be an array
+        return Array.isArray(handle) &&
+
+        // Have a length equal to that of HANDLE_MAX
+        handle.length === HANDLE_MAX &&
+
+        // Contain a handle at the 'id position'
+        handle[HANDLE_ID] === _handleId &&
+
+        // Contain a string at the 'subscription position'
+        isString(handle[HANDLE_SUBSCRIPTION]) &&
+
+        // Contain a function at the 'callback position'
+        isFunction(handle[HANDLE_CALLBACK]);
     }
 
     // Check if a value is an object. Based on the idea by lodash
     function isObject(value) {
 
-        // Store the typeof
+        // Store the typeof value
         var type = typeof value;
 
         // !!value is basically checking if value is not 'truthy' e.g. null or zero and then inverts that boolean value
@@ -76,38 +90,35 @@ var PubSub = (function (Array, Object) {
     // Public API
     return {
         // Subscribe to a subscription with a callback function. It's best practice not to make this an anonymous function
-        // as then you can't properly unsubscribe, since the callback function reference is required
-        // Returns an opaque handle for use with unsubscribe(), though it's optional to use of course
+        // as you then can't unsubscribe, since the callback function reference is required
+        // Returns an opaque handle for use with unsubscribe() (though it's optional to use of course)
         subscribe: function subscribe(subscriptions, callbacks) {
-            // on()
-            // Store whether the first param is a string
+            // Store as to whether or not  the first parameter is a string
             var isStringTypes = isString(subscriptions) && isFunction(callbacks);
 
-            // If a string and a function datatype, then create an array for each
+            // If a string and a function datatype, then create an array for each parameter
             if (isStringTypes) {
                 callbacks = [callbacks];
                 subscriptions = [subscriptions];
             }
 
-            // If either of the arguments are not an array or the lengths simply mismatch
+            // If either of the arguments are not an array or the lengths mismatch, then return a handle error
             if (!Array.isArray(subscriptions) || !Array.isArray(callbacks) || subscriptions.length !== callbacks.length) {
                 return _handleError;
             }
 
-            // Return array of handles i.e. [handle id, subscription, callback]
+            // Return an array of opaque 'PubSub' handles i.e. [handle id, subscription, callback]
             var handles = [];
 
             // Iterate through all the subscriptions
-            for (var i = 0, subscriptionsLength = subscriptions.length; i < subscriptionsLength; i++) {
+            for (var i = 0, _length = subscriptions.length; i < _length; i++) {
                 // Store the subscription
                 var subscription = subscriptions[i];
 
-                // If an array for the event name doesn't exist, then generate a new empty array
-                // This cannot be done on the function datatype for obvious reasons
-                _subscribers[subscription] = _subscribers[subscription] || [];
-
-                // Retrieve the callbacks for the subscription
-                var functions = _subscribers[subscription];
+                // The subscription should be a string datatype with a length greater than zero
+                if (!isString(subscription)) {
+                    continue;
+                }
 
                 // Store the callback
                 var callback = callbacks[i];
@@ -116,6 +127,13 @@ var PubSub = (function (Array, Object) {
                 if (!isFunction(callback)) {
                     continue;
                 }
+
+                // If an array for the event name doesn't exist, then generate a new empty array
+                // This cannot be done on the function datatype for obvious reasons (it's an array)
+                _subscribers[subscription] = _subscribers[subscription] || [];
+
+                // Retrieve the callbacks for the subscription
+                var functions = _subscribers[subscription];
 
                 // Check if the callback hasn't already been registered for the event name
                 // Could use include() when ES2015 is widely available
@@ -128,7 +146,7 @@ var PubSub = (function (Array, Object) {
                 }
             }
 
-            // An error occurred as no opaque 'PubSub' handles were pushed to the handles array
+            // If an error occurred as no opaque 'PubSub' handles were pushed to the handles array
             if (handles.length === 0) {
                 return isStringTypes ? _handleError : [_handleError];
             }
@@ -141,35 +159,34 @@ var PubSub = (function (Array, Object) {
         // the handle returned from subscribe()
         // Returns true or false
         unsubscribe: function unsubscribe(subscriptions, callbacks) {
-            // off()
-            // If the reference is equal to the handle error array, then an error occurred with subscribing
+            // If the reference is equal to the handle error array, then an error occurred with previously subscribing
             if (subscriptions === _handleError) {
                 return false;
             }
 
             // Set the following variable(s), if it's an opaque 'PubSub' handle returned from subscribe()
             if (isHandle(subscriptions)) {
-                // Do not swap, otherwise it will cause an error with overwriting subscriptions
-                // The value of callbacks will be ignored
+                // Do not swap these around, otherwise it will cause an error with overwriting subscriptions before
+                // setting the callbacks variable
                 callbacks = [subscriptions[HANDLE_CALLBACK]];
                 subscriptions = [subscriptions[HANDLE_SUBSCRIPTION]];
-                // If a string and a function datatype, then create an array for each
+                // If a string and function datatype, then create an array for each variable
             } else if (isString(subscriptions) && isFunction(callbacks)) {
                     callbacks = [callbacks];
                     subscriptions = [subscriptions];
                 }
 
-            // If either of the arguments are not an array or the lengths simply mismatch
+            // If either of the arguments are not an array or the lengths simply mismatch, then return false
             if (!Array.isArray(subscriptions) || !Array.isArray(callbacks) || subscriptions.length !== callbacks.length) {
                 return false;
             }
 
             // Iterate through all the subscriptions
-            for (var i = 0, subscriptionsLength = subscriptions.length; i < subscriptionsLength; i++) {
-                // Retrieve the callbacks for the subscription
+            for (var i = 0, _length2 = subscriptions.length; i < _length2; i++) {
+                // Retrieve the callback functions for the subscription
                 var functions = _subscribers[subscriptions[i]];
 
-                // The subscription hasn't been created or there are simply no callbacks assigned
+                // The subscription hasn't been created or there are simply no callback functions assigned
                 if (!functions) {
                     continue;
                 }
@@ -178,7 +195,6 @@ var PubSub = (function (Array, Object) {
                 // then remove from the array using the index value
                 var index = functions.indexOf(callbacks[i]);
                 if (index !== -1) {
-                    // Only remove one value
                     functions.splice(index, 1);
                 }
             }
@@ -193,7 +209,6 @@ var PubSub = (function (Array, Object) {
                 args[_key - 1] = arguments[_key];
             }
 
-            // emit()
             // Set the following variable(s), if it's an opaque 'PubSub' handle returned from subscribe()
             if (isHandle(subscriptions)) {
                 // Convert to an array datatype
@@ -203,33 +218,35 @@ var PubSub = (function (Array, Object) {
                     subscriptions = [subscriptions];
                 }
 
-            // Store the number of subscriptions published
-            var published = 0;
-
-            // If not an array, then the subscription was either not a valid array, handle or string
+            // If not an array, then the subscription was not a valid array, handle or string
             if (!Array.isArray(subscriptions)) {
-                return published;
+                return 0;
             }
 
             // Push the subscription to the end of the arguments array as a comma separated string,
-            // just in case it's required
+            // just in case it's required. Of course this will kind of fail if the user uses a subscription with a comma,
+            // but that's up to them I guess!
             args.push(subscriptions.join(','));
 
+            // Store the number of subscriptions published
+            var published = 0;
+
             // Iterate through all the subscriptions
-            for (var i = 0, _length = subscriptions.length; i < _length; i++) {
-                // Retrieve the callbacks for the subscription
+            for (var i = 0, _length3 = subscriptions.length; i < _length3; i++) {
+                // Retrieve the callback function for the subscription
                 var functions = _subscribers[subscriptions[i]];
 
-                // The subscription hasn't been created or there are simply no callbacks assigned
+                // The subscription hasn't been created or there are simply no callback functions assigned
                 if (!functions) {
                     continue;
                 }
 
-                // For each callback function, call the function with the callback arguments
-                // by using apply() and passing the array of arguments
+                // Iterate through all the functions for the particular subscription
                 for (var j = 0, functionsLength = functions.length; j < functionsLength; j++) {
+                    // Call the function with the arguments array using the spread operator
                     functions[j].apply(functions, args);
-                    // Increase the number of publish subscriptions
+
+                    // Increase the number of published subscriptions
                     published++;
                 }
             }
