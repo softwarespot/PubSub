@@ -3,7 +3,7 @@
  * https://github.com/softwarespot/pubsub
  * Author: softwarespot
  * Licensed under the MIT license
- * Version: 0.1.0
+ * Version: 1.0.0
  */
 'use strict';
 
@@ -13,7 +13,7 @@ var PubSub = (function (Array, Object) {
     // Constants
 
     // Version number of the module
-    var VERSION = '0.1.0';
+    var VERSION = '1.0.0';
 
     // Array constants enumeration
     var HANDLE_ID = 0,

@@ -1,17 +1,35 @@
-# PubSub - v0.1.0
+# PubSub - v1.0.0
 
 ## What exactly is PubSub?
 
-PubSub is a JavaScript module of the Publish–Subscribe pattern.
+PubSub is a JavaScript module based around the Publish–Subscribe pattern. If you're unfamiliar with the Publish-Subscribe pattern, then please familiarise yourself by visiting the [MSDN](https://msdn.microsoft.com/en-us/library/ff649664.aspx) article about `PubSub`. You will be amazed as to why you didn't know this before.
 
-The README will be finalised by 2015/09/05
+The module is written using ES2015, though is transpiled using [babel](https://babeljs.io) from ES2015 to ES5. The reason being is that not all browsers are currently supporting the full specification of ES2015, though no doubt will in the next 6-12 months. The transpiled files are located in the `dist` directory.
+
+## How to use
 
 ```javascript
     <!--Use the minified version for better performance-->
     <script src="pubsub.min.js"></script>
 
     <script>
-        // See examples/index.html
+        // Call the following function when
+        function subscribed() {
+            // Display the alert when the 'onrefresh' is published to
+            window.alert('The "onrefresh" subscription was published to.');
+        }
+
+        // Register a subscription to 'onrefresh' with the 'subscribed' callback function.
+        // The function will be called when a subscription is published to
+        PubSub.subscribe('onrefresh', subscribed);
+
+        // ... further along in the code ...
+
+        // Publish to the 'onrefresh' subscription, in that any of those callback functions subscribed,
+        // will be called. No additional arguments have been provided
+        PubSub.publish('onrefresh');
+
+        // See examples/index.html for additional examples
     </script>
 ```
 
@@ -26,7 +44,57 @@ Otherwise just include `pubsub.min.js` somewhere in your document.
 
 ## Documentation
 
-The following documentation outlines in detail how to use the following plugin.
+The following documentation outlines in detail about using the following plugin.
+
+### Subscribe
+
+To subscribe to a particular subscription or list of subscriptions, pass either a string or array of strings of the subscription(s). A callback function or array of callback functions must be passed as the second parameter. It's recommended that the callback function be named and not anonymous functions. This will return either a `handle` or array of `handles` depending on what was passed to the function.
+
+```javascript
+    // Using a string and callback function
+    PubSub.subscribe('subscription', callbackFunction);
+
+    // Using an array of strings and an array of callback functions. They must be the same length
+    PubSub.subscribe([subscription1, subscription2, subscriptionn], [callbackFunction1, callbackFunction2, callbackFunctionn]);
+```
+
+To unsubscribe from a particular subscription or list of subscriptions, is achieved by passing a string, an array of strings or a 'handle' returned by subscribe(). If a string or array of strings if passed, then pass either a callback function or array of callback functions respectively. The second parameter is ignored if the first parameter is passed a 'handle'.
+
+### Unsubscribe
+```javascript
+    // Using a string and callback function
+    PubSub.unsubscribe('subscription', callbackFunction);
+
+    // Using an array of strings and an array of callback functions. They must be the same length
+    PubSub.unsubscribe(['subscription1', 'subscription2', 'subscriptionn'], [callbackFunction1, callbackFunction2, callbackFunctionn]);
+
+    // Using the 'handle' by subscribe()
+    let subHandle = PubSub.subscribe('subscription', callbackFunction);
+
+    // ... further along in the code ...
+
+    // Unsubscribe using the 'handle'
+    PubSub.unsubscribe(subHandle);
+```
+
+To publish to a particular subscription or list of subscriptions, is achieved by passing a string, an array of strings or a 'handle' returned by subscribe()
+
+### Publish
+```javascript
+    // Publish to those who have subscribed to a subscription
+    PubSub.publish('subscription', arg1, arg2, argn ... [args are optional]);
+
+    // Using an array of strings
+    PubSub.publish(['subscription1', 'subscription2', 'subscriptionn'], arg1, arg2, argn ... [args are optional]);
+
+    // Using the 'handle' by subscribe()
+    let subHandle = PubSub.subscribe('subscription', callbackFunction);
+
+    // ... further along in the code ...
+
+    // Publish using the 'handle'
+    PubSub.publish(subHandle, arg1, arg2, argn ... [args are optional]);
+```
 
 ## Contribute
 
@@ -36,7 +104,7 @@ To contribute to the project, you will first need to install [gulp](gulpjs.com) 
     npm install
 ```
 
-Once installation of the local modules has finally completed, you're ready to start contributing to the project. Before you submit your PR, please don't forget to call `gulp`, which will run against [JSHint](jshint.com) for any errors, but will also minify the plugin.
+Once installation of the local modules has finally completed, you're ready to start contributing to the project. Before you submit your PR, please don't forget to call `gulp`, which will run against [JSHint](jshint.com) for any errors, but will also minify the plugin and transpile using [babel](https://babeljs.io).
 
 ##### Watch
 Call the following command to start 'watching' for any changes to the main JavaScript file. This will automatically invoke JSHint and Uglify.
@@ -57,7 +125,7 @@ Call the following command to invoke Uglify, which will minify the main JavaScri
 ```
 
 ##### Build
-Call the following command to invoke both JSHint and Uglify.
+Call the following command to invoke both babel, JSHint and Uglify.
 ```shell
     gulp
 ```
