@@ -34,7 +34,7 @@ gulp.task('jshint', function () {
 });
 
 // Uglify aka minify the main file
-gulp.task('uglify', ['clean', 'es6to5'], function () {
+gulp.task('uglify', ['es6to5'], function () {
     return gulp.src('./' + Assets.dest + '/' + Assets.main)
         .pipe(uglify({
             // See the uglify documentation for more details
