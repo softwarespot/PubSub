@@ -61,5 +61,6 @@ gulp.task('watch', function () {
 // Register the default task
 gulp.task('default', ['jshint', 'uglify']);
 
+// 'gulp es6to5' to transpile from ES2015 to ES5
 // 'gulp jshint' to check the syntax
 // 'gulp uglify' to uglify the main file
