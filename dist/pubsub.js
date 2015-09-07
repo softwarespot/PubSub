@@ -47,13 +47,11 @@ var PubSub = (function (Array, Object) {
 
     // Check if a value is a function. Based on the idea by lodash
     function isFunction(value) {
-
         return isObject(value) && _objectToString.call(value) === ObjectStrings.FUNCTION;
     }
 
     // Check if an opaque 'PubSub' handle is valid
     function isHandle(handle) {
-
         // The opaque 'PubSub' handle must be an array
         return Array.isArray(handle) &&
 
@@ -72,7 +70,6 @@ var PubSub = (function (Array, Object) {
 
     // Check if a value is an object. Based on the idea by lodash
     function isObject(value) {
-
         // Store the typeof value
         var type = typeof value;
 
@@ -83,7 +80,6 @@ var PubSub = (function (Array, Object) {
 
     // Check if a value is a string datatype with a length greater than zero when whitespace is stripped. Based partially on the idea by lodash
     function isString(value) {
-
         return (typeof value === 'string' || _objectToString.call(value) === ObjectStrings.STRING) && value.trim().length > 0;
     }
 
