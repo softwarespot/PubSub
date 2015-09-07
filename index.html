@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <title>PubSub Example</title>
+
+    <!--Font-->
+    <link href="http://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet"/>
+
+    <!--Mobile Specific Metas-->
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+    <!--Stylesheets-->
+    <style>
+        /*Body styling*/
+        body {
+            font-family: 'Open Sans', sans-serif, Arial;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>At present the example only writes to the brower's console</h1>
+
+    <!--Scripts-->
+    <script src="pubsub.min.js"></script>
+
+    <script>
+        /* global PubSub */
+        (function() {
+            // Note: Do not use anonymous functions if you would like to unsubscribe at a later stage
+
+            function fireFirst() {
+                console.log('fireFirst: %o', arguments);
+            }
+
+            function fireSecond(arg1, arg2, subscriptions) {
+                console.log('fireSecond Params: %s, %s', arg1, arg2);
+                console.log('fireSecond Subscriptions Sent: ' + subscriptions);
+            }
+
+            // Subscribe to the 'search/twitter' subscription using the first function as a reference
+            var handle = PubSub.subscribe('search/twitter', fireFirst);
+
+            // Subscribe to the 'search/twitter' subscription, using a different callback
+            PubSub.subscribe('search/twitter', fireSecond);
+
+            // Publish to all those subscribed to the 'search/twitter' subscription
+            PubSub.publish('search/twitter', 'Example arg1', 'Example arg2');
+
+            // Destroy the event only for the second function by passing the event name and function reference i.e. fireSecond (no parentheses)
+            PubSub.unsubscribe('search/twitter', fireSecond);
+
+            // Publish the event
+            // Notice how there is only one console.log() displayed, which is for the fireFirst() function
+            console.log('This should NOT show for the fireSecond function');
+            PubSub.publish('search/twitter', 'Example arg1', 'Example arg2');
+
+            // Destroy the event for the first function by passing the handle
+            PubSub.unsubscribe(handle);
+
+            // Publish the event
+            // Notice no event fired
+            console.log('This should NOT show for any events, as all were unsubscribed previously');
+            PubSub.publish('search/twitter', 'Example arg1', 'Example arg2');
+
+            // Test subscribing to multiple subscriptions and unsubscribing
+            console.log('Testing multiple subscriptions:');
+            PubSub.subscribe(['search/github', 'search/js'], [fireFirst, fireSecond]);
+
+            console.log('Events should display below:');
+            PubSub.publish(['search/github', 'search/js'], 'This is the first argument', 'This is the second argument');
+            PubSub.unsubscribe(['search/github', 'search/js'], [fireFirst, fireSecond]);
+
+            console.log('Events should NOT display below:');
+            PubSub.publish(['search/github', 'search/js']);
+
+        })();
+    </script>
+
+</body>
+
+</html>
