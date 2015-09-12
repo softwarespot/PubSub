@@ -76,7 +76,7 @@ let IPubSub = ((window) => { // jshint ignore:line
 
     return class PubSub {
         // Constructor for the class
-        constuctor() {
+        constructor() {
             this._subscribers = {};
         }
 
