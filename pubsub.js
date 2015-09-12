@@ -6,26 +6,26 @@
  * Version: 1.0.0
  */
 ; // jshint ignore:line
-let PubSub = ((Array, Object) => { // jshint ignore:line
+let PubSub = ((window) => { // jshint ignore:line
     // Constants
 
     // Version number of the module
     const VERSION = '1.0.0';
 
     // Array constants enumeration
-    const HANDLE_ID = 0,
-        HANDLE_SUBSCRIPTION = 1,
-        HANDLE_CALLBACK = 2,
-        HANDLE_MAX = 3;
+    const HANDLE_ID = 0;
+    const HANDLE_SUBSCRIPTION = 1;
+    const HANDLE_CALLBACK = 2;
+    const HANDLE_MAX = 3;
 
     // Return strings of toString() found on the Object prototype
-    const ObjectStrings = {
+    const _objectStrings = {
         FUNCTION: '[object Function]',
         STRING: '[object String]'
     };
 
     // Store the Object prototype toString method
-    const _objectToString = Object.prototype.toString;
+    const _objectToString = window.Object.prototype.toString;
 
     // Unique identifier (advanced leet speak for PubSub_Module)
     const _handleId = '|>|_|85|_|8_|\\/|0|)|_|13';
@@ -44,13 +44,13 @@ let PubSub = ((Array, Object) => { // jshint ignore:line
 
     // Check if a value is a function. Based on the idea by lodash
     function isFunction(value) {
-        return isObject(value) && _objectToString.call(value) === ObjectStrings.FUNCTION;
+        return isObject(value) && _objectToString.call(value) === _objectStrings.FUNCTION;
     }
 
     // Check if an opaque 'PubSub' handle is valid
     function isHandle(handle) {
         // The opaque 'PubSub' handle must be an array
-        return Array.isArray(handle) &&
+        return window.Array.isArray(handle) &&
 
             // Have a length equal to that of HANDLE_MAX
             handle.length === HANDLE_MAX &&
@@ -77,10 +77,11 @@ let PubSub = ((Array, Object) => { // jshint ignore:line
 
     // Check if a value is a string datatype with a length greater than zero when whitespace is stripped. Based partially on the idea by lodash
     function isString(value) {
-        return (typeof value === 'string' || _objectToString.call(value) === ObjectStrings.STRING) && value.trim().length > 0;
+        return (typeof value === 'string' || _objectToString.call(value) === _objectStrings.STRING) && value.trim().length > 0;
     }
 
     // Public API
+
     return {
         // Subscribe to a subscription with a callback function. It's best practice not to make this an anonymous function
         // as you then can't unsubscribe, since the callback function reference is required
@@ -96,8 +97,8 @@ let PubSub = ((Array, Object) => { // jshint ignore:line
             }
 
             // If either of the arguments are not an array or the lengths mismatch, then return a handle error
-            if (!Array.isArray(subscriptions) ||
-                !Array.isArray(callbacks) ||
+            if (!window.Array.isArray(subscriptions) ||
+                !window.Array.isArray(callbacks) ||
                 subscriptions.length !== callbacks.length) {
                 return _handleError;
             }
@@ -172,7 +173,7 @@ let PubSub = ((Array, Object) => { // jshint ignore:line
             }
 
             // If either of the arguments are not an array or the lengths simply mismatch, then return false
-            if (!Array.isArray(subscriptions) || !Array.isArray(callbacks) || subscriptions.length !== callbacks.length) {
+            if (!window.Array.isArray(subscriptions) || !window.Array.isArray(callbacks) || subscriptions.length !== callbacks.length) {
                 return false;
             }
 
@@ -210,7 +211,7 @@ let PubSub = ((Array, Object) => { // jshint ignore:line
             }
 
             // If not an array, then the subscription was not a valid array, handle or string
-            if (!Array.isArray(subscriptions)) {
+            if (!window.Array.isArray(subscriptions)) {
                 return 0;
             }
 
@@ -256,7 +257,7 @@ let PubSub = ((Array, Object) => { // jshint ignore:line
             return VERSION;
         }
     };
-})(Array, Object);
+})(window);
 
 //
 // PubSub pattern in JavaScript
