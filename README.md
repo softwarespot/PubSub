@@ -1,10 +1,10 @@
-# PubSub - v1.0.0
+# PubSub - v1.1.0
 
 ## What exactly is PubSub?
 
 PubSub is a JavaScript module based around the Publish–Subscribe pattern. If you're unfamiliar with the Publish-Subscribe pattern, then please familiarise yourself by visiting the [MSDN](https://msdn.microsoft.com/en-us/library/ff649664.aspx) article about `PubSub`. You will be amazed as to why you didn't know this before.
 
-The module is written using ES2015, though is transpiled using [babel](https://babeljs.io) from ES2015 to ES5. The reason being is that not all browsers are currently supporting the full specification of ES2015, though no doubt will in the next 6-12 months. The transpiled files are located in the `dist` directory.
+The module is written using ES2015, though transpiled using [babel](https://babeljs.io) from ES2015 to ES5. The reason being is that not all browsers are currently supporting the full specification of ES2015, which hopefully will be in the next 6-12 months. The transpiled files are located in the `dist` directory.
 
 ## How to use
 
