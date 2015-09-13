@@ -3,7 +3,7 @@
  * https://github.com/softwarespot/pubsub
  * Author: softwarespot
  * Licensed under the MIT license
- * Version: 1.0.0
+ * Version: 1.1.0
  */
 'use strict';
 
@@ -17,7 +17,7 @@ var PubSub = (function (iPubSub) {
     // Constants
 
     // Version number of the module
-    var VERSION = '1.0.0';
+    var VERSION = '1.1.0';
 
     // Create an instance of the PubSub interface
     var _pubSub = new iPubSub();
