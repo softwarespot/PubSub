@@ -55,7 +55,7 @@
     const define = global.define;
 
     // Append PubSub to the global object reference
-    global.PubSub = _pubSub();
+    global.PubSub = _pubSub;
 
     if (typeof module !== 'undefined' && module.exports && typeof global === 'undefined') {
         // NodeJS
@@ -67,7 +67,7 @@
         // AMD
         global.define('PubSub', [], _pubSub);
     }
-})(this, ((global) => {
+})(window, ((global) => {
     // Constants
 
     // Array constants enumeration
@@ -311,7 +311,7 @@
             this._subscribers = {};
         }
     };
-})(this)); // this equals window
+})(window));
 
 //
 // PubSub pattern in JavaScript

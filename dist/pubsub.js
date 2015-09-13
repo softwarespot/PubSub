@@ -66,7 +66,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     var define = global.define;
 
     // Append PubSub to the global object reference
-    global.PubSub = _pubSub();
+    global.PubSub = _pubSub;
 
     if (typeof module !== 'undefined' && module.exports && typeof global === 'undefined') {
         // NodeJS
@@ -78,7 +78,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         // AMD
         global.define('PubSub', [], _pubSub);
     }
-})(undefined, (function (global) {
+})(window, (function (global) {
     // Constants
 
     // Array constants enumeration
@@ -340,7 +340,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
         return PubSub;
     })();
-})(undefined)); // this equals window
+})(window));
 
 //
 // PubSub pattern in JavaScript
