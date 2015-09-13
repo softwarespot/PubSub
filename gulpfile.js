@@ -99,6 +99,7 @@ gulp.task('version', function () {
 
     return streams;
 });
+
 // Register the default task
 gulp.task('default', ['version', 'jshint', 'uglify']);
 
