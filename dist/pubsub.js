@@ -50,7 +50,7 @@ var PubSub = (function (iPubSub) {
         },
 
         // Expose the underlying interface to create multiple instances of the module
-        'interface': function _interface() {
+        getInterface: function getInterface() {
             return iPubSub;
         },
 

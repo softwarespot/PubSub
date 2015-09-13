@@ -39,7 +39,7 @@ let PubSub = ((iPubSub) => { // jshint ignore:line
         },
 
         // Expose the underlying interface to create multiple instances of the module
-        interface: () => {
+        getInterface: () => {
             return iPubSub;
         },
 
