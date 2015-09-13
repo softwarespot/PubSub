@@ -48,7 +48,7 @@ let PubSub = ((iPubSub) => { // jshint ignore:line
             return VERSION;
         }
     };
-})(((window) => {
+})(((global) => {
     // Constants
 
     // Array constants enumeration
@@ -64,7 +64,7 @@ let PubSub = ((iPubSub) => { // jshint ignore:line
     };
 
     // Store the Object prototype toString method
-    const _objectToString = window.Object.prototype.toString;
+    const _objectToString = global.Object.prototype.toString;
 
     // Unique identifier (advanced leet speak for PubSub_Module)
     const _handleId = '|>|_|85|_|8_|\\/|0|)|_|13';
@@ -84,7 +84,7 @@ let PubSub = ((iPubSub) => { // jshint ignore:line
     // Check if an opaque 'PubSub' handle is valid
     function isHandle(handle) {
         // The opaque 'PubSub' handle must be an array
-        return window.Array.isArray(handle) &&
+        return global.Array.isArray(handle) &&
 
             // Have a length equal to that of HANDLE_MAX
             handle.length === HANDLE_MAX &&
@@ -136,8 +136,8 @@ let PubSub = ((iPubSub) => { // jshint ignore:line
             }
 
             // If either of the arguments are not an array or the lengths mismatch, then return a handle error
-            if (!window.Array.isArray(subscriptions) ||
-                !window.Array.isArray(callbacks) ||
+            if (!global.Array.isArray(subscriptions) ||
+                !global.Array.isArray(callbacks) ||
                 subscriptions.length !== callbacks.length) {
                 return _handleError;
             }
@@ -212,7 +212,7 @@ let PubSub = ((iPubSub) => { // jshint ignore:line
             }
 
             // If either of the arguments are not an array or the lengths simply mismatch, then return false
-            if (!window.Array.isArray(subscriptions) || !window.Array.isArray(callbacks) || subscriptions.length !== callbacks.length) {
+            if (!global.Array.isArray(subscriptions) || !global.Array.isArray(callbacks) || subscriptions.length !== callbacks.length) {
                 return false;
             }
 
@@ -251,7 +251,7 @@ let PubSub = ((iPubSub) => { // jshint ignore:line
             }
 
             // If not an array, then the subscription was not a valid array, handle or string
-            if (!window.Array.isArray(subscriptions)) {
+            if (!global.Array.isArray(subscriptions)) {
                 return 0;
             }
 
@@ -292,7 +292,7 @@ let PubSub = ((iPubSub) => { // jshint ignore:line
             this._subscribers = {};
         }
     };
-})(window));
+})(this)); // this equals window
 
 //
 // PubSub pattern in JavaScript
