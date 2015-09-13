@@ -77,7 +77,7 @@ To unsubscribe from a particular subscription or list of subscriptions, is achie
     PubSub.unsubscribe(subHandle);
 ```
 
-To publish to a particular subscription or list of subscriptions, is achieved by passing a string, an array of strings or a 'handle' returned by subscribe()
+To publish to a particular subscription or list of subscriptions, is achieved by passing a string, an array of strings or a 'handle' returned by subscribe().
 
 ### Publish
 ```javascript
@@ -94,6 +94,41 @@ To publish to a particular subscription or list of subscriptions, is achieved by
 
     // Publish using the 'handle'
     PubSub.publish(subHandle, arg1, arg2, argn ... [args are optional]);
+```
+
+To clear all subscriptions, use the `clear` function
+
+### Clear
+```javascript
+    // Clear all subscriptions
+    PubSub.clear();
+```
+
+The module uses an underlying interface which is exposed via the `getInterface` function and therefore can be used adjacent to the global PubSub module without interference. The functions exposed are `subscribe`, `unsubscribe`, `publish` and `clear`.
+
+### Interface
+```javascript
+    // Retrieve the module's interface
+    // 'subscribe', 'unsubscribe', 'publish' and 'clear'
+    let interface = PubSub.getInterface();
+
+    // Create a new instance of the interface
+    let myPubSub = new interface();
+
+    // Publish to those who have subscribed to a subscription (see above for more details)
+    // This does not publish to those subscribed to the global module
+    myPubSub.publish('subscription', arg1, arg2, argn ... [args are optional]);
+```
+
+To retrieve the version number of the module, use `getVersion`
+
+### Version
+```javascript
+    // Retrieve the version number of the module
+    let version = PubSub.getVersion();
+
+    // Display in the console
+    console.log(version);
 ```
 
 ## Contribute
