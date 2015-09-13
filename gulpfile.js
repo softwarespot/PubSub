@@ -36,7 +36,7 @@ gulp.task('clean', function (cb) {
 });
 
 // Run the babel transpiler to convert from ES2015 to ES5
-gulp.task('es6to5', ['clean'], function () {
+gulp.task('es6to5', function () {
     return gulp.src('./' + Assets.main)
         .pipe(babel())
         .pipe(gulp.dest('./' + Assets.dest));
@@ -50,7 +50,7 @@ gulp.task('jshint', function () {
 });
 
 // Uglify aka minify the main file
-gulp.task('uglify', ['es6to5'], function () {
+gulp.task('uglify', ['clean', 'es6to5'], function () {
     return gulp.src('./' + Assets.dest + '/' + Assets.main)
         .pipe(concat(Assets.minified))
         .pipe(uglify(uglifySettings))
