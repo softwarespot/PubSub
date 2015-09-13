@@ -6,36 +6,35 @@
  * Version: 1.1.0
  */
 ; // jshint ignore:line
-let PubSub = ((iPubSub) => { // jshint ignore:line
+((global, iPubSub) => { // jshint ignore:line
     // Constants
 
     // Version number of the module
     const VERSION = '1.1.0';
 
     // Create an instance of the PubSub interface
-    const _pubSub = new iPubSub();
+    const _pubSubInstance = new iPubSub();
 
     // Public API
-
-    return {
+    const _pubSub = {
         // See subscribe in the documentation below
         subscribe: (subscriptions, callbacks) => {
-            return _pubSub.subscribe(subscriptions, callbacks);
+            return _pubSubInstance.subscribe(subscriptions, callbacks);
         },
 
         // See unsubscribe in the documentation below
         unsubscribe: (subscriptions, callbacks) => {
-            return _pubSub.unsubscribe(subscriptions, callbacks);
+            return _pubSubInstance.unsubscribe(subscriptions, callbacks);
         },
 
         // See publish in the documentation below
         publish: (subscriptions, ...args) => {
-            return _pubSub.publish(subscriptions, ...args);
+            return _pubSubInstance.publish(subscriptions, ...args);
         },
 
         // See clear in the documentation below
         clear: () => {
-            return _pubSub.clear();
+            return _pubSubInstance.clear();
         },
 
         // Expose the underlying interface to create multiple instances of the module
@@ -48,7 +47,27 @@ let PubSub = ((iPubSub) => { // jshint ignore:line
             return VERSION;
         }
     };
-})(((global) => {
+
+    // Store a module reference
+    const module = global.module;
+
+    // Store a define reference
+    const define = global.define;
+
+    // Append PubSub to the global object reference
+    global.PubSub = _pubSub();
+
+    if (typeof module !== 'undefined' && module.exports && typeof global === 'undefined') {
+        // NodeJS
+        module.exports = _pubSub;
+    } else if (typeof module !== 'undefined' && module.exports && typeof global !== 'undefined') {
+        // Browserify
+        module.exports = _pubSub;
+    } else if (typeof define === 'function' && define.amd) {
+        // AMD
+        global.define('PubSub', [], _pubSub);
+    }
+})(this, ((global) => {
     // Constants
 
     // Array constants enumeration

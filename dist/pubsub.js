@@ -12,7 +12,7 @@ var _createClass = (function () { function defineProperties(target, props) { for
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
 ; // jshint ignore:line
-var PubSub = (function (iPubSub) {
+(function (global, iPubSub) {
     // jshint ignore:line
     // Constants
 
@@ -20,19 +20,18 @@ var PubSub = (function (iPubSub) {
     var VERSION = '1.1.0';
 
     // Create an instance of the PubSub interface
-    var _pubSub = new iPubSub();
+    var _pubSubInstance = new iPubSub();
 
     // Public API
-
-    return {
+    var _pubSub = {
         // See subscribe in the documentation below
         subscribe: function subscribe(subscriptions, callbacks) {
-            return _pubSub.subscribe(subscriptions, callbacks);
+            return _pubSubInstance.subscribe(subscriptions, callbacks);
         },
 
         // See unsubscribe in the documentation below
         unsubscribe: function unsubscribe(subscriptions, callbacks) {
-            return _pubSub.unsubscribe(subscriptions, callbacks);
+            return _pubSubInstance.unsubscribe(subscriptions, callbacks);
         },
 
         // See publish in the documentation below
@@ -41,12 +40,12 @@ var PubSub = (function (iPubSub) {
                 args[_key - 1] = arguments[_key];
             }
 
-            return _pubSub.publish.apply(_pubSub, [subscriptions].concat(args));
+            return _pubSubInstance.publish.apply(_pubSubInstance, [subscriptions].concat(args));
         },
 
         // See clear in the documentation below
         clear: function clear() {
-            return _pubSub.clear();
+            return _pubSubInstance.clear();
         },
 
         // Expose the underlying interface to create multiple instances of the module
@@ -59,7 +58,27 @@ var PubSub = (function (iPubSub) {
             return VERSION;
         }
     };
-})((function (window) {
+
+    // Store a module reference
+    var module = global.module;
+
+    // Store a define reference
+    var define = global.define;
+
+    // Append PubSub to the global object reference
+    global.PubSub = _pubSub();
+
+    if (typeof module !== 'undefined' && module.exports && typeof global === 'undefined') {
+        // NodeJS
+        module.exports = _pubSub;
+    } else if (typeof module !== 'undefined' && module.exports && typeof global !== 'undefined') {
+        // Browserify
+        module.exports = _pubSub;
+    } else if (typeof define === 'function' && define.amd) {
+        // AMD
+        global.define('PubSub', [], _pubSub);
+    }
+})(undefined, (function (global) {
     // Constants
 
     // Array constants enumeration
@@ -75,7 +94,7 @@ var PubSub = (function (iPubSub) {
     };
 
     // Store the Object prototype toString method
-    var _objectToString = window.Object.prototype.toString;
+    var _objectToString = global.Object.prototype.toString;
 
     // Unique identifier (advanced leet speak for PubSub_Module)
     var _handleId = '|>|_|85|_|8_|\\/|0|)|_|13';
@@ -95,7 +114,7 @@ var PubSub = (function (iPubSub) {
     // Check if an opaque 'PubSub' handle is valid
     function isHandle(handle) {
         // The opaque 'PubSub' handle must be an array
-        return window.Array.isArray(handle) &&
+        return global.Array.isArray(handle) &&
 
         // Have a length equal to that of HANDLE_MAX
         handle.length === HANDLE_MAX &&
@@ -153,7 +172,7 @@ var PubSub = (function (iPubSub) {
                 }
 
                 // If either of the arguments are not an array or the lengths mismatch, then return a handle error
-                if (!window.Array.isArray(subscriptions) || !window.Array.isArray(callbacks) || subscriptions.length !== callbacks.length) {
+                if (!global.Array.isArray(subscriptions) || !global.Array.isArray(callbacks) || subscriptions.length !== callbacks.length) {
                     return _handleError;
                 }
 
@@ -229,7 +248,7 @@ var PubSub = (function (iPubSub) {
                     }
 
                 // If either of the arguments are not an array or the lengths simply mismatch, then return false
-                if (!window.Array.isArray(subscriptions) || !window.Array.isArray(callbacks) || subscriptions.length !== callbacks.length) {
+                if (!global.Array.isArray(subscriptions) || !global.Array.isArray(callbacks) || subscriptions.length !== callbacks.length) {
                     return false;
                 }
 
@@ -270,7 +289,7 @@ var PubSub = (function (iPubSub) {
                     }
 
                 // If not an array, then the subscription was not a valid array, handle or string
-                if (!window.Array.isArray(subscriptions)) {
+                if (!global.Array.isArray(subscriptions)) {
                     return 0;
                 }
 
@@ -321,7 +340,7 @@ var PubSub = (function (iPubSub) {
 
         return PubSub;
     })();
-})(window));
+})(undefined)); // this equals window
 
 //
 // PubSub pattern in JavaScript
