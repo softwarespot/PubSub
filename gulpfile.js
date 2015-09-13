@@ -78,21 +78,21 @@ gulp.task('version', function () {
     streams.add(
         gulp.src('./' + Assets.main)
         .pipe(replace(/VERSION\s+=\s+'(?:\d+\.){2}\d+';/, 'VERSION = \'' + version + '\';'))
-        .pipe(gulp.dest('.'))
+        .pipe(gulp.dest('./'))
     );
 
     // package.json version property
     streams.add(
         gulp.src('./package.json')
         .pipe(replace(/"version":\s+"(?:\d+\.){2}\d+",/, '"version": "' + version + '",'))
-        .pipe(gulp.dest('.'))
+        .pipe(gulp.dest('./'))
     );
 
     // README.md version number
     streams.add(
         gulp.src('./README.md')
         .pipe(replace(/^#\s+(\w+)\s+-\s+v(?:\d+\.){2}\d+/, '# $1 - v' + version))
-        .pipe(gulp.dest('.'))
+        .pipe(gulp.dest('./'))
     );
 
     return streams;
