@@ -3,14 +3,53 @@
  * https://github.com/softwarespot/pubsub
  * Author: softwarespot
  * Licensed under the MIT license
- * Version: 1.0.0
+ * Version: 1.1.0
  */
 ; // jshint ignore:line
-let PubSub = ((window) => { // jshint ignore:line
+let PubSub = ((iPubSub) => { // jshint ignore:line
     // Constants
 
     // Version number of the module
-    const VERSION = '1.0.0';
+    const VERSION = '1.1.0';
+
+    // Create an instance of the PubSub interface
+    const _pubSub = new iPubSub();
+
+    // Public API
+
+    return {
+        // See subscribe in the documentation below
+        subscribe: (subscriptions, callbacks) => {
+            return _pubSub.subscribe(subscriptions, callbacks);
+        },
+
+        // See unsubscribe in the documentation below
+        unsubscribe: (subscriptions, callbacks) => {
+            return _pubSub.unsubscribe(subscriptions, callbacks);
+        },
+
+        // See publish in the documentation below
+        publish: (subscriptions, ...args) => {
+            return _pubSub.publish(subscriptions, ...args);
+        },
+
+        // See clear in the documentation below
+        clear: () => {
+            return _pubSub.clear();
+        },
+
+        // Expose the underlying interface to create multiple instances of the module
+        getInterface: () => {
+            return iPubSub;
+        },
+
+        // Get the version number of the module
+        getVersion: () => {
+            return VERSION;
+        }
+    };
+})(((window) => {
+    // Constants
 
     // Array constants enumeration
     const HANDLE_ID = 0;
@@ -34,11 +73,6 @@ let PubSub = ((window) => { // jshint ignore:line
     // This is an array so the reference can be used as a
     // way of verifying that it's an error
     const _handleError = [_handleId];
-
-    // Fields
-
-    // Hold event names with an array of callback functions for each one
-    let _subscribers = {};
 
     // Methods
 
@@ -82,11 +116,16 @@ let PubSub = ((window) => { // jshint ignore:line
 
     // Public API
 
-    return {
+    return class PubSub {
+        // Constructor for the class
+        constructor() {
+            this._subscribers = {};
+        }
+
         // Subscribe to a subscription with a callback function. It's best practice not to make this an anonymous function
         // as you then can't unsubscribe, since the callback function reference is required
         // Returns an opaque handle for use with unsubscribe() (though it's optional to use of course)
-        subscribe: (subscriptions, callbacks) => {
+        subscribe(subscriptions, callbacks) {
             // Store as to whether or not  the first parameter is a string
             let isStringTypes = isString(subscriptions) && isFunction(callbacks);
 
@@ -126,10 +165,10 @@ let PubSub = ((window) => { // jshint ignore:line
 
                 // If an array for the event name doesn't exist, then generate a new empty array
                 // This cannot be done on the function datatype for obvious reasons (it's an array)
-                _subscribers[subscription] = _subscribers[subscription] || [];
+                this._subscribers[subscription] = this._subscribers[subscription] || [];
 
                 // Retrieve the callbacks for the subscription
-                let functions = _subscribers[subscription];
+                let functions = this._subscribers[subscription];
 
                 // Check if the callback hasn't already been registered for the event name
                 // Could use include() when ES2015 is widely available
@@ -149,12 +188,12 @@ let PubSub = ((window) => { // jshint ignore:line
 
             // If a string was passed as the first parameter, then return a single handle instead of an array of handles
             return isStringTypes ? handles[0] : handles;
-        },
+        }
 
         // Unsubscribe from a subscription. A string and callback function reference are expected OR
         // the handle returned from subscribe()
         // Returns true or false
-        unsubscribe: (subscriptions, callbacks) => {
+        unsubscribe(subscriptions, callbacks) {
             // If the reference is equal to the handle error array, then an error occurred with previously subscribing
             if (subscriptions === _handleError) {
                 return false;
@@ -180,7 +219,7 @@ let PubSub = ((window) => { // jshint ignore:line
             // Iterate through all the subscriptions
             for (let i = 0, length = subscriptions.length; i < length; i++) {
                 // Retrieve the callback functions for the subscription
-                let functions = _subscribers[subscriptions[i]];
+                let functions = this._subscribers[subscriptions[i]];
 
                 // The subscription hasn't been created or there are simply no callback functions assigned
                 if (!functions) {
@@ -196,11 +235,12 @@ let PubSub = ((window) => { // jshint ignore:line
             }
 
             return true;
-        },
+        }
 
-        // Publish a subscription to all subscribers with an unlimited number of arguments. The subscription is the last argument i.e. arguments[arguments.length]
+        // Publish a subscription to all subscribers with an unlimited number of arguments. The subscription is the last argument
+        // i.e. arguments[arguments.length]
         // Returns number of subscriptions published
-        publish: (subscriptions, ...args) => {
+        publish(subscriptions, ...args) {
             // Set the following variable(s), if it's an opaque 'PubSub' handle returned from subscribe()
             if (isHandle(subscriptions)) {
                 // Convert to an array datatype
@@ -226,7 +266,7 @@ let PubSub = ((window) => { // jshint ignore:line
             // Iterate through all the subscriptions
             for (let i = 0, length = subscriptions.length; i < length; i++) {
                 // Retrieve the callback function for the subscription
-                let functions = _subscribers[subscriptions[i]];
+                let functions = this._subscribers[subscriptions[i]];
 
                 // The subscription hasn't been created or there are simply no callback functions assigned
                 if (!functions) {
@@ -245,19 +285,14 @@ let PubSub = ((window) => { // jshint ignore:line
 
             // Return the number of subscribers published to
             return published;
-        },
+        }
 
         // Clear the internal subscribers store
-        clear: () => {
-            _subscribers = {};
-        },
-
-        // Get the version number of the module
-        getVersion: () => {
-            return VERSION;
+        clear() {
+            this._subscribers = {};
         }
     };
-})(window);
+})(window));
 
 //
 // PubSub pattern in JavaScript

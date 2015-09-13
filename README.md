@@ -1,10 +1,10 @@
-# PubSub - v1.0.0
+# PubSub - v1.1.0
 
 ## What exactly is PubSub?
 
 PubSub is a JavaScript module based around the Publish–Subscribe pattern. If you're unfamiliar with the Publish-Subscribe pattern, then please familiarise yourself by visiting the [MSDN](https://msdn.microsoft.com/en-us/library/ff649664.aspx) article about `PubSub`. You will be amazed as to why you didn't know this before.
 
-The module is written using ES2015, though is transpiled using [babel](https://babeljs.io) from ES2015 to ES5. The reason being is that not all browsers are currently supporting the full specification of ES2015, though no doubt will in the next 6-12 months. The transpiled files are located in the `dist` directory.
+The module is written using ES2015, though transpiled using [babel](https://babeljs.io) from ES2015 to ES5. The reason being is that not all browsers are currently supporting the full specification of ES2015, which hopefully will be in the next 6-12 months. The transpiled files are located in the `dist` directory.
 
 ## How to use
 
@@ -77,7 +77,7 @@ To unsubscribe from a particular subscription or list of subscriptions, is achie
     PubSub.unsubscribe(subHandle);
 ```
 
-To publish to a particular subscription or list of subscriptions, is achieved by passing a string, an array of strings or a 'handle' returned by subscribe()
+To publish to a particular subscription or list of subscriptions, is achieved by passing a string, an array of strings or a 'handle' returned by subscribe().
 
 ### Publish
 ```javascript
@@ -96,15 +96,50 @@ To publish to a particular subscription or list of subscriptions, is achieved by
     PubSub.publish(subHandle, arg1, arg2, argn ... [args are optional]);
 ```
 
+To clear all subscriptions, use the `clear` function
+
+### Clear
+```javascript
+    // Clear all subscriptions
+    PubSub.clear();
+```
+
+The module uses an underlying interface which is exposed via the `getInterface` function and therefore can be used adjacent to the global PubSub module without interference. The functions exposed are `subscribe`, `unsubscribe`, `publish` and `clear`.
+
+### Interface
+```javascript
+    // Retrieve the module's interface
+    // 'subscribe', 'unsubscribe', 'publish' and 'clear'
+    let interface = PubSub.getInterface();
+
+    // Create a new instance of the interface
+    let myPubSub = new interface();
+
+    // Publish to those who have subscribed to a subscription (see above for more details)
+    // This does not publish to those subscribed to the global module
+    myPubSub.publish('subscription', arg1, arg2, argn ... [args are optional]);
+```
+
+To retrieve the version number of the module, use `getVersion`
+
+### Version
+```javascript
+    // Retrieve the version number of the module
+    let version = PubSub.getVersion();
+
+    // Display in the console
+    console.log(version);
+```
+
 ## Contribute
 
-To contribute to the project, you will first need to install [gulp](gulpjs.com) globally on your system. Once installation has completed, change the working directory to the plugin's location and run the following command:
+To contribute to the project, you will first need to install [gulp](http://gulpjs.com) globally on your system. Once installation has completed, change the working directory to the plugin's location and run the following command:
 
 ```shell
     npm install
 ```
 
-After installation of the local modules, you're ready to start contributing to the project. Before you submit your PR, please don't forget to call `gulp`, which will run against [JSHint](jshint.com) for any errors, but will also minify the plugin and transpile using [babel](https://babeljs.io).
+After installation of the local modules, you're ready to start contributing to the project. Before you submit your PR, please don't forget to call `gulp`, which will run against [JSHint](http://jshint.com) for any errors, but will also minify the plugin and transpile using [babel](https://babeljs.io).
 
 ##### Watch
 Call the following command to start 'watching' for any changes to the main JavaScript file(s). This will automatically invoke JSHint and Uglify.
