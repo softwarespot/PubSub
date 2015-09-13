@@ -48,7 +48,7 @@ gulp.task('es6to5', ['clean'], function () {
 gulp.task('jshint', function () {
     return gulp.src(['./' + Assets.main, './' + Assets.main_interface])
         .pipe(jshint())
-        .pipe(jshint.reporter('default'));
+        .pipe(jshint.reporter('jshint-stylish'));
 });
 
 // Uglify aka minify the main file
