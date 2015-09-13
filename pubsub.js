@@ -3,14 +3,14 @@
  * https://github.com/softwarespot/pubsub
  * Author: softwarespot
  * Licensed under the MIT license
- * Version: 1.1.0
+ * Version: 1.2.0
  */
 ; // jshint ignore:line
 ((global, iPubSub) => { // jshint ignore:line
     // Constants
 
     // Version number of the module
-    const VERSION = '1.1.0';
+    const VERSION = '1.2.0';
 
     // Create an instance of the PubSub interface
     const _pubSubInstance = new iPubSub();

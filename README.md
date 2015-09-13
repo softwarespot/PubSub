@@ -1,4 +1,4 @@
-# PubSub - v1.1.0
+# PubSub - v1.2.0
 
 ## What exactly is PubSub?
 
