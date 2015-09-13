@@ -24,9 +24,7 @@ var uglifySettings = {
 var Assets = {
     dest: 'dist',
     main: 'pubsub.js',
-    main_interface: 'ipubsub.js',
     minified: 'pubsub.min.js',
-    minified_interface: 'ipubsub.min.js'
 };
 
 // Clean the 'dist' directory
@@ -36,32 +34,21 @@ gulp.task('clean', function (cb) {
 
 // Run the babel transpiler to convert from ES2015 to ES5
 gulp.task('es6to5', ['clean'], function () {
-    return gulp.src([
-            './' + Assets.main,
-            './' + Assets.main_interface
-        ])
+    return gulp.src('./' + Assets.main)
         .pipe(babel())
         .pipe(gulp.dest('./' + Assets.dest));
 });
 
 // Check the code meets the following standards outlined in .jshintrc
 gulp.task('jshint', function () {
-    return gulp.src(['./' + Assets.main, './' + Assets.main_interface])
+    return gulp.src('./' + Assets.main)
         .pipe(jshint())
         .pipe(jshint.reporter('jshint-stylish'));
 });
 
 // Uglify aka minify the main file
 gulp.task('uglify', ['es6to5'], function () {
-    gulp.src('./' + Assets.dest + '/' + Assets.main_interface)
-        .pipe(uglify(uglifySettings))
-        .pipe(rename(Assets.minified_interface))
-        .pipe(gulp.dest('./' + Assets.dest));
-
-    return gulp.src([
-            './' + Assets.dest + '/' + Assets.main_interface,
-            './' + Assets.dest + '/' + Assets.main
-        ])
+    return gulp.src('./' + Assets.dest + '/' + Assets.main)
         .pipe(concat(Assets.minified))
         .pipe(uglify(uglifySettings))
         .pipe(rename(Assets.minified))
