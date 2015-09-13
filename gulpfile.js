@@ -74,6 +74,8 @@ gulp.task('version', function () {
 
     var streams = merge();
 
+    // SemVer matching is done using (?:\d+\.){2}\d+
+
     // Main file VERSION constant
     streams.add(
         gulp.src('./' + Assets.main)
