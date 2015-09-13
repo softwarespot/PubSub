@@ -57,11 +57,8 @@
     // Append PubSub to the global object reference
     global.PubSub = _pubSub;
 
-    if (typeof module !== 'undefined' && module.exports && typeof global === 'undefined') {
-        // NodeJS
-        module.exports = _pubSub;
-    } else if (typeof module !== 'undefined' && module.exports && typeof global !== 'undefined') {
-        // Browserify
+    if (typeof module !== 'undefined' && module.exports) {
+        // NodeJS or Browserify
         module.exports = _pubSub;
     } else if (typeof define === 'function' && define.amd) {
         // AMD
