@@ -93,7 +93,7 @@ gulp.task('version', function () {
     // README.md version number
     streams.add(
         gulp.src('./README.md')
-        .pipe(replace(/^#\s+(\w+)\s+-\s+v(?:\d+\.){2}\d+/, '# $1 - v' + version))
+        .pipe(replace(/^#\s+([\w\-]+)\s+-\s+v(?:\d+\.){2}\d+/, '# $1 - v' + version))
         .pipe(gulp.dest('./'))
     );
 
