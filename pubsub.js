@@ -6,14 +6,14 @@
  * Version: 1.2.0
  */
 ; // jshint ignore:line
-((global, name, interface) => {
+((global, name, iPubSub) => {
     // Constants
 
     // Version number of the module
     const VERSION = '1.2.0';
 
     // Create an instance of the PubSub interface
-    const _pubSubInstance = new interface();
+    const _pubSubInstance = new iPubSub();
 
     // Public API
     const _pubSubAPI = {
@@ -39,7 +39,7 @@
 
         // Expose the underlying interface to create multiple instances of the module
         getInterface: () => {
-            return interface;
+            return iPubSub;
         },
 
         // Get the version number of the module
@@ -53,10 +53,10 @@
         return _pubSubAPI;
     };
 
-    // Store a module reference
+    // Store a 'module' reference
     const module = global.module;
 
-    // Store a define reference
+    // Store a 'define' reference
     const define = global.define;
 
     if (typeof module !== 'undefined' && module.exports) {
@@ -68,12 +68,12 @@
     }
 
     // Check if PubSub has already been registered beforehand and if so, throw an error
-    if (typeof global.PubSub !== 'undefined') {
+    if (typeof global[name] !== 'undefined') {
         throw 'PubSub appears to be already registered on the global object, therefore the module has not be registered.';
     }
 
     // Append the PubSub API to the global object reference
-    global.PubSub = _pubSubAPI;
+    global[name] = _pubSubAPI;
 })(window, 'PubSub', ((global) => {
     // Constants
 
