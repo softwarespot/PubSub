@@ -59,7 +59,7 @@
         module.exports = _pubSub;
     } else if (typeof define === 'function' && define.amd) {
         // AMD
-        global.define('PubSub', [], _pubSub);
+        global.define('PubSub', [], iPubSub);
     }
 
     // Check if PubSub has already been registered beforehand
