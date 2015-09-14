@@ -13,11 +13,10 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 ; // jshint ignore:line
 (function (global, iPubSub) {
-    // jshint ignore:line
     // Constants
 
     // Version number of the module
-    var VERSION = '1.1.0';
+    var VERSION = '1.2.0';
 
     // Create an instance of the PubSub interface
     var _pubSubInstance = new iPubSub();
@@ -65,19 +64,21 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     // Store a define reference
     var define = global.define;
 
-    // Append PubSub to the global object reference
-    global.PubSub = _pubSub;
-
-    if (typeof module !== 'undefined' && module.exports && typeof global === 'undefined') {
-        // NodeJS
-        module.exports = _pubSub;
-    } else if (typeof module !== 'undefined' && module.exports && typeof global !== 'undefined') {
-        // Browserify
+    if (typeof module !== 'undefined' && module.exports) {
+        // NodeJS or Browserify
         module.exports = _pubSub;
     } else if (typeof define === 'function' && define.amd) {
         // AMD
         global.define('PubSub', [], _pubSub);
     }
+
+    // Check if PubSub has already been registered beforehand
+    if (typeof global.PubSub !== 'undefined') {
+        throw 'PubSub appears to be already registered on the global object, therefore the module has not be registered.';
+    }
+
+    // Append PubSub to the global object reference
+    global.PubSub = _pubSub;
 })(window, (function (global) {
     // Constants
 
