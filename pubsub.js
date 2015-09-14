@@ -16,7 +16,7 @@
     const _pubSubInstance = new iPubSub();
 
     // Public API
-    const _pubSub = {
+    const _pubSubAPI = {
         // See subscribe in the documentation below
         subscribe: (subscriptions, callbacks) => {
             return _pubSubInstance.subscribe(subscriptions, callbacks);
@@ -48,6 +48,11 @@
         }
     };
 
+    // Define a 'constructor' function for modules to instantiate, which is a wrapper around _pubSubAPI
+    const _pubSubConstructor = function () {
+        return _pubSubAPI;
+    };
+
     // Store a module reference
     const module = global.module;
 
@@ -56,19 +61,19 @@
 
     if (typeof module !== 'undefined' && module.exports) {
         // Node.js Module
-        module.exports = iPubSub;
+        module.exports = _pubSubConstructor;
     } else if (typeof define === 'function' && define.amd) {
         // AMD Module
-        global.define('PubSub', [], iPubSub);
+        global.define('PubSub', [], _pubSubConstructor);
     }
 
-    // Check if PubSub has already been registered beforehand
+    // Check if PubSub has already been registered beforehand and if so, throw an error
     if (typeof global.PubSub !== 'undefined') {
         throw 'PubSub appears to be already registered on the global object, therefore the module has not be registered.';
     }
 
-    // Append PubSub to the global object reference
-    global.PubSub = _pubSub;
+    // Append the PubSub API to the global object reference
+    global.PubSub = _pubSubAPI;
 })(window, ((global) => {
     // Constants
 
