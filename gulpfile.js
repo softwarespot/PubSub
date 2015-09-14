@@ -65,6 +65,8 @@ gulp.task('watch', function () {
 
 // Update version numbers based on the main file version comment
 gulp.task('version', function () {
+    // SemVer matching is done using (?:\d+\.){2}\d+
+
     var reVersion = /\n\s*\*\s+Version:\s+((?:\d+\.){2}\d+)/;
     var version = fs.readFileSync('./' + Assets.main, {
             encoding: 'utf8'
@@ -73,8 +75,6 @@ gulp.task('version', function () {
         .match(reVersion)[1];
 
     var streams = merge();
-
-    // SemVer matching is done using (?:\d+\.){2}\d+
 
     // Main file VERSION constant
     streams.add(
