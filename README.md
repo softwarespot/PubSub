@@ -1,5 +1,7 @@
 # PubSub - v2.2.0
 
+An easy to use publish subscribe module, based on the mediator pattern.
+
 ## What exactly is PubSub?
 
 PubSub is a JavaScript module based around the Publish–Subscribe pattern. If you're unfamiliar with the Publish-Subscribe pattern, then please familiarise yourself by visiting the [MSDN](https://msdn.microsoft.com/en-us/library/ff649664.aspx) article about `PubSub`. You will be amazed as to why you didn't know this before.
