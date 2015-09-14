@@ -65,10 +65,10 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     var define = global.define;
 
     if (typeof module !== 'undefined' && module.exports) {
-        // NodeJS or Browserify
-        module.exports = _pubSub;
+        // Node.js Module
+        module.exports = iPubSub;
     } else if (typeof define === 'function' && define.amd) {
-        // AMD
+        // AMD Module
         global.define('PubSub', [], iPubSub);
     }
 

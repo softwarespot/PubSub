@@ -40,7 +40,7 @@ If you use bower, then just copy and paste the following command to the shell wi
     bower install pubsub-module
 ```
 
-Otherwise just include `pubsub.min.js` somewhere in your document. The module supports AMD, NodeJS or Browserify module loaders.
+Otherwise just include `pubsub.min.js` somewhere in your document. The module supports AMD, Node.js or Browserify module loaders. Note that this uses the `interface` version of the module. See above for more details.
 
 ## Documentation
 
