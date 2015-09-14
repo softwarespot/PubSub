@@ -40,15 +40,16 @@ If you use bower, then just copy and paste the following command to the shell wi
     bower install pubsub-module
 ```
 
-Otherwise just include `pubsub.min.js` somewhere in your document. The plugin is supports AMD, NodeJS or Browserify module loaders.
+Otherwise just include `pubsub.min.js` somewhere in your document. The module supports AMD, NodeJS or Browserify module loaders.
 
 ## Documentation
 
-The following documentation outlines in detail about using the following plugin.
+The following documentation outlines in detail about using the following module.
 
 ### Subscribe
 
-To subscribe to a particular subscription or list of subscriptions, pass either a string or array of strings of the subscription(s). A callback function or array of callback functions must be passed as the second parameter. It's recommended that the callback function be named and not anonymous functions. This will return either a `handle` or array of `handles` depending on what was passed to the function.
+To subscribe to a particular subscription or a list of subscriptions, pass either a string or an array of strings of the subscription(s). A callback function or an array of callback functions must be passed as the second argument, depending on the first argument type used. It's recommended that the callback function(s) be named and not anonymous functions (see `unsubscribe`).
+The function will return either a 'handle' or an array of 'handles', depending on what was passed as the first argument i.e. an array of subscriptions will return an array of 'handles' and a subscription string will return a 'handle'.
 
 ```javascript
     // Using a string and callback function
@@ -58,9 +59,11 @@ To subscribe to a particular subscription or list of subscriptions, pass either 
     PubSub.subscribe([subscription1, subscription2, subscriptionn], [callbackFunction1, callbackFunction2, callbackFunctionn]);
 ```
 
-To unsubscribe from a particular subscription or list of subscriptions, is achieved by passing a string, an array of strings or a 'handle' returned by subscribe(). If a string or array of strings if passed, then pass either a callback function or array of callback functions respectively. The second parameter is ignored if the first parameter is passed a 'handle'.
-
 ### Unsubscribe
+
+To unsubscribe from a particular subscription or a list of subscriptions, can be done by passing a string, an array of strings or a 'handle' returned by `subscribe`. If a string or an array of strings if passed, then pass either a callback function or array of callback functions respectively. The second argument is ignored if the first argument is passed a 'handle'.
+The function returns true on successful unsubscription; otherwise, false.
+
 ```javascript
     // Using a string and callback function
     PubSub.unsubscribe('subscription', callbackFunction);
@@ -77,36 +80,47 @@ To unsubscribe from a particular subscription or list of subscriptions, is achie
     PubSub.unsubscribe(subHandle);
 ```
 
-To publish to a particular subscription or list of subscriptions, is achieved by passing a string, an array of strings or a 'handle' returned by subscribe().
-
 ### Publish
+
+To publish to a particular subscription or list of subscriptions, can be done by passing a string, an array of strings or a 'handle' returned by `subscribe`. The second argument is the argument(s) to pass to the callback functions that have registered with the subscription. The last argument passed to the callback function(s) will always be a comma delimited string (CSV), that outlines the subscription(s) that were published to (even if no arguments were passed).
+The function returns the number of subscribers publish to.
+
 ```javascript
     // Publish to those who have subscribed to a subscription
-    PubSub.publish('subscription', arg1, arg2, argn ... [args are optional]);
+    PubSub.publish('subscription', arg1, arg2, argN ... [args are optional]);
 
     // Using an array of strings
-    PubSub.publish(['subscription1', 'subscription2', 'subscriptionn'], arg1, arg2, argn ... [args are optional]);
+    PubSub.publish(['subscription1', 'subscription2', 'subscriptionn'], arg1, arg2, argN ... [args are optional]);
 
     // Using the 'handle' by subscribe()
+
+    // Callback function that will be invoked when the subscription is published to
+    function callBackFunction(arg1, arg2, argN, subscriptionsArg) {
+        // Display the subscriptions that were published to
+        console.log(subscriptionsArg);
+    }
+
     let subHandle = PubSub.subscribe('subscription', callbackFunction);
 
     // ... further along in the code ...
 
     // Publish using the 'handle'
-    PubSub.publish(subHandle, arg1, arg2, argn ... [args are optional]);
+    PubSub.publish(subHandle, arg1, arg2, argN ... [args are optional]);
 ```
 
-To clear all subscriptions, use the `clear` function
-
 ### Clear
+
+To clear all subscriptions, use the `clear` function.
+
 ```javascript
     // Clear all subscriptions
     PubSub.clear();
 ```
 
-The module uses an underlying interface which is exposed via the `getInterface` function and therefore can be used adjacent to the global PubSub module without interference. The functions exposed are `subscribe`, `unsubscribe`, `publish` and `clear`.
-
 ### Interface
+
+The module uses an underlying interface which is exposed via the `getInterface` function and therefore can be used adjacent to the global PubSub module without interference. The functions exposed are `subscribe`, `unsubscribe`, `publish` and `clear`. See above for details about usage.
+
 ```javascript
     // Retrieve the module's interface
     // 'subscribe', 'unsubscribe', 'publish' and 'clear'
@@ -117,12 +131,16 @@ The module uses an underlying interface which is exposed via the `getInterface` 
 
     // Publish to those who have subscribed to a subscription (see above for more details)
     // This does not publish to those subscribed to the global module
-    myPubSub.publish('subscription', arg1, arg2, argn ... [args are optional]);
+    myPubSub.publish('subscription', arg1, arg2, argN ... [args are optional]);
+
+    // Publish to those who have subscribed to a subscription using the global module. This does not affect 'myPubSub'
+    PubSub.publish('subscription', arg1, arg2, argN ... [args are optional]);
 ```
 
-To retrieve the version number of the module, use `getVersion`
-
 ### Version
+
+To retrieve the version number of the module, use `getVersion`.
+
 ```javascript
     // Retrieve the version number of the module
     let version = PubSub.getVersion();
@@ -133,13 +151,13 @@ To retrieve the version number of the module, use `getVersion`
 
 ## Contribute
 
-To contribute to the project, you will first need to install [gulp](http://gulpjs.com) globally on your system. Once installation has completed, change the working directory to the plugin's location and run the following command:
+To contribute to the project, you will first need to install [gulp](http://gulpjs.com) globally on your system. Once installation has completed, change the working directory to the module's location and run the following command:
 
 ```shell
     npm install
 ```
 
-After installation of the local modules, you're ready to start contributing to the project. Before you submit your PR, please don't forget to call `gulp`, which will run against [JSHint](http://jshint.com) for any errors, but will also minify the plugin and transpile using [babel](https://babeljs.io).
+After installation of the local modules, you're ready to start contributing to the project. Before you submit your PR, please don't forget to call `gulp`, which will run against [JSHint](http://jshint.com) for any errors, but will also minify the module and transpile using [babel](https://babeljs.io).
 
 ##### Watch
 Call the following command to start 'watching' for any changes to the main JavaScript file(s). This will automatically invoke JSHint and Uglify.
