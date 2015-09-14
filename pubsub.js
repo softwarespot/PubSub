@@ -3,39 +3,35 @@
  * https://github.com/softwarespot/pubsub
  * Author: softwarespot
  * Licensed under the MIT license
- * Version: 1.1.0
+ * Version: 2.2.0
  */
 ; // jshint ignore:line
-let PubSub = ((iPubSub) => { // jshint ignore:line
+((global, name, iPubSub) => {
     // Constants
 
-    // Version number of the module
-    const VERSION = '1.1.0';
-
     // Create an instance of the PubSub interface
-    const _pubSub = new iPubSub();
+    const _pubSubInstance = new iPubSub();
 
     // Public API
-
-    return {
+    const _pubSubAPI = {
         // See subscribe in the documentation below
         subscribe: (subscriptions, callbacks) => {
-            return _pubSub.subscribe(subscriptions, callbacks);
+            return _pubSubInstance.subscribe(subscriptions, callbacks);
         },
 
         // See unsubscribe in the documentation below
         unsubscribe: (subscriptions, callbacks) => {
-            return _pubSub.unsubscribe(subscriptions, callbacks);
+            return _pubSubInstance.unsubscribe(subscriptions, callbacks);
         },
 
         // See publish in the documentation below
         publish: (subscriptions, ...args) => {
-            return _pubSub.publish(subscriptions, ...args);
+            return _pubSubInstance.publish(subscriptions, ...args);
         },
 
         // See clear in the documentation below
         clear: () => {
-            return _pubSub.clear();
+            return _pubSubInstance.clear();
         },
 
         // Expose the underlying interface to create multiple instances of the module
@@ -45,11 +41,41 @@ let PubSub = ((iPubSub) => { // jshint ignore:line
 
         // Get the version number of the module
         getVersion: () => {
-            return VERSION;
+            return _pubSubInstance.getVersion();
         }
     };
-})(((window) => {
+
+    // Define a 'constructor' function for modules to instantiate, which is a wrapper around the _pubSubAPI
+    const _pubSubConstructor = function () {
+        return _pubSubAPI;
+    };
+
+    // Store a 'module' reference
+    const module = global.module;
+
+    // Store a 'define' reference
+    const define = global.define;
+
+    if (typeof module !== 'undefined' && module.exports) {
+        // Node.js Module
+        module.exports = _pubSubConstructor;
+    } else if (typeof define === 'function' && define.amd) {
+        // AMD Module
+        global.define(name, [], _pubSubConstructor);
+    }
+
+    // Check if PubSub has already been registered beforehand and if so, throw an error
+    if (typeof global[name] !== 'undefined') {
+        throw 'PubSub appears to be already registered on the global object, therefore the module has not be registered.';
+    }
+
+    // Append the PubSub API to the global object reference
+    global[name] = _pubSubAPI;
+})(window, 'PubSub', ((global) => {
     // Constants
+
+    // Version number of the module
+    const VERSION = '2.2.0';
 
     // Array constants enumeration
     const HANDLE_ID = 0;
@@ -64,7 +90,7 @@ let PubSub = ((iPubSub) => { // jshint ignore:line
     };
 
     // Store the Object prototype toString method
-    const _objectToString = window.Object.prototype.toString;
+    const _objectToString = global.Object.prototype.toString;
 
     // Unique identifier (advanced leet speak for PubSub_Module)
     const _handleId = '|>|_|85|_|8_|\\/|0|)|_|13';
@@ -84,7 +110,7 @@ let PubSub = ((iPubSub) => { // jshint ignore:line
     // Check if an opaque 'PubSub' handle is valid
     function isHandle(handle) {
         // The opaque 'PubSub' handle must be an array
-        return window.Array.isArray(handle) &&
+        return global.Array.isArray(handle) &&
 
             // Have a length equal to that of HANDLE_MAX
             handle.length === HANDLE_MAX &&
@@ -136,8 +162,8 @@ let PubSub = ((iPubSub) => { // jshint ignore:line
             }
 
             // If either of the arguments are not an array or the lengths mismatch, then return a handle error
-            if (!window.Array.isArray(subscriptions) ||
-                !window.Array.isArray(callbacks) ||
+            if (!global.Array.isArray(subscriptions) ||
+                !global.Array.isArray(callbacks) ||
                 subscriptions.length !== callbacks.length) {
                 return _handleError;
             }
@@ -212,7 +238,7 @@ let PubSub = ((iPubSub) => { // jshint ignore:line
             }
 
             // If either of the arguments are not an array or the lengths simply mismatch, then return false
-            if (!window.Array.isArray(subscriptions) || !window.Array.isArray(callbacks) || subscriptions.length !== callbacks.length) {
+            if (!global.Array.isArray(subscriptions) || !global.Array.isArray(callbacks) || subscriptions.length !== callbacks.length) {
                 return false;
             }
 
@@ -251,7 +277,7 @@ let PubSub = ((iPubSub) => { // jshint ignore:line
             }
 
             // If not an array, then the subscription was not a valid array, handle or string
-            if (!window.Array.isArray(subscriptions)) {
+            if (!global.Array.isArray(subscriptions)) {
                 return 0;
             }
 
@@ -290,6 +316,11 @@ let PubSub = ((iPubSub) => { // jshint ignore:line
         // Clear the internal subscribers store
         clear() {
             this._subscribers = {};
+        }
+
+        // Get the version number of the module
+        getVersion() {
+            return VERSION;
         }
     };
 })(window));

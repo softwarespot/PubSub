@@ -3,7 +3,7 @@
  * https://github.com/softwarespot/pubsub
  * Author: softwarespot
  * Licensed under the MIT license
- * Version: 1.1.0
+ * Version: 2.2.0
  */
 'use strict';
 
@@ -12,27 +12,22 @@ var _createClass = (function () { function defineProperties(target, props) { for
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
 ; // jshint ignore:line
-var PubSub = (function (iPubSub) {
-    // jshint ignore:line
+(function (global, name, iPubSub) {
     // Constants
 
-    // Version number of the module
-    var VERSION = '1.1.0';
-
     // Create an instance of the PubSub interface
-    var _pubSub = new iPubSub();
+    var _pubSubInstance = new iPubSub();
 
     // Public API
-
-    return {
+    var _pubSubAPI = {
         // See subscribe in the documentation below
         subscribe: function subscribe(subscriptions, callbacks) {
-            return _pubSub.subscribe(subscriptions, callbacks);
+            return _pubSubInstance.subscribe(subscriptions, callbacks);
         },
 
         // See unsubscribe in the documentation below
         unsubscribe: function unsubscribe(subscriptions, callbacks) {
-            return _pubSub.unsubscribe(subscriptions, callbacks);
+            return _pubSubInstance.unsubscribe(subscriptions, callbacks);
         },
 
         // See publish in the documentation below
@@ -41,12 +36,12 @@ var PubSub = (function (iPubSub) {
                 args[_key - 1] = arguments[_key];
             }
 
-            return _pubSub.publish.apply(_pubSub, [subscriptions].concat(args));
+            return _pubSubInstance.publish.apply(_pubSubInstance, [subscriptions].concat(args));
         },
 
         // See clear in the documentation below
         clear: function clear() {
-            return _pubSub.clear();
+            return _pubSubInstance.clear();
         },
 
         // Expose the underlying interface to create multiple instances of the module
@@ -56,11 +51,41 @@ var PubSub = (function (iPubSub) {
 
         // Get the version number of the module
         getVersion: function getVersion() {
-            return VERSION;
+            return _pubSubInstance.getVersion();
         }
     };
-})((function (window) {
+
+    // Define a 'constructor' function for modules to instantiate, which is a wrapper around the _pubSubAPI
+    var _pubSubConstructor = function _pubSubConstructor() {
+        return _pubSubAPI;
+    };
+
+    // Store a 'module' reference
+    var module = global.module;
+
+    // Store a 'define' reference
+    var define = global.define;
+
+    if (typeof module !== 'undefined' && module.exports) {
+        // Node.js Module
+        module.exports = _pubSubConstructor;
+    } else if (typeof define === 'function' && define.amd) {
+        // AMD Module
+        global.define(name, [], _pubSubConstructor);
+    }
+
+    // Check if PubSub has already been registered beforehand and if so, throw an error
+    if (typeof global[name] !== 'undefined') {
+        throw 'PubSub appears to be already registered on the global object, therefore the module has not be registered.';
+    }
+
+    // Append the PubSub API to the global object reference
+    global[name] = _pubSubAPI;
+})(window, 'PubSub', (function (global) {
     // Constants
+
+    // Version number of the module
+    var VERSION = '1.2.0';
 
     // Array constants enumeration
     var HANDLE_ID = 0;
@@ -75,7 +100,7 @@ var PubSub = (function (iPubSub) {
     };
 
     // Store the Object prototype toString method
-    var _objectToString = window.Object.prototype.toString;
+    var _objectToString = global.Object.prototype.toString;
 
     // Unique identifier (advanced leet speak for PubSub_Module)
     var _handleId = '|>|_|85|_|8_|\\/|0|)|_|13';
@@ -95,7 +120,7 @@ var PubSub = (function (iPubSub) {
     // Check if an opaque 'PubSub' handle is valid
     function isHandle(handle) {
         // The opaque 'PubSub' handle must be an array
-        return window.Array.isArray(handle) &&
+        return global.Array.isArray(handle) &&
 
         // Have a length equal to that of HANDLE_MAX
         handle.length === HANDLE_MAX &&
@@ -153,7 +178,7 @@ var PubSub = (function (iPubSub) {
                 }
 
                 // If either of the arguments are not an array or the lengths mismatch, then return a handle error
-                if (!window.Array.isArray(subscriptions) || !window.Array.isArray(callbacks) || subscriptions.length !== callbacks.length) {
+                if (!global.Array.isArray(subscriptions) || !global.Array.isArray(callbacks) || subscriptions.length !== callbacks.length) {
                     return _handleError;
                 }
 
@@ -229,7 +254,7 @@ var PubSub = (function (iPubSub) {
                     }
 
                 // If either of the arguments are not an array or the lengths simply mismatch, then return false
-                if (!window.Array.isArray(subscriptions) || !window.Array.isArray(callbacks) || subscriptions.length !== callbacks.length) {
+                if (!global.Array.isArray(subscriptions) || !global.Array.isArray(callbacks) || subscriptions.length !== callbacks.length) {
                     return false;
                 }
 
@@ -270,7 +295,7 @@ var PubSub = (function (iPubSub) {
                     }
 
                 // If not an array, then the subscription was not a valid array, handle or string
-                if (!window.Array.isArray(subscriptions)) {
+                if (!global.Array.isArray(subscriptions)) {
                     return 0;
                 }
 
@@ -316,6 +341,13 @@ var PubSub = (function (iPubSub) {
             key: 'clear',
             value: function clear() {
                 this._subscribers = {};
+            }
+
+            // Get the version number of the module
+        }, {
+            key: 'getVersion',
+            value: function getVersion() {
+                return VERSION;
             }
         }]);
 
