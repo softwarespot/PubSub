@@ -85,7 +85,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     // Constants
 
     // Version number of the module
-    var VERSION = '1.2.0';
+    var VERSION = '2.2.0';
 
     // Array constants enumeration
     var HANDLE_ID = 0;
@@ -205,7 +205,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
                     // If an array for the event name doesn't exist, then generate a new empty array
                     // This cannot be done on the function datatype for obvious reasons (it's an array)
-                    this._subscribers[subscription] = this._subscribers[subscription] || [];
+                    if (!this._subscribers.hasOwnProperty(subscription)) {
+                        this._subscribers[subscription] = [];
+                    }
 
                     // Retrieve the callbacks for the subscription
                     var functions = this._subscribers[subscription];
@@ -260,11 +262,16 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
                 // Iterate through all the subscriptions
                 for (var i = 0, _length2 = subscriptions.length; i < _length2; i++) {
+                    // The subscription hasn't been created as of yet
+                    if (!this._subscribers.hasOwnProperty(subscriptions[i])) {
+                        continue;
+                    }
+
                     // Retrieve the callback functions for the subscription
                     var functions = this._subscribers[subscriptions[i]];
 
-                    // The subscription hasn't been created or there are simply no callback functions assigned
-                    if (!functions) {
+                    // There are no callback functions assigned to the subscription
+                    if (!functions.length) {
                         continue;
                     }
 
@@ -314,11 +321,16 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
                 // Iterate through all the subscriptions
                 for (var i = 0, _length3 = subscriptions.length; i < _length3; i++) {
-                    // Retrieve the callback function for the subscription
+                    // The subscription hasn't been created as of yet
+                    if (!this._subscribers.hasOwnProperty(subscriptions[i])) {
+                        continue;
+                    }
+
+                    // Retrieve the callback functions for the subscription
                     var functions = this._subscribers[subscriptions[i]];
 
-                    // The subscription hasn't been created or there are simply no callback functions assigned
-                    if (!functions) {
+                    // There are no callback functions assigned to the subscription
+                    if (!functions.length) {
                         continue;
                     }
 

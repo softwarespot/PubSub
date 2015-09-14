@@ -191,7 +191,9 @@
 
                 // If an array for the event name doesn't exist, then generate a new empty array
                 // This cannot be done on the function datatype for obvious reasons (it's an array)
-                this._subscribers[subscription] = this._subscribers[subscription] || [];
+                if (!this._subscribers.hasOwnProperty(subscription)) {
+                    this._subscribers[subscription] = [];
+                }
 
                 // Retrieve the callbacks for the subscription
                 let functions = this._subscribers[subscription];
@@ -244,11 +246,16 @@
 
             // Iterate through all the subscriptions
             for (let i = 0, length = subscriptions.length; i < length; i++) {
+                // The subscription hasn't been created as of yet
+                if (!this._subscribers.hasOwnProperty(subscriptions[i])) {
+                    continue;
+                }
+
                 // Retrieve the callback functions for the subscription
                 let functions = this._subscribers[subscriptions[i]];
 
-                // The subscription hasn't been created or there are simply no callback functions assigned
-                if (!functions) {
+                // There are no callback functions assigned to the subscription
+                if (!functions.length) {
                     continue;
                 }
 
@@ -291,11 +298,16 @@
 
             // Iterate through all the subscriptions
             for (let i = 0, length = subscriptions.length; i < length; i++) {
-                // Retrieve the callback function for the subscription
+                // The subscription hasn't been created as of yet
+                if (!this._subscribers.hasOwnProperty(subscriptions[i])) {
+                    continue;
+                }
+
+                // Retrieve the callback functions for the subscription
                 let functions = this._subscribers[subscriptions[i]];
 
-                // The subscription hasn't been created or there are simply no callback functions assigned
-                if (!functions) {
+                // There are no callback functions assigned to the subscription
+                if (!functions.length) {
                     continue;
                 }
 
