@@ -56,7 +56,7 @@ The function will return either a 'handle' or an array of 'handles', depending o
     PubSub.subscribe('subscription', callbackFunction);
 
     // Using an array of strings and an array of callback functions. They must be the same length
-    PubSub.subscribe([subscription1, subscription2, subscriptionn], [callbackFunction1, callbackFunction2, callbackFunctionn]);
+    PubSub.subscribe([subscription1, subscription2, subscriptionN], [callbackFunction1, callbackFunction2, callbackFunctionn]);
 ```
 
 ### Unsubscribe
@@ -69,7 +69,7 @@ The function returns true on successful unsubscription; otherwise, false.
     PubSub.unsubscribe('subscription', callbackFunction);
 
     // Using an array of strings and an array of callback functions. They must be the same length
-    PubSub.unsubscribe(['subscription1', 'subscription2', 'subscriptionn'], [callbackFunction1, callbackFunction2, callbackFunctionn]);
+    PubSub.unsubscribe(['subscription1', 'subscription2', 'subscriptionN'], [callbackFunction1, callbackFunction2, callbackFunctionn]);
 
     // Using the 'handle' by subscribe()
     let subHandle = PubSub.subscribe('subscription', callbackFunction);
@@ -90,7 +90,7 @@ The function returns the number of subscribers publish to.
     PubSub.publish('subscription', arg1, arg2, argN ... [args are optional]);
 
     // Using an array of strings
-    PubSub.publish(['subscription1', 'subscription2', 'subscriptionn'], arg1, arg2, argN ... [args are optional]);
+    PubSub.publish(['subscription1', 'subscription2', 'subscriptionN'], arg1, arg2, argN ... [args are optional]);
 
     // Using the 'handle' by subscribe()
 

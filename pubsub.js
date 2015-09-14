@@ -6,14 +6,14 @@
  * Version: 1.2.0
  */
 ; // jshint ignore:line
-((global, iPubSub) => {
+((global, name, interface) => {
     // Constants
 
     // Version number of the module
     const VERSION = '1.2.0';
 
     // Create an instance of the PubSub interface
-    const _pubSubInstance = new iPubSub();
+    const _pubSubInstance = new interface();
 
     // Public API
     const _pubSubAPI = {
@@ -39,7 +39,7 @@
 
         // Expose the underlying interface to create multiple instances of the module
         getInterface: () => {
-            return iPubSub;
+            return interface;
         },
 
         // Get the version number of the module
@@ -64,7 +64,7 @@
         module.exports = _pubSubConstructor;
     } else if (typeof define === 'function' && define.amd) {
         // AMD Module
-        global.define('PubSub', [], _pubSubConstructor);
+        global.define(name, [], _pubSubConstructor);
     }
 
     // Check if PubSub has already been registered beforehand and if so, throw an error
@@ -74,7 +74,7 @@
 
     // Append the PubSub API to the global object reference
     global.PubSub = _pubSubAPI;
-})(window, ((global) => {
+})(window, 'PubSub', ((global) => {
     // Constants
 
     // Array constants enumeration
