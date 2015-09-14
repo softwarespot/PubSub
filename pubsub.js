@@ -3,7 +3,7 @@
  * https://github.com/softwarespot/pubsub
  * Author: softwarespot
  * Licensed under the MIT license
- * Version: 2.2.1
+ * Version: 2.2.2
  */
 ; // jshint ignore:line
 ((global, name, iPubSub) => {
@@ -75,7 +75,7 @@
     // Constants
 
     // Version number of the module
-    const VERSION = '2.2.1';
+    const VERSION = '2.2.2';
 
     // Array constants enumeration
     const HANDLE_ID = 0;
