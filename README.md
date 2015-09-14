@@ -40,7 +40,7 @@ If you use bower, then just copy and paste the following command to the shell wi
     bower install pubsub-module
 ```
 
-Otherwise just include `pubsub.min.js` somewhere in your document. The following module also supports AMD, Node.js or Browserify module type loaders.
+Otherwise just include `pubsub.min.js` somewhere in your document. The following module also supports AMD or Node.js module type loaders.
 
 **Note:** The module will throw an error if the name `PubSub` is found in the global space.
 
@@ -121,7 +121,7 @@ To clear all subscriptions, use the `clear` function.
 
 ### Interface
 
-The module uses an underlying interface which is exposed via the `getInterface` function and therefore can be used adjacent to the global PubSub module without interference. The functions exposed are `subscribe`, `unsubscribe`, `publish` and `clear`. See above for details about usage.
+The module uses an underlying interface which is exposed via the `getInterface` function and therefore can be used adjacent to the global PubSub module without interference. The functions exposed are `subscribe`, `unsubscribe`, `publish`, `clear` and `getVersion`. See above for details about usage.
 
 ```javascript
     // Retrieve the module's interface

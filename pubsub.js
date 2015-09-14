@@ -9,9 +9,6 @@
 ((global, name, iPubSub) => {
     // Constants
 
-    // Version number of the module
-    const VERSION = '1.2.0';
-
     // Create an instance of the PubSub interface
     const _pubSubInstance = new iPubSub();
 
@@ -44,11 +41,11 @@
 
         // Get the version number of the module
         getVersion: () => {
-            return VERSION;
+            return _pubSubInstance.getVersion();
         }
     };
 
-    // Define a 'constructor' function for modules to instantiate, which is a wrapper around _pubSubAPI
+    // Define a 'constructor' function for modules to instantiate, which is a wrapper around the _pubSubAPI
     const _pubSubConstructor = function () {
         return _pubSubAPI;
     };
@@ -76,6 +73,9 @@
     global[name] = _pubSubAPI;
 })(window, 'PubSub', ((global) => {
     // Constants
+
+    // Version number of the module
+    const VERSION = '1.2.0';
 
     // Array constants enumeration
     const HANDLE_ID = 0;
@@ -316,6 +316,11 @@
         // Clear the internal subscribers store
         clear() {
             this._subscribers = {};
+        }
+
+        // Get the version number of the module
+        getVersion() {
+            return VERSION;
         }
     };
 })(window));

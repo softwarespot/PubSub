@@ -15,9 +15,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 (function (global, name, iPubSub) {
     // Constants
 
-    // Version number of the module
-    var VERSION = '1.2.0';
-
     // Create an instance of the PubSub interface
     var _pubSubInstance = new iPubSub();
 
@@ -54,11 +51,11 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
         // Get the version number of the module
         getVersion: function getVersion() {
-            return VERSION;
+            return _pubSubInstance.getVersion();
         }
     };
 
-    // Define a 'constructor' function for modules to instantiate, which is a wrapper around _pubSubAPI
+    // Define a 'constructor' function for modules to instantiate, which is a wrapper around the _pubSubAPI
     var _pubSubConstructor = function _pubSubConstructor() {
         return _pubSubAPI;
     };
@@ -86,6 +83,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     global[name] = _pubSubAPI;
 })(window, 'PubSub', (function (global) {
     // Constants
+
+    // Version number of the module
+    var VERSION = '1.2.0';
 
     // Array constants enumeration
     var HANDLE_ID = 0;
@@ -341,6 +341,13 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             key: 'clear',
             value: function clear() {
                 this._subscribers = {};
+            }
+
+            // Get the version number of the module
+        }, {
+            key: 'getVersion',
+            value: function getVersion() {
+                return VERSION;
             }
         }]);
 
