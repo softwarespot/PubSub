@@ -6,7 +6,7 @@
  * Version: 1.2.0
  */
 ; // jshint ignore:line
-((global, iPubSub) => { // jshint ignore:line
+((global, iPubSub) => {
     // Constants
 
     // Version number of the module
@@ -54,9 +54,6 @@
     // Store a define reference
     const define = global.define;
 
-    // Append PubSub to the global object reference
-    global.PubSub = _pubSub;
-
     if (typeof module !== 'undefined' && module.exports) {
         // NodeJS or Browserify
         module.exports = _pubSub;
@@ -64,6 +61,14 @@
         // AMD
         global.define('PubSub', [], _pubSub);
     }
+
+    // Check if PubSub has already been registered beforehand
+    if (typeof global.PubSub !== 'undefined') {
+        throw 'PubSub appears to be already registered on the global object, therefore the module has not be registered.';
+    }
+
+    // Append PubSub to the global object reference
+    global.PubSub = _pubSub;
 })(window, ((global) => {
     // Constants
 
