@@ -3,7 +3,7 @@
  * https://github.com/softwarespot/pubsub
  * Author: softwarespot
  * Licensed under the MIT license
- * Version: 1.2.0
+ * Version: 2.2.0
  */
 'use strict';
 
