@@ -76,7 +76,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
     // Check if PubSub has already been registered beforehand and if so, throw an error
     if (typeof global[name] !== 'undefined') {
-        throw 'PubSub appears to be already registered on the global object, therefore the module has not be registered.';
+        throw new Error('PubSub appears to be already registered on the global object, therefore the module has not be registered.');
     }
 
     // Append the PubSub API to the global object reference
@@ -85,7 +85,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     // Constants
 
     // Version number of the module
-    var VERSION = '2.2.1';
+    var VERSION = '2.2.2';
 
     // Array constants enumeration
     var HANDLE_ID = 0;
