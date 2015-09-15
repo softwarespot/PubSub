@@ -3,7 +3,7 @@
  * https://github.com/softwarespot/pubsub
  * Author: softwarespot
  * Licensed under the MIT license
- * Version: 2.2.2
+ * Version: 2.2.3
  */
 'use strict';
 
@@ -85,7 +85,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     // Constants
 
     // Version number of the module
-    var VERSION = '2.2.2';
+    var VERSION = '2.2.3';
 
     // Array constants enumeration
     var HANDLE_ID = 0;

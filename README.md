@@ -1,4 +1,4 @@
-# PubSub - v2.2.2
+# PubSub - v2.2.3
 
 An easy to use publish subscribe module, based on the mediator pattern.
 

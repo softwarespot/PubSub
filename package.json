@@ -1,6 +1,6 @@
 {
   "name": "pubsub",
-  "version": "2.2.2",
+  "version": "2.2.3",
   "license": "MIT",
   "repository": "https://github.com/softwarespot/PubSub",
   "devDependencies": {
