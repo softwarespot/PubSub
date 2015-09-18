@@ -283,7 +283,7 @@
                 subscriptions = [subscriptions];
             }
 
-            // If not an array, then the subscription was not a valid array, handle or string
+            // If not an array, then the subscription was an invalid array, handle or string
             if (!global.Array.isArray(subscriptions)) {
                 return 0;
             }
