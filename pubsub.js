@@ -171,7 +171,7 @@
             // Return an array of opaque 'PubSub' handles i.e. [handle id, subscription, callback]
             const handles = [];
 
-            // Iterate through all the subscriptions
+            // Iterate through all the subscriptions. Must be a for loop
             for (let i = 0, length = subscriptions.length; i < length; i++) {
                 // Store the subscription
                 const subscription = subscriptions[i];
@@ -244,7 +244,7 @@
                 return false;
             }
 
-            // Iterate through all the subscriptions
+            // Iterate through all the subscriptions. Must be a for loop
             for (let i = 0, length = subscriptions.length; i < length; i++) {
                 // The subscription hasn't been created as of yet
                 if (!this._subscribers.hasOwnProperty(subscriptions[i])) {
@@ -297,14 +297,14 @@
             let published = 0;
 
             // Iterate through all the subscriptions
-            for (let i = 0, length = subscriptions.length; i < length; i++) {
+            for (const subscription of subscriptions) {
                 // The subscription hasn't been created as of yet
-                if (!this._subscribers.hasOwnProperty(subscriptions[i])) {
+                if (!this._subscribers.hasOwnProperty(subscription)) {
                     continue;
                 }
 
                 // Retrieve the callback functions for the subscription
-                const functions = this._subscribers[subscriptions[i]];
+                const functions = this._subscribers[subscription];
 
                 // There are no callback functions assigned to the subscription
                 if (!functions.length) {
@@ -312,9 +312,9 @@
                 }
 
                 // Iterate through all the functions for the particular subscription
-                for (let j = 0, functionsLength = functions.length; j < functionsLength; j++) {
+                for (const fnCallback of functions) {
                     // Call the function with the arguments array using the spread operator
-                    functions[j](...args);
+                    fnCallback(...args);
 
                     // Increase the number of published subscriptions
                     published++;

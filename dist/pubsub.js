@@ -12,7 +12,7 @@ var _createClass = (function () { function defineProperties(target, props) { for
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
 ; // jshint ignore:line
-(function (global, name, iPubSub) {
+(function (global, name, iPubSub, undefined) {
     // Constants
 
     // Create an instance of the PubSub interface
@@ -66,7 +66,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     // Store a 'define' reference
     var define = global.define;
 
-    if (typeof module !== 'undefined' && module.exports) {
+    if (module !== undefined && module.exports) {
         // Node.js Module
         module.exports = _pubSubConstructor;
     } else if (typeof define === 'function' && define.amd) {
@@ -75,13 +75,14 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     }
 
     // Check if PubSub has already been registered beforehand and if so, throw an error
-    if (typeof global[name] !== 'undefined') {
-        throw new Error('PubSub appears to be already registered on the global object, therefore the module has not be registered.');
+    if (global[name] !== undefined) {
+        throw new Error('PubSub appears to be already registered with the global object, therefore the module has not be registered.');
     }
 
     // Append the PubSub API to the global object reference
     global[name] = _pubSubAPI;
 })(window, 'PubSub', (function (global) {
+    // Can't be 'this' with babelJS, as it gets set to 'undefined'
     // Constants
 
     // Version number of the module
@@ -185,7 +186,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                 // Return an array of opaque 'PubSub' handles i.e. [handle id, subscription, callback]
                 var handles = [];
 
-                // Iterate through all the subscriptions
+                // Iterate through all the subscriptions. Must be a for loop
                 for (var i = 0, _length = subscriptions.length; i < _length; i++) {
                     // Store the subscription
                     var subscription = subscriptions[i];
@@ -260,7 +261,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                     return false;
                 }
 
-                // Iterate through all the subscriptions
+                // Iterate through all the subscriptions. Must be a for loop
                 for (var i = 0, _length2 = subscriptions.length; i < _length2; i++) {
                     // The subscription hasn't been created as of yet
                     if (!this._subscribers.hasOwnProperty(subscriptions[i])) {
@@ -320,31 +321,74 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                 var published = 0;
 
                 // Iterate through all the subscriptions
-                for (var i = 0, _length3 = subscriptions.length; i < _length3; i++) {
-                    // The subscription hasn't been created as of yet
-                    if (!this._subscribers.hasOwnProperty(subscriptions[i])) {
-                        continue;
+                var _iteratorNormalCompletion = true;
+                var _didIteratorError = false;
+                var _iteratorError = undefined;
+
+                try {
+                    for (var _iterator = subscriptions[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                        var subscription = _step.value;
+
+                        // The subscription hasn't been created as of yet
+                        if (!this._subscribers.hasOwnProperty(subscription)) {
+                            continue;
+                        }
+
+                        // Retrieve the callback functions for the subscription
+                        var functions = this._subscribers[subscription];
+
+                        // There are no callback functions assigned to the subscription
+                        if (!functions.length) {
+                            continue;
+                        }
+
+                        // Iterate through all the functions for the particular subscription
+                        var _iteratorNormalCompletion2 = true;
+                        var _didIteratorError2 = false;
+                        var _iteratorError2 = undefined;
+
+                        try {
+                            for (var _iterator2 = functions[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+                                var fnCallback = _step2.value;
+
+                                // Call the function with the arguments array using the spread operator
+                                fnCallback.apply(undefined, args);
+
+                                // Increase the number of published subscriptions
+                                published++;
+                            }
+                        } catch (err) {
+                            _didIteratorError2 = true;
+                            _iteratorError2 = err;
+                        } finally {
+                            try {
+                                if (!_iteratorNormalCompletion2 && _iterator2['return']) {
+                                    _iterator2['return']();
+                                }
+                            } finally {
+                                if (_didIteratorError2) {
+                                    throw _iteratorError2;
+                                }
+                            }
+                        }
                     }
 
-                    // Retrieve the callback functions for the subscription
-                    var functions = this._subscribers[subscriptions[i]];
-
-                    // There are no callback functions assigned to the subscription
-                    if (!functions.length) {
-                        continue;
-                    }
-
-                    // Iterate through all the functions for the particular subscription
-                    for (var j = 0, functionsLength = functions.length; j < functionsLength; j++) {
-                        // Call the function with the arguments array using the spread operator
-                        functions[j].apply(functions, args);
-
-                        // Increase the number of published subscriptions
-                        published++;
+                    // Return the number of subscribers published to
+                } catch (err) {
+                    _didIteratorError = true;
+                    _iteratorError = err;
+                } finally {
+                    try {
+                        if (!_iteratorNormalCompletion && _iterator['return']) {
+                            _iterator['return']();
+                        }
+                    } finally {
+                        if (_didIteratorError) {
+                            throw _iteratorError;
+                        }
                     }
                 }
 
-                // Return the number of subscribers published to
                 return published;
             }
 
@@ -365,7 +409,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
         return PubSub;
     })();
-})(window));
+})(window)); // Can't be 'this' with babelJS, as it gets set to 'undefined'
 
 //
 // PubSub pattern in JavaScript
