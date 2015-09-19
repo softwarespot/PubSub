@@ -46,7 +46,7 @@
     };
 
     // Define a 'constructor' function for modules to instantiate, which is a wrapper around the _pubSubAPI
-    const _pubSubConstructor = function () {
+    const _pubSubConstructor = () => {
         return _pubSubAPI;
     };
 
@@ -66,7 +66,7 @@
 
     // Check if PubSub has already been registered beforehand and if so, throw an error
     if (global[name] !== undefined) {
-        throw new Error('PubSub appears to be already registered on the global object, therefore the module has not be registered.');
+        throw new Error('PubSub appears to be already registered with the global object, therefore the module has not be registered.');
     }
 
     // Append the PubSub API to the global object reference
