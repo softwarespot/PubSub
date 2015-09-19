@@ -6,7 +6,7 @@
  * Version: 2.2.3
  */
 ; // jshint ignore:line
-((global, name, iPubSub) => {
+((global, name, iPubSub, undefined) => {
     // Constants
 
     // Create an instance of the PubSub interface
@@ -56,7 +56,7 @@
     // Store a 'define' reference
     const define = global.define;
 
-    if (typeof module !== 'undefined' && module.exports) {
+    if (module !== undefined && module.exports) {
         // Node.js Module
         module.exports = _pubSubConstructor;
     } else if (typeof define === 'function' && define.amd) {
@@ -65,7 +65,7 @@
     }
 
     // Check if PubSub has already been registered beforehand and if so, throw an error
-    if (typeof global[name] !== 'undefined') {
+    if (global[name] !== undefined) {
         throw new Error('PubSub appears to be already registered on the global object, therefore the module has not be registered.');
     }
 
