@@ -6,7 +6,7 @@
  * Version: 2.2.3
  */
 ; // jshint ignore:line
-((global, name, iPubSub) => {
+((global, name, iPubSub, undefined) => {
     // Constants
 
     // Create an instance of the PubSub interface
@@ -46,7 +46,7 @@
     };
 
     // Define a 'constructor' function for modules to instantiate, which is a wrapper around the _pubSubAPI
-    const _pubSubConstructor = function () {
+    const _pubSubConstructor = () => {
         return _pubSubAPI;
     };
 
@@ -56,7 +56,7 @@
     // Store a 'define' reference
     const define = global.define;
 
-    if (typeof module !== 'undefined' && module.exports) {
+    if (module !== undefined && module.exports) {
         // Node.js Module
         module.exports = _pubSubConstructor;
     } else if (typeof define === 'function' && define.amd) {
@@ -65,13 +65,13 @@
     }
 
     // Check if PubSub has already been registered beforehand and if so, throw an error
-    if (typeof global[name] !== 'undefined') {
-        throw new Error('PubSub appears to be already registered on the global object, therefore the module has not be registered.');
+    if (global[name] !== undefined) {
+        throw new Error('PubSub appears to be already registered with the global object, therefore the module has not be registered.');
     }
 
     // Append the PubSub API to the global object reference
     global[name] = _pubSubAPI;
-})(window, 'PubSub', ((global) => {
+})(window, 'PubSub', ((global) => { // Can't be 'this' with babelJS, as it gets set to 'undefined'
     // Constants
 
     // Version number of the module
@@ -128,7 +128,7 @@
     // Check if a value is an object. Based on the idea by lodash
     function isObject(value) {
         // Store the typeof value
-        let type = typeof value;
+        const type = typeof value;
 
         // !!value is basically checking if value is not 'truthy' e.g. null or zero and then inverts that boolean value
         // So, !'Some test' is false and then inverting false is true. There if value contains 'something', continue
@@ -153,7 +153,7 @@
         // Returns an opaque handle for use with unsubscribe() (though it's optional to use of course)
         subscribe(subscriptions, callbacks) {
             // Store as to whether or not  the first parameter is a string
-            let isStringTypes = isString(subscriptions) && isFunction(callbacks);
+            const isStringTypes = isString(subscriptions) && isFunction(callbacks);
 
             // If a string and a function datatype, then create an array for each parameter
             if (isStringTypes) {
@@ -169,12 +169,12 @@
             }
 
             // Return an array of opaque 'PubSub' handles i.e. [handle id, subscription, callback]
-            let handles = [];
+            const handles = [];
 
             // Iterate through all the subscriptions
             for (let i = 0, length = subscriptions.length; i < length; i++) {
                 // Store the subscription
-                let subscription = subscriptions[i];
+                const subscription = subscriptions[i];
 
                 // The subscription should be a string datatype with a length greater than zero
                 if (!isString(subscription)) {
@@ -182,7 +182,7 @@
                 }
 
                 // Store the callback
-                let callback = callbacks[i];
+                const callback = callbacks[i];
 
                 // The callback should be a function datatype
                 if (!isFunction(callback)) {
@@ -196,7 +196,7 @@
                 }
 
                 // Retrieve the callbacks for the subscription
-                let functions = this._subscribers[subscription];
+                const functions = this._subscribers[subscription];
 
                 // Check if the callback hasn't already been registered for the event name
                 // Could use include() when ES2015 is widely available
@@ -252,7 +252,7 @@
                 }
 
                 // Retrieve the callback functions for the subscription
-                let functions = this._subscribers[subscriptions[i]];
+                const functions = this._subscribers[subscriptions[i]];
 
                 // There are no callback functions assigned to the subscription
                 if (!functions.length) {
@@ -261,7 +261,7 @@
 
                 // If a callback function reference exists for the subscription,
                 // then remove from the array using the index value
-                let index = functions.indexOf(callbacks[i]);
+                const index = functions.indexOf(callbacks[i]);
                 if (index !== -1) {
                     functions.splice(index, 1);
                 }
@@ -304,7 +304,7 @@
                 }
 
                 // Retrieve the callback functions for the subscription
-                let functions = this._subscribers[subscriptions[i]];
+                const functions = this._subscribers[subscriptions[i]];
 
                 // There are no callback functions assigned to the subscription
                 if (!functions.length) {
@@ -335,7 +335,7 @@
             return VERSION;
         }
     };
-})(window));
+})(window)); // Can't be 'this' with babelJS, as it gets set to 'undefined'
 
 //
 // PubSub pattern in JavaScript
