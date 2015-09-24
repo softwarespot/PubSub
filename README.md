@@ -6,11 +6,9 @@ An easy to use publish subscribe module, based on the mediator pattern.
 
 PubSub is a JavaScript module based around the Publish–Subscribe pattern. If you're unfamiliar with the Publish-Subscribe pattern, then please familiarise yourself by visiting the [MSDN](https://msdn.microsoft.com/en-us/library/ff649664.aspx) article about `PubSub`. You will be amazed as to why you didn't know this before.
 
-The module is written using ES2015, though transpiled using [babel](https://babeljs.io) from ES2015 to ES5. The reason being is that not all browsers are currently supporting the full specification of ES2015, which hopefully will be in the next 6-12 months. The transpiled files are located in the `dist` directory.
-
 ## How to use
 
-```javascript
+```html
     <!--Use the minified version for better performance-->
     <script src="pubsub.min.js"></script>
 
@@ -34,6 +32,10 @@ The module is written using ES2015, though transpiled using [babel](https://babe
         // See examples/index.html for additional examples
     </script>
 ```
+
+## ES2015
+
+The module is written using ES2015, but is transpiled using [babel](https://babeljs.io) to ES5. The reason for using [babel](https://babeljs.io), is not all browsers currently support the ES2015 specification, though will likely change very soon. The transpiled files are located in the `dist` directory.
 
 ## How to install
 
