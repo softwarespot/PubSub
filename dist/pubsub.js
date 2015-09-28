@@ -44,12 +44,16 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             return _pubSubInstance.clear();
         },
 
-        // Expose the underlying interface to create multiple instances of the module
+        /**
+         * Expose the underlying interface to create multiple instances of the module
+         *
+         * @return {class|object} Underlying interface, which is a class in ES2015 or a function object in ES5
+         */
         getInterface: function getInterface() {
             return iPubSub;
         },
 
-        // Get the version number of the module
+        // See getVersion in the documentation below
         getVersion: function getVersion() {
             return _pubSubInstance.getVersion();
         }
@@ -113,15 +117,33 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
     // Methods
 
-    // Check if a value is a function. Based on the idea by lodash
+    /**
+     * Check if a variable is an array datatype
+     *
+     * @param {mixed} value Value to check
+     * @returns {boolean} True the value is an array datatype; otherwise, false
+     */
+    var isArray = global.Array.isArray;
+
+    /**
+     * Check if a variable is a function datatype
+     *
+     * @param {mixed} value Value to check
+     * @returns {boolean} True the value is a function datatype; otherwise, false
+     */
     function isFunction(value) {
         return isObject(value) && _objectToString.call(value) === _objectStrings.FUNCTION;
     }
 
-    // Check if an opaque 'PubSub' handle is valid
+    /**
+     * Check if a variable is an opaque handle
+     *
+     * @param {mixed} handle Handle to check
+     * @returns {boolean} True the handle is an opaque handle; otherwise, false
+     */
     function isHandle(handle) {
         // The opaque 'PubSub' handle must be an array
-        return global.Array.isArray(handle) &&
+        return isArray(handle) &&
 
         // Have a length equal to that of HANDLE_MAX
         handle.length === HANDLE_MAX &&
@@ -136,7 +158,12 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         isFunction(handle[HANDLE_CALLBACK]);
     }
 
-    // Check if a value is an object. Based on the idea by lodash
+    /**
+     * Check if a variable is an object
+     *
+     * @param {mixed} value Value to check
+     * @returns {boolean} True the value is an object; otherwise, false
+     */
     function isObject(value) {
         // Store the typeof value
         var type = typeof value;
@@ -146,15 +173,25 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         return !!value && (type === 'object' || type === 'function');
     }
 
-    // Check if a value is a string datatype with a length greater than zero when whitespace is stripped. Based partially on the idea by lodash
+    /**
+     * Check if a variable is a string datatype
+     *
+     * @param {mixed} value Value to check
+     * @returns {boolean} True the value is a string datatype; otherwise, false
+     */
     function isString(value) {
         return (typeof value === 'string' || _objectToString.call(value) === _objectStrings.STRING) && value.trim().length > 0;
     }
 
-    // Public API
-
+    /**
+     * PubSub class
+     */
     return (function () {
-        // Constructor for the class
+        /**
+         * Constructor for the class
+         *
+         * @return {undefined}
+         */
 
         function PubSub() {
             _classCallCheck(this, PubSub);
@@ -162,9 +199,17 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             this._subscribers = {};
         }
 
-        // Subscribe to a subscription with a callback function. It's best practice not to make this an anonymous function
-        // as you then can't unsubscribe, since the callback function reference is required
-        // Returns an opaque handle for use with unsubscribe() (though it's optional to use of course)
+        /**
+         * Subscribe to a subscription with a callback function
+         *
+         * Note: It's best practice not to make this an anonymous function as you then can't unsubscribe,
+         * since the callback function reference is required
+         *
+         * @param {array|string} subscriptions An array of subscription strings or a single subscription string
+         * @param {array|string} callbacks An array of callback functions or a single callback function
+         * @return {handle} An array of opaque handles if an array is passed or a single opaque handle; otherwise,
+         * an error opaque handle on error
+         */
 
         _createClass(PubSub, [{
             key: 'subscribe',
@@ -179,7 +224,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                 }
 
                 // If either of the arguments are not an array or the lengths mismatch, then return a handle error
-                if (!global.Array.isArray(subscriptions) || !global.Array.isArray(callbacks) || subscriptions.length !== callbacks.length) {
+                if (!isArray(subscriptions) || !isArray(callbacks) || subscriptions.length !== callbacks.length) {
                     return _handleError;
                 }
 
@@ -233,9 +278,16 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                 return isStringTypes ? handles[0] : handles;
             }
 
-            // Unsubscribe from a subscription. A string and callback function reference are expected OR
-            // the handle returned from subscribe()
-            // Returns true or false
+            /**
+             * Unsubscribe from a subscription
+             *
+             * @param {array|handle|string} subscriptions An array of subscription strings, a single subscription string or an opaque handle
+             * returned by the subscribe function
+             *
+             * @param {array|string} callbacks An array of callback functions or a single callback function. If an opaque handle is passed as
+             * the first argument then this parameter is ignored
+             * @return {boolean} True on success; otherwise, false
+             */
         }, {
             key: 'unsubscribe',
             value: function unsubscribe(subscriptions, callbacks) {
@@ -257,7 +309,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                     }
 
                 // If either of the arguments are not an array or the lengths simply mismatch, then return false
-                if (!global.Array.isArray(subscriptions) || !global.Array.isArray(callbacks) || subscriptions.length !== callbacks.length) {
+                if (!isArray(subscriptions) || !isArray(callbacks) || subscriptions.length !== callbacks.length) {
                     return false;
                 }
 
@@ -287,9 +339,16 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                 return true;
             }
 
-            // Publish a subscription to all subscribers with an unlimited number of arguments. The subscription is the last argument
-            // i.e. arguments[arguments.length]
-            // Returns number of subscriptions published
+            /**
+             * Publish a subscription to all subscribers with an unlimited number of arguments
+             *
+             * Note: A comma separated subscription list is appended as the last argument passed to the callback function
+             *
+             * @param {array|handle|string} subscriptions An array of subscription strings, a single subscription string or an opaque handle
+             * returned by the subscribe function
+             * @param {...[mixed]} args A argument list to pass to the registered subscribers
+             * @return {number} Number of subscribers published to; otherwise zero on error
+             */
         }, {
             key: 'publish',
             value: function publish(subscriptions) {
@@ -303,7 +362,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                     }
 
                 // If not an array, then the subscription was an invalid array, handle or string
-                if (!global.Array.isArray(subscriptions)) {
+                if (!isArray(subscriptions)) {
                     return 0;
                 }
 
@@ -392,14 +451,22 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                 return published;
             }
 
-            // Clear the internal subscribers store
+            /**
+             * Clear the internal subscribers store
+             *
+             * @return {undefined}
+             */
         }, {
             key: 'clear',
             value: function clear() {
                 this._subscribers = {};
             }
 
-            // Get the version number of the module
+            /**
+             * Get the version number of the module
+             *
+             * @return {string} Module version number
+             */
         }, {
             key: 'getVersion',
             value: function getVersion() {
