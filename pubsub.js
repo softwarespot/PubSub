@@ -70,7 +70,7 @@
 
     // Check if PubSub has already been registered beforehand and if so, throw an error
     if (global[name] !== undefined) {
-        throw new Error('PubSub appears to be already registered with the global object, therefore the module has not be registered.');
+        throw new Error('PubSub appears to be already registered with the global object, therefore the module has not been registered.');
     }
 
     // Append the PubSub API to the global object reference
@@ -90,6 +90,7 @@
     // Return strings of toString() found on the Object prototype
     const _objectStrings = {
         FUNCTION: '[object Function]',
+        GENERATOR: '[object GeneratorFunction]',
         STRING: '[object String]'
     };
 
@@ -121,7 +122,8 @@
      * @returns {boolean} True the value is a function datatype; otherwise, false
      */
     function isFunction(value) {
-        return isObject(value) && _objectToString.call(value) === _objectStrings.FUNCTION;
+        const tag = isObject(value) ? _objectToString.call(value) : '';
+        return tag === _objectStrings.FUNCTION || tag === _objectStrings.GENERATOR;
     }
 
     /**
