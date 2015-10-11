@@ -363,9 +363,12 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                         subscriptions = [subscriptions];
                     }
 
+                // Store the number of subscriptions published
+                var published = 0;
+
                 // If not an array, then the subscription was an invalid array, handle or string
                 if (!isArray(subscriptions)) {
-                    return 0;
+                    return published;
                 }
 
                 // Push the subscription to the end of the arguments array as a comma separated string,
@@ -377,9 +380,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                 }
 
                 args.push(subscriptions.join(','));
-
-                // Store the number of subscriptions published
-                var published = 0;
 
                 // Iterate through all the subscriptions
                 var _iteratorNormalCompletion = true;
@@ -410,10 +410,10 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
                         try {
                             for (var _iterator2 = functions[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-                                var fnCallback = _step2.value;
+                                var callbackFn = _step2.value;
 
                                 // Call the function with the arguments array using the spread operator
-                                fnCallback.apply(undefined, args);
+                                callbackFn.apply(undefined, args);
 
                                 // Increase the number of published subscriptions
                                 published++;

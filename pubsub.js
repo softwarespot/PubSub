@@ -344,18 +344,18 @@
                 subscriptions = [subscriptions];
             }
 
+            // Store the number of subscriptions published
+            let published = 0;
+
             // If not an array, then the subscription was an invalid array, handle or string
             if (!isArray(subscriptions)) {
-                return 0;
+                return published;
             }
 
             // Push the subscription to the end of the arguments array as a comma separated string,
             // just in case it's required. Of course this will kind of fail if the user uses a subscription with a comma,
             // but that's up to them I guess!
             args.push(subscriptions.join(','));
-
-            // Store the number of subscriptions published
-            let published = 0;
 
             // Iterate through all the subscriptions
             for (const subscription of subscriptions) {
@@ -373,9 +373,9 @@
                 }
 
                 // Iterate through all the functions for the particular subscription
-                for (const fnCallback of functions) {
+                for (const callbackFn of functions) {
                     // Call the function with the arguments array using the spread operator
-                    fnCallback(...args);
+                    callbackFn(...args);
 
                     // Increase the number of published subscriptions
                     published++;
