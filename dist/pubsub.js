@@ -12,11 +12,11 @@ var _createClass = (function () { function defineProperties(target, props) { for
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
 ; // jshint ignore:line
-(function (global, name, iPubSub, undefined) {
+(function (global, name, IPubSub, undefined) {
     // Constants
 
     // Create an instance of the PubSub interface
-    var _pubSubInstance = new iPubSub();
+    var _pubSubInstance = new IPubSub();
 
     // Public API
     var _pubSubAPI = {
@@ -50,7 +50,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
          * @return {class|object} Underlying interface, which is a class in ES2015 or a function object in ES5
          */
         getInterface: function getInterface() {
-            return iPubSub;
+            return IPubSub;
         },
 
         // See getVersion in the documentation below
@@ -304,6 +304,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                     // setting the callbacks variable
                     callbacks = [subscriptions[HANDLE_CALLBACK]];
                     subscriptions = [subscriptions[HANDLE_SUBSCRIPTION]];
+
                     // If a string and function datatype, then create an array for each variable
                 } else if (isString(subscriptions) && isFunction(callbacks)) {
                         callbacks = [callbacks];
@@ -358,6 +359,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                 if (isHandle(subscriptions)) {
                     // Convert to an array datatype
                     subscriptions = [subscriptions[HANDLE_SUBSCRIPTION]];
+
                     // If a string has been passed, then convert to an array datatype
                 } else if (isString(subscriptions)) {
                         subscriptions = [subscriptions];

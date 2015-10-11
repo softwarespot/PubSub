@@ -6,11 +6,11 @@
  * Version: 2.2.3
  */
 ; // jshint ignore:line
-((global, name, iPubSub, undefined) => {
+((global, name, IPubSub, undefined) => {
     // Constants
 
     // Create an instance of the PubSub interface
-    const _pubSubInstance = new iPubSub();
+    const _pubSubInstance = new IPubSub();
 
     // Public API
     const _pubSubAPI = {
@@ -40,7 +40,7 @@
          * @return {class|object} Underlying interface, which is a class in ES2015 or a function object in ES5
          */
         getInterface: () => {
-            return iPubSub;
+            return IPubSub;
         },
 
         // See getVersion in the documentation below
@@ -91,7 +91,7 @@
     const _objectStrings = {
         FUNCTION: '[object Function]',
         GENERATOR: '[object GeneratorFunction]',
-        STRING: '[object String]'
+        STRING: '[object String]',
     };
 
     // Store the Object prototype toString method
@@ -103,7 +103,7 @@
     // Generic handle for an error
     // This is an array so the reference can be used as a
     // way of verifying that it's an error
-    const _handleError = [_handleId];
+    const _handleError = [_handleId,];
 
     // Methods
 
@@ -204,8 +204,8 @@
 
             // If a string and a function datatype, then create an array for each parameter
             if (isStringTypes) {
-                callbacks = [callbacks];
-                subscriptions = [subscriptions];
+                callbacks = [callbacks,];
+                subscriptions = [subscriptions,];
             }
 
             // If either of the arguments are not an array or the lengths mismatch, then return a handle error
@@ -252,13 +252,13 @@
                     functions.push(callback);
 
                     // An opaque 'PubSub' handle
-                    handles.push([_handleId, subscription, callback]);
+                    handles.push([_handleId, subscription, callback,]);
                 }
             }
 
             // If an error occurred as no opaque 'PubSub' handles were pushed to the handles array
             if (handles.length === 0) {
-                return isStringTypes ? _handleError : [_handleError];
+                return isStringTypes ? _handleError : [_handleError,];
             }
 
             // If a string was passed as the first parameter, then return a single handle instead of an array of handles
@@ -285,12 +285,13 @@
             if (isHandle(subscriptions)) {
                 // Do not swap these around, otherwise it will cause an error with overwriting subscriptions before
                 // setting the callbacks variable
-                callbacks = [subscriptions[HANDLE_CALLBACK]];
-                subscriptions = [subscriptions[HANDLE_SUBSCRIPTION]];
+                callbacks = [subscriptions[HANDLE_CALLBACK],];
+                subscriptions = [subscriptions[HANDLE_SUBSCRIPTION],];
+
                 // If a string and function datatype, then create an array for each variable
             } else if (isString(subscriptions) && isFunction(callbacks)) {
-                callbacks = [callbacks];
-                subscriptions = [subscriptions];
+                callbacks = [callbacks,];
+                subscriptions = [subscriptions,];
             }
 
             // If either of the arguments are not an array or the lengths simply mismatch, then return false
@@ -338,10 +339,11 @@
             // Set the following variable(s), if it's an opaque 'PubSub' handle returned from subscribe()
             if (isHandle(subscriptions)) {
                 // Convert to an array datatype
-                subscriptions = [subscriptions[HANDLE_SUBSCRIPTION]];
+                subscriptions = [subscriptions[HANDLE_SUBSCRIPTION],];
+
                 // If a string has been passed, then convert to an array datatype
             } else if (isString(subscriptions)) {
-                subscriptions = [subscriptions];
+                subscriptions = [subscriptions,];
             }
 
             // Store the number of subscriptions published
