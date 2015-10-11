@@ -16,8 +16,10 @@ var uglifySettings = {
     compress: {
         comparisons: true,
         conditionals: true,
+        /* jscs: disable */
         dead_code: true,
         drop_console: true,
+        /* jscs: enable */
         unsafe: true,
         unused: true
     }
@@ -71,6 +73,7 @@ gulp.task('version', function () {
     var version = fs.readFileSync('./' + Assets.main, {
             encoding: 'utf8'
         })
+
         // Match is found in the 2nd element
         .match(reVersion)[1];
 
