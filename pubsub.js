@@ -89,6 +89,7 @@
 
     // Return strings of toString() found on the Object prototype
     const _objectStrings = {
+        ARRAY: '[object Array]',
         FUNCTION: '[object Function]',
         GENERATOR: '[object GeneratorFunction]',
         STRING: '[object String]',
@@ -103,17 +104,9 @@
     // Generic handle for an error
     // This is an array so the reference can be used as a
     // way of verifying that it's an error
-    const _handleError = [_handleId,];
+    const _handleError = [_handleId];
 
     // Methods
-
-    /**
-     * Check if a variable is an array datatype
-     *
-     * @param {mixed} value Value to check
-     * @returns {boolean} True the value is an array datatype; otherwise, false
-     */
-    const isArray = global.Array.isArray;
 
     /**
      * Check if a variable is a function datatype
@@ -121,10 +114,20 @@
      * @param {mixed} value Value to check
      * @returns {boolean} True the value is a function datatype; otherwise, false
      */
-    function isFunction(value) {
-        const tag = isObject(value) ? _objectToString.call(value) : '';
+    function _isFunction(value) {
+        const tag = _isObject(value) ? _objectToString.call(value) : '';
         return tag === _objectStrings.FUNCTION || tag === _objectStrings.GENERATOR;
     }
+
+    /**
+     * Check if a variable is an array datatype
+     *
+     * @param {mixed} value Value to check
+     * @returns {boolean} True the value is an array datatype; otherwise, false
+     */
+    const _isArray = _isFunction(global.Array.isArray) ? global.Array.isArray : function (value) {
+        return _objectToString.call(value) === _objectStrings.ARRAY;
+    };
 
     /**
      * Check if a variable is an opaque handle
@@ -132,9 +135,9 @@
      * @param {mixed} handle Handle to check
      * @returns {boolean} True the handle is an opaque handle; otherwise, false
      */
-    function isHandle(handle) {
+    function _isHandle(handle) {
         // The opaque 'PubSub' handle must be an array
-        return isArray(handle) &&
+        return _isArray(handle) &&
 
             // Have a length equal to that of HANDLE_MAX
             handle.length === HANDLE_MAX &&
@@ -143,10 +146,10 @@
             handle[HANDLE_ID] === _handleId &&
 
             // Contain a string at the 'subscription position'
-            isString(handle[HANDLE_SUBSCRIPTION]) &&
+            _isString(handle[HANDLE_SUBSCRIPTION]) &&
 
             // Contain a function at the 'callback position'
-            isFunction(handle[HANDLE_CALLBACK]);
+            _isFunction(handle[HANDLE_CALLBACK]);
     }
 
     /**
@@ -155,7 +158,7 @@
      * @param {mixed} value Value to check
      * @returns {boolean} True the value is an object; otherwise, false
      */
-    function isObject(value) {
+    function _isObject(value) {
         // Store the typeof value
         const type = typeof value;
 
@@ -170,7 +173,7 @@
      * @param {mixed} value Value to check
      * @returns {boolean} True the value is a string datatype; otherwise, false
      */
-    function isString(value) {
+    function _isString(value) {
         return (typeof value === 'string' || _objectToString.call(value) === _objectStrings.STRING) && value.trim().length > 0;
     }
 
@@ -200,17 +203,17 @@
          */
         subscribe(subscriptions, callbacks) {
             // Store as to whether or not  the first parameter is a string
-            const isStringTypes = isString(subscriptions) && isFunction(callbacks);
+            const isStringTypes = _isString(subscriptions) && _isFunction(callbacks);
 
             // If a string and a function datatype, then create an array for each parameter
             if (isStringTypes) {
-                callbacks = [callbacks,];
-                subscriptions = [subscriptions,];
+                callbacks = [callbacks];
+                subscriptions = [subscriptions];
             }
 
             // If either of the arguments are not an array or the lengths mismatch, then return a handle error
-            if (!isArray(subscriptions) ||
-                !isArray(callbacks) ||
+            if (!_isArray(subscriptions) ||
+                !_isArray(callbacks) ||
                 subscriptions.length !== callbacks.length) {
                 return _handleError;
             }
@@ -224,7 +227,7 @@
                 const subscription = subscriptions[i];
 
                 // The subscription should be a string datatype with a length greater than zero
-                if (!isString(subscription)) {
+                if (!_isString(subscription)) {
                     continue;
                 }
 
@@ -232,7 +235,7 @@
                 const callback = callbacks[i];
 
                 // The callback should be a function datatype
-                if (!isFunction(callback)) {
+                if (!_isFunction(callback)) {
                     continue;
                 }
 
@@ -252,13 +255,13 @@
                     functions.push(callback);
 
                     // An opaque 'PubSub' handle
-                    handles.push([_handleId, subscription, callback,]);
+                    handles.push([_handleId, subscription, callback]);
                 }
             }
 
             // If an error occurred as no opaque 'PubSub' handles were pushed to the handles array
             if (handles.length === 0) {
-                return isStringTypes ? _handleError : [_handleError,];
+                return isStringTypes ? _handleError : [_handleError];
             }
 
             // If a string was passed as the first parameter, then return a single handle instead of an array of handles
@@ -282,20 +285,20 @@
             }
 
             // Set the following variable(s), if it's an opaque 'PubSub' handle returned from subscribe()
-            if (isHandle(subscriptions)) {
+            if (_isHandle(subscriptions)) {
                 // Do not swap these around, otherwise it will cause an error with overwriting subscriptions before
                 // setting the callbacks variable
-                callbacks = [subscriptions[HANDLE_CALLBACK],];
-                subscriptions = [subscriptions[HANDLE_SUBSCRIPTION],];
+                callbacks = [subscriptions[HANDLE_CALLBACK]];
+                subscriptions = [subscriptions[HANDLE_SUBSCRIPTION]];
 
                 // If a string and function datatype, then create an array for each variable
-            } else if (isString(subscriptions) && isFunction(callbacks)) {
-                callbacks = [callbacks,];
-                subscriptions = [subscriptions,];
+            } else if (_isString(subscriptions) && _isFunction(callbacks)) {
+                callbacks = [callbacks];
+                subscriptions = [subscriptions];
             }
 
             // If either of the arguments are not an array or the lengths simply mismatch, then return false
-            if (!isArray(subscriptions) || !isArray(callbacks) || subscriptions.length !== callbacks.length) {
+            if (!_isArray(subscriptions) || !_isArray(callbacks) || subscriptions.length !== callbacks.length) {
                 return false;
             }
 
@@ -337,20 +340,20 @@
          */
         publish(subscriptions, ...args) {
             // Set the following variable(s), if it's an opaque 'PubSub' handle returned from subscribe()
-            if (isHandle(subscriptions)) {
+            if (_isHandle(subscriptions)) {
                 // Convert to an array datatype
-                subscriptions = [subscriptions[HANDLE_SUBSCRIPTION],];
+                subscriptions = [subscriptions[HANDLE_SUBSCRIPTION]];
 
                 // If a string has been passed, then convert to an array datatype
-            } else if (isString(subscriptions)) {
-                subscriptions = [subscriptions,];
+            } else if (_isString(subscriptions)) {
+                subscriptions = [subscriptions];
             }
 
             // Store the number of subscriptions published
             let published = 0;
 
             // If not an array, then the subscription was an invalid array, handle or string
-            if (!isArray(subscriptions)) {
+            if (!_isArray(subscriptions)) {
                 return published;
             }
 
