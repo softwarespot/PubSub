@@ -70,7 +70,7 @@
 
     // Check if PubSub has already been registered beforehand and if so, throw an error
     if (global[name] !== undefined) {
-        throw new Error('PubSub appears to be already registered with the global object, therefore the module has not been registered.');
+        throw new global.Error('PubSub appears to be already registered with the global object, therefore the module has not been registered.');
     }
 
     // Append the PubSub API to the global object reference
