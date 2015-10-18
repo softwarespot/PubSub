@@ -80,7 +80,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
     // Check if PubSub has already been registered beforehand and if so, throw an error
     if (global[name] !== undefined) {
-        throw new Error('PubSub appears to be already registered with the global object, therefore the module has not been registered.');
+        throw new global.Error('PubSub appears to be already registered with the global object, therefore the module has not been registered.');
     }
 
     // Append the PubSub API to the global object reference
@@ -100,6 +100,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
     // Return strings of toString() found on the Object prototype
     var _objectStrings = {
+        ARRAY: '[object Array]',
         FUNCTION: '[object Function]',
         GENERATOR: '[object GeneratorFunction]',
         STRING: '[object String]'
@@ -119,23 +120,25 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     // Methods
 
     /**
-     * Check if a variable is an array datatype
-     *
-     * @param {mixed} value Value to check
-     * @returns {boolean} True the value is an array datatype; otherwise, false
-     */
-    var isArray = global.Array.isArray;
-
-    /**
      * Check if a variable is a function datatype
      *
      * @param {mixed} value Value to check
      * @returns {boolean} True the value is a function datatype; otherwise, false
      */
-    function isFunction(value) {
-        var tag = isObject(value) ? _objectToString.call(value) : '';
+    function _isFunction(value) {
+        var tag = _isObject(value) ? _objectToString.call(value) : '';
         return tag === _objectStrings.FUNCTION || tag === _objectStrings.GENERATOR;
     }
+
+    /**
+     * Check if a variable is an array datatype
+     *
+     * @param {mixed} value Value to check
+     * @returns {boolean} True the value is an array datatype; otherwise, false
+     */
+    var _isArray = _isFunction(global.Array.isArray) ? global.Array.isArray : function (value) {
+        return _objectToString.call(value) === _objectStrings.ARRAY;
+    };
 
     /**
      * Check if a variable is an opaque handle
@@ -143,9 +146,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
      * @param {mixed} handle Handle to check
      * @returns {boolean} True the handle is an opaque handle; otherwise, false
      */
-    function isHandle(handle) {
+    function _isHandle(handle) {
         // The opaque 'PubSub' handle must be an array
-        return isArray(handle) &&
+        return _isArray(handle) &&
 
         // Have a length equal to that of HANDLE_MAX
         handle.length === HANDLE_MAX &&
@@ -154,10 +157,10 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         handle[HANDLE_ID] === _handleId &&
 
         // Contain a string at the 'subscription position'
-        isString(handle[HANDLE_SUBSCRIPTION]) &&
+        _isString(handle[HANDLE_SUBSCRIPTION]) &&
 
         // Contain a function at the 'callback position'
-        isFunction(handle[HANDLE_CALLBACK]);
+        _isFunction(handle[HANDLE_CALLBACK]);
     }
 
     /**
@@ -166,7 +169,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
      * @param {mixed} value Value to check
      * @returns {boolean} True the value is an object; otherwise, false
      */
-    function isObject(value) {
+    function _isObject(value) {
         // Store the typeof value
         var type = typeof value;
 
@@ -181,7 +184,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
      * @param {mixed} value Value to check
      * @returns {boolean} True the value is a string datatype; otherwise, false
      */
-    function isString(value) {
+    function _isString(value) {
         return (typeof value === 'string' || _objectToString.call(value) === _objectStrings.STRING) && value.trim().length > 0;
     }
 
@@ -202,22 +205,170 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         }
 
         /**
-         * Subscribe to a subscription with a callback function
+         * Clear the internal subscribers store
          *
-         * Note: It's best practice not to make this an anonymous function as you then can't unsubscribe,
-         * since the callback function reference is required
-         *
-         * @param {array|string} subscriptions An array of subscription strings or a single subscription string
-         * @param {array|string} callbacks An array of callback functions or a single callback function
-         * @return {handle} An array of opaque handles if an array is passed or a single opaque handle; otherwise,
-         * an error opaque handle on error
+         * @return {undefined}
          */
 
         _createClass(PubSub, [{
+            key: 'clear',
+            value: function clear() {
+                this._subscribers = {};
+            }
+
+            /**
+             * Get the version number of the module
+             *
+             * @return {string} Module version number
+             */
+        }, {
+            key: 'getVersion',
+            value: function getVersion() {
+                return VERSION;
+            }
+
+            /**
+             * Publish a subscription to all subscribers with an unlimited number of arguments
+             *
+             * Note: A comma separated subscription list is appended as the last argument passed to the callback function
+             *
+             * @param {array|handle|string} subscriptions An array of subscription strings, a single subscription string or an opaque handle
+             * returned by the subscribe function
+             * @param {...[mixed]} args A argument list to pass to the registered subscribers
+             * @return {number} Number of subscribers published to; otherwise zero on error
+             */
+        }, {
+            key: 'publish',
+            value: function publish(subscriptions) {
+                for (var _len2 = arguments.length, args = Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
+                    args[_key2 - 1] = arguments[_key2];
+                }
+
+                // Set the following variable(s), if it's an opaque 'PubSub' handle returned from subscribe()
+                if (_isHandle(subscriptions)) {
+                    // Convert to an array datatype
+                    subscriptions = [subscriptions[HANDLE_SUBSCRIPTION]];
+
+                    // If a string has been passed, then convert to an array datatype
+                } else if (_isString(subscriptions)) {
+                        subscriptions = [subscriptions];
+                    }
+
+                // Store the number of subscriptions published
+                var published = 0;
+
+                // If not an array, then the subscription was an invalid array, handle or string
+                if (!_isArray(subscriptions)) {
+                    return published;
+                }
+
+                // Push the subscription to the end of the arguments array as a comma separated string,
+                // just in case it's required. Of course this will kind of fail if the user uses a subscription with a comma,
+                // but that's up to them I guess!
+                args.push(subscriptions.join(','));
+
+                /**
+                 * Queue calling the callback function (idea by Nicolas Bevacqua)
+                 *
+                 * @param {function} callbackFn Callback function to apply the arguments to
+                 * @return {undefined}
+                 */
+                function _publishCallback(callbackFn) {
+                    // Queue the callback function, as setTimeout is asynchronous
+                    window.setTimeout(function _emitTimeout() {
+                        callbackFn.apply(undefined, args);
+                    }, 0);
+                }
+
+                // Iterate through all the subscriptions
+                var _iteratorNormalCompletion = true;
+                var _didIteratorError = false;
+                var _iteratorError = undefined;
+
+                try {
+                    for (var _iterator = subscriptions[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                        var subscription = _step.value;
+
+                        // The subscription hasn't been created as of yet
+                        if (!this._subscribers.hasOwnProperty(subscription)) {
+                            continue;
+                        }
+
+                        // Retrieve the callback functions for the subscription
+                        var functions = this._subscribers[subscription];
+
+                        // There are no callback functions assigned to the subscription
+                        if (!functions.length) {
+                            continue;
+                        }
+
+                        // Iterate through all the functions for the particular subscription
+                        var _iteratorNormalCompletion2 = true;
+                        var _didIteratorError2 = false;
+                        var _iteratorError2 = undefined;
+
+                        try {
+                            for (var _iterator2 = functions[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+                                var callbackFn = _step2.value;
+
+                                // Call the function with the arguments array using the spread operator
+                                // callbackFn(...args); // Synchronous
+                                _publishCallback(callbackFn); // Asynchronous
+
+                                // Increase the number of published subscriptions
+                                published++;
+                            }
+                        } catch (err) {
+                            _didIteratorError2 = true;
+                            _iteratorError2 = err;
+                        } finally {
+                            try {
+                                if (!_iteratorNormalCompletion2 && _iterator2['return']) {
+                                    _iterator2['return']();
+                                }
+                            } finally {
+                                if (_didIteratorError2) {
+                                    throw _iteratorError2;
+                                }
+                            }
+                        }
+                    }
+
+                    // Return the number of subscribers published to
+                } catch (err) {
+                    _didIteratorError = true;
+                    _iteratorError = err;
+                } finally {
+                    try {
+                        if (!_iteratorNormalCompletion && _iterator['return']) {
+                            _iterator['return']();
+                        }
+                    } finally {
+                        if (_didIteratorError) {
+                            throw _iteratorError;
+                        }
+                    }
+                }
+
+                return published;
+            }
+
+            /**
+             * Subscribe to a subscription with a callback function
+             *
+             * Note: It's best practice not to make this an anonymous function as you then can't unsubscribe,
+             * since the callback function reference is required
+             *
+             * @param {array|string} subscriptions An array of subscription strings or a single subscription string
+             * @param {array|string} callbacks An array of callback functions or a single callback function
+             * @return {handle} An array of opaque handles if an array is passed or a single opaque handle; otherwise,
+             * an error opaque handle on error
+             */
+        }, {
             key: 'subscribe',
             value: function subscribe(subscriptions, callbacks) {
                 // Store as to whether or not  the first parameter is a string
-                var isStringTypes = isString(subscriptions) && isFunction(callbacks);
+                var isStringTypes = _isString(subscriptions) && _isFunction(callbacks);
 
                 // If a string and a function datatype, then create an array for each parameter
                 if (isStringTypes) {
@@ -226,7 +377,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                 }
 
                 // If either of the arguments are not an array or the lengths mismatch, then return a handle error
-                if (!isArray(subscriptions) || !isArray(callbacks) || subscriptions.length !== callbacks.length) {
+                if (!_isArray(subscriptions) || !_isArray(callbacks) || subscriptions.length !== callbacks.length) {
                     return _handleError;
                 }
 
@@ -239,7 +390,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                     var subscription = subscriptions[i];
 
                     // The subscription should be a string datatype with a length greater than zero
-                    if (!isString(subscription)) {
+                    if (!_isString(subscription)) {
                         continue;
                     }
 
@@ -247,7 +398,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                     var callback = callbacks[i];
 
                     // The callback should be a function datatype
-                    if (!isFunction(callback)) {
+                    if (!_isFunction(callback)) {
                         continue;
                     }
 
@@ -299,20 +450,20 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                 }
 
                 // Set the following variable(s), if it's an opaque 'PubSub' handle returned from subscribe()
-                if (isHandle(subscriptions)) {
+                if (_isHandle(subscriptions)) {
                     // Do not swap these around, otherwise it will cause an error with overwriting subscriptions before
                     // setting the callbacks variable
                     callbacks = [subscriptions[HANDLE_CALLBACK]];
                     subscriptions = [subscriptions[HANDLE_SUBSCRIPTION]];
 
                     // If a string and function datatype, then create an array for each variable
-                } else if (isString(subscriptions) && isFunction(callbacks)) {
+                } else if (_isString(subscriptions) && _isFunction(callbacks)) {
                         callbacks = [callbacks];
                         subscriptions = [subscriptions];
                     }
 
                 // If either of the arguments are not an array or the lengths simply mismatch, then return false
-                if (!isArray(subscriptions) || !isArray(callbacks) || subscriptions.length !== callbacks.length) {
+                if (!_isArray(subscriptions) || !_isArray(callbacks) || subscriptions.length !== callbacks.length) {
                     return false;
                 }
 
@@ -340,141 +491,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                 }
 
                 return true;
-            }
-
-            /**
-             * Publish a subscription to all subscribers with an unlimited number of arguments
-             *
-             * Note: A comma separated subscription list is appended as the last argument passed to the callback function
-             *
-             * @param {array|handle|string} subscriptions An array of subscription strings, a single subscription string or an opaque handle
-             * returned by the subscribe function
-             * @param {...[mixed]} args A argument list to pass to the registered subscribers
-             * @return {number} Number of subscribers published to; otherwise zero on error
-             */
-        }, {
-            key: 'publish',
-            value: function publish(subscriptions) {
-                // Set the following variable(s), if it's an opaque 'PubSub' handle returned from subscribe()
-                if (isHandle(subscriptions)) {
-                    // Convert to an array datatype
-                    subscriptions = [subscriptions[HANDLE_SUBSCRIPTION]];
-
-                    // If a string has been passed, then convert to an array datatype
-                } else if (isString(subscriptions)) {
-                        subscriptions = [subscriptions];
-                    }
-
-                // Store the number of subscriptions published
-                var published = 0;
-
-                // If not an array, then the subscription was an invalid array, handle or string
-                if (!isArray(subscriptions)) {
-                    return published;
-                }
-
-                // Push the subscription to the end of the arguments array as a comma separated string,
-                // just in case it's required. Of course this will kind of fail if the user uses a subscription with a comma,
-                // but that's up to them I guess!
-
-                for (var _len2 = arguments.length, args = Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
-                    args[_key2 - 1] = arguments[_key2];
-                }
-
-                args.push(subscriptions.join(','));
-
-                // Iterate through all the subscriptions
-                var _iteratorNormalCompletion = true;
-                var _didIteratorError = false;
-                var _iteratorError = undefined;
-
-                try {
-                    for (var _iterator = subscriptions[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-                        var subscription = _step.value;
-
-                        // The subscription hasn't been created as of yet
-                        if (!this._subscribers.hasOwnProperty(subscription)) {
-                            continue;
-                        }
-
-                        // Retrieve the callback functions for the subscription
-                        var functions = this._subscribers[subscription];
-
-                        // There are no callback functions assigned to the subscription
-                        if (!functions.length) {
-                            continue;
-                        }
-
-                        // Iterate through all the functions for the particular subscription
-                        var _iteratorNormalCompletion2 = true;
-                        var _didIteratorError2 = false;
-                        var _iteratorError2 = undefined;
-
-                        try {
-                            for (var _iterator2 = functions[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-                                var callbackFn = _step2.value;
-
-                                // Call the function with the arguments array using the spread operator
-                                callbackFn.apply(undefined, args);
-
-                                // Increase the number of published subscriptions
-                                published++;
-                            }
-                        } catch (err) {
-                            _didIteratorError2 = true;
-                            _iteratorError2 = err;
-                        } finally {
-                            try {
-                                if (!_iteratorNormalCompletion2 && _iterator2['return']) {
-                                    _iterator2['return']();
-                                }
-                            } finally {
-                                if (_didIteratorError2) {
-                                    throw _iteratorError2;
-                                }
-                            }
-                        }
-                    }
-
-                    // Return the number of subscribers published to
-                } catch (err) {
-                    _didIteratorError = true;
-                    _iteratorError = err;
-                } finally {
-                    try {
-                        if (!_iteratorNormalCompletion && _iterator['return']) {
-                            _iterator['return']();
-                        }
-                    } finally {
-                        if (_didIteratorError) {
-                            throw _iteratorError;
-                        }
-                    }
-                }
-
-                return published;
-            }
-
-            /**
-             * Clear the internal subscribers store
-             *
-             * @return {undefined}
-             */
-        }, {
-            key: 'clear',
-            value: function clear() {
-                this._subscribers = {};
-            }
-
-            /**
-             * Get the version number of the module
-             *
-             * @return {string} Module version number
-             */
-        }, {
-            key: 'getVersion',
-            value: function getVersion() {
-                return VERSION;
             }
         }]);
 
