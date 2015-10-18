@@ -191,6 +191,101 @@
         }
 
         /**
+         * Clear the internal subscribers store
+         *
+         * @return {undefined}
+         */
+        clear() {
+            this._subscribers = {};
+        }
+
+        /**
+         * Get the version number of the module
+         *
+         * @return {string} Module version number
+         */
+        getVersion() {
+            return VERSION;
+        }
+
+        /**
+         * Publish a subscription to all subscribers with an unlimited number of arguments
+         *
+         * Note: A comma separated subscription list is appended as the last argument passed to the callback function
+         *
+         * @param {array|handle|string} subscriptions An array of subscription strings, a single subscription string or an opaque handle
+         * returned by the subscribe function
+         * @param {...[mixed]} args A argument list to pass to the registered subscribers
+         * @return {number} Number of subscribers published to; otherwise zero on error
+         */
+        publish(subscriptions, ...args) {
+            // Set the following variable(s), if it's an opaque 'PubSub' handle returned from subscribe()
+            if (_isHandle(subscriptions)) {
+                // Convert to an array datatype
+                subscriptions = [subscriptions[HANDLE_SUBSCRIPTION]];
+
+                // If a string has been passed, then convert to an array datatype
+            } else if (_isString(subscriptions)) {
+                subscriptions = [subscriptions];
+            }
+
+            // Store the number of subscriptions published
+            let published = 0;
+
+            // If not an array, then the subscription was an invalid array, handle or string
+            if (!_isArray(subscriptions)) {
+                return published;
+            }
+
+            // Push the subscription to the end of the arguments array as a comma separated string,
+            // just in case it's required. Of course this will kind of fail if the user uses a subscription with a comma,
+            // but that's up to them I guess!
+            args.push(subscriptions.join(','));
+
+            /**
+             * Queue calling the callback function (idea by Nicolas Bevacqua)
+             *
+             * @param {function} callbackFn Callback function to apply the arguments to
+             * @return {undefined}
+             */
+            function _publishCallback(callbackFn) {
+                // Queue the callback function, as setTimeout is asynchronous
+                window.setTimeout(function _emitTimeout() {
+                    callbackFn(...args);
+                }, 0);
+            }
+
+            // Iterate through all the subscriptions
+            for (const subscription of subscriptions) {
+                // The subscription hasn't been created as of yet
+                if (!this._subscribers.hasOwnProperty(subscription)) {
+                    continue;
+                }
+
+                // Retrieve the callback functions for the subscription
+                const functions = this._subscribers[subscription];
+
+                // There are no callback functions assigned to the subscription
+                if (!functions.length) {
+                    continue;
+                }
+
+                // Iterate through all the functions for the particular subscription
+                for (const callbackFn of functions) {
+                    // Call the function with the arguments array using the spread operator
+                    // callbackFn(...args); // Synchronous
+                    _publishCallback(callbackFn); // Asynchronous
+
+                    // Increase the number of published subscriptions
+                    published++;
+                }
+            }
+
+            // Return the number of subscribers published to
+            return published;
+        }
+
+        /**
          * Subscribe to a subscription with a callback function
          *
          * Note: It's best practice not to make this an anonymous function as you then can't unsubscribe,
@@ -326,87 +421,6 @@
             }
 
             return true;
-        }
-
-        /**
-         * Publish a subscription to all subscribers with an unlimited number of arguments
-         *
-         * Note: A comma separated subscription list is appended as the last argument passed to the callback function
-         *
-         * @param {array|handle|string} subscriptions An array of subscription strings, a single subscription string or an opaque handle
-         * returned by the subscribe function
-         * @param {...[mixed]} args A argument list to pass to the registered subscribers
-         * @return {number} Number of subscribers published to; otherwise zero on error
-         */
-        publish(subscriptions, ...args) {
-            // Set the following variable(s), if it's an opaque 'PubSub' handle returned from subscribe()
-            if (_isHandle(subscriptions)) {
-                // Convert to an array datatype
-                subscriptions = [subscriptions[HANDLE_SUBSCRIPTION]];
-
-                // If a string has been passed, then convert to an array datatype
-            } else if (_isString(subscriptions)) {
-                subscriptions = [subscriptions];
-            }
-
-            // Store the number of subscriptions published
-            let published = 0;
-
-            // If not an array, then the subscription was an invalid array, handle or string
-            if (!_isArray(subscriptions)) {
-                return published;
-            }
-
-            // Push the subscription to the end of the arguments array as a comma separated string,
-            // just in case it's required. Of course this will kind of fail if the user uses a subscription with a comma,
-            // but that's up to them I guess!
-            args.push(subscriptions.join(','));
-
-            // Iterate through all the subscriptions
-            for (const subscription of subscriptions) {
-                // The subscription hasn't been created as of yet
-                if (!this._subscribers.hasOwnProperty(subscription)) {
-                    continue;
-                }
-
-                // Retrieve the callback functions for the subscription
-                const functions = this._subscribers[subscription];
-
-                // There are no callback functions assigned to the subscription
-                if (!functions.length) {
-                    continue;
-                }
-
-                // Iterate through all the functions for the particular subscription
-                for (const callbackFn of functions) {
-                    // Call the function with the arguments array using the spread operator
-                    callbackFn(...args);
-
-                    // Increase the number of published subscriptions
-                    published++;
-                }
-            }
-
-            // Return the number of subscribers published to
-            return published;
-        }
-
-        /**
-         * Clear the internal subscribers store
-         *
-         * @return {undefined}
-         */
-        clear() {
-            this._subscribers = {};
-        }
-
-        /**
-         * Get the version number of the module
-         *
-         * @return {string} Module version number
-         */
-        getVersion() {
-            return VERSION;
         }
     };
 })(window)); // Can't be 'this' with babelJS, as it gets set to 'undefined'
