@@ -297,7 +297,7 @@
          * an error opaque handle on error
          */
         subscribe(subscriptions, callbacks) {
-            // Store as to whether or not  the first parameter is a string
+            // Store as to whether or not the first parameter is a string
             const isStringTypes = _isString(subscriptions) && _isFunction(callbacks);
 
             // If a string and a function datatype, then create an array for each parameter
