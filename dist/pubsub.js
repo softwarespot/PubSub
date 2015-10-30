@@ -134,7 +134,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
      * Check if a variable is an array datatype
      *
      * @param {mixed} value Value to check
-     * @returns {boolean} True the value is an array datatype; otherwise, false
+     * @returns {boolean} True, the value is an array datatype; otherwise, false
      */
     var _isArray = _isFunction(global.Array.isArray) ? global.Array.isArray : function (value) {
         return _objectToString.call(value) === _objectStrings.ARRAY;
@@ -144,7 +144,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
      * Check if a variable is an opaque handle
      *
      * @param {mixed} handle Handle to check
-     * @returns {boolean} True the handle is an opaque handle; otherwise, false
+     * @returns {boolean} True, the handle is an opaque handle; otherwise, false
      */
     function _isHandle(handle) {
         // The opaque 'PubSub' handle must be an array
@@ -167,7 +167,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
      * Check if a variable is an object
      *
      * @param {mixed} value Value to check
-     * @returns {boolean} True the value is an object; otherwise, false
+     * @returns {boolean} True, the value is an object; otherwise, false
      */
     function _isObject(value) {
         // Store the typeof value
@@ -182,7 +182,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
      * Check if a variable is a string datatype
      *
      * @param {mixed} value Value to check
-     * @returns {boolean} True the value is a string datatype; otherwise, false
+     * @returns {boolean} True, the value is a string datatype; otherwise, false
      */
     function _isString(value) {
         return (typeof value === 'string' || _objectToString.call(value) === _objectStrings.STRING) && value.trim().length > 0;
@@ -275,7 +275,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                  */
                 function _publishCallback(callbackFn) {
                     // Queue the callback function, as setTimeout is asynchronous
-                    window.setTimeout(function _emitTimeout() {
+                    global.setTimeout(function () {
                         callbackFn.apply(undefined, args);
                     }, 0);
                 }
@@ -367,7 +367,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         }, {
             key: 'subscribe',
             value: function subscribe(subscriptions, callbacks) {
-                // Store as to whether or not  the first parameter is a string
+                // Store as to whether or not the first parameter is a string
                 var isStringTypes = _isString(subscriptions) && _isFunction(callbacks);
 
                 // If a string and a function datatype, then create an array for each parameter
