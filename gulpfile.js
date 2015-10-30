@@ -40,7 +40,9 @@ gulp.task('clean', function (cb) {
 // Run the babel transpiler to convert from ES2015 to ES5
 gulp.task('es6to5', function () {
     return gulp.src('./' + Assets.main)
-        .pipe(babel())
+        .pipe(babel({
+            presets: ['es2015']
+        }))
         .pipe(gulp.dest('./' + Assets.dest));
 });
 
@@ -71,11 +73,11 @@ gulp.task('version', function () {
 
     var reVersion = /\n\s*\*\s+Version:\s+((?:\d+\.){2}\d+)/;
     var version = fs.readFileSync('./' + Assets.main, {
-            encoding: 'utf8'
-        })
+        encoding: 'utf8'
+    })
 
-        // Match is found in the 2nd element
-        .match(reVersion)[1];
+    // Match is found in the 2nd element
+    .match(reVersion)[1];
 
     var streams = merge();
 

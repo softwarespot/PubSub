@@ -1,3 +1,13 @@
+'use strict';
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) arr2[i] = arr[i]; return arr2; } else { return Array.from(arr); } }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _typeof(obj) { return obj && obj.constructor === Symbol ? "symbol" : typeof obj; }
+
 /*
  * PubSub module
  * https://github.com/softwarespot/pubsub
@@ -5,12 +15,6 @@
  * Licensed under the MIT license
  * Version: 2.2.3
  */
-'use strict';
-
-var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
-
 ; // jshint ignore:line
 (function (global, name, IPubSub, undefined) {
     // Constants
@@ -171,7 +175,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
      */
     function _isObject(value) {
         // Store the typeof value
-        var type = typeof value;
+        var type = typeof value === 'undefined' ? 'undefined' : _typeof(value);
 
         // !!value is basically checking if value is not 'truthy' e.g. null or zero and then inverts that boolean value
         // So, !'Some test' is false and then inverting false is true. There if value contains 'something', continue
@@ -221,6 +225,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
              *
              * @return {string} Module version number
              */
+
         }, {
             key: 'getVersion',
             value: function getVersion() {
@@ -237,6 +242,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
              * @param {...[mixed]} args A argument list to pass to the registered subscribers
              * @return {number} Number of subscribers published to; otherwise zero on error
              */
+
         }, {
             key: 'publish',
             value: function publish(subscriptions) {
@@ -276,7 +282,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                 function _publishCallback(callbackFn) {
                     // Queue the callback function, as setTimeout is asynchronous
                     global.setTimeout(function () {
-                        callbackFn.apply(undefined, args);
+                        callbackFn.apply(undefined, _toConsumableArray(args));
                     }, 0);
                 }
 
@@ -323,8 +329,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                             _iteratorError2 = err;
                         } finally {
                             try {
-                                if (!_iteratorNormalCompletion2 && _iterator2['return']) {
-                                    _iterator2['return']();
+                                if (!_iteratorNormalCompletion2 && _iterator2.return) {
+                                    _iterator2.return();
                                 }
                             } finally {
                                 if (_didIteratorError2) {
@@ -340,8 +346,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                     _iteratorError = err;
                 } finally {
                     try {
-                        if (!_iteratorNormalCompletion && _iterator['return']) {
-                            _iterator['return']();
+                        if (!_iteratorNormalCompletion && _iterator.return) {
+                            _iterator.return();
                         }
                     } finally {
                         if (_didIteratorError) {
@@ -364,6 +370,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
              * @return {handle} An array of opaque handles if an array is passed or a single opaque handle; otherwise,
              * an error opaque handle on error
              */
+
         }, {
             key: 'subscribe',
             value: function subscribe(subscriptions, callbacks) {
@@ -385,7 +392,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                 var handles = [];
 
                 // Iterate through all the subscriptions. Must be a for loop
-                for (var i = 0, _length = subscriptions.length; i < _length; i++) {
+                for (var i = 0, length = subscriptions.length; i < length; i++) {
                     // Store the subscription
                     var subscription = subscriptions[i];
 
@@ -441,6 +448,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
              * the first argument then this parameter is ignored
              * @return {boolean} True on success; otherwise, false
              */
+
         }, {
             key: 'unsubscribe',
             value: function unsubscribe(subscriptions, callbacks) {
@@ -468,7 +476,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                 }
 
                 // Iterate through all the subscriptions. Must be a for loop
-                for (var i = 0, _length2 = subscriptions.length; i < _length2; i++) {
+                for (var i = 0, length = subscriptions.length; i < length; i++) {
                     // The subscription hasn't been created as of yet
                     if (!this._subscribers.hasOwnProperty(subscriptions[i])) {
                         continue;
