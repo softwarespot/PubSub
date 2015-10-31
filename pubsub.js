@@ -46,7 +46,7 @@
         // See getVersion in the documentation below
         getVersion: () => {
             return _pubSubInstance.getVersion();
-        }
+        },
     };
 
     // Define a 'constructor' function for modules to instantiate, which is a wrapper around the _pubSubAPI
@@ -423,7 +423,7 @@
             return true;
         }
     };
-})(window)); // Can't be 'this' with babelJS, as it gets set to 'undefined'
+})(window));
 
 //
 // PubSub pattern in JavaScript
