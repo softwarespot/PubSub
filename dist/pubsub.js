@@ -13,7 +13,7 @@ function _typeof(obj) { return obj && obj.constructor === Symbol ? "symbol" : ty
  * https://github.com/softwarespot/pubsub
  * Author: softwarespot
  * Licensed under the MIT license
- * Version: 2.2.3
+ * Version: 2.2.4
  */
 ; // jshint ignore:line
 (function (global, name, IPubSub, undefined) {
@@ -94,7 +94,7 @@ function _typeof(obj) { return obj && obj.constructor === Symbol ? "symbol" : ty
     // Constants
 
     // Version number of the module
-    var VERSION = '2.2.3';
+    var VERSION = '2.2.4';
 
     // Array constants enumeration
     var HANDLE_ID = 0;
@@ -504,7 +504,7 @@ function _typeof(obj) { return obj && obj.constructor === Symbol ? "symbol" : ty
 
         return PubSub;
     })();
-})(window)); // Can't be 'this' with babelJS, as it gets set to 'undefined'
+})(window));
 
 //
 // PubSub pattern in JavaScript
