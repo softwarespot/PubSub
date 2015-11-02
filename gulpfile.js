@@ -21,8 +21,8 @@ var uglifySettings = {
         drop_console: true,
         /* jscs: enable */
         unsafe: true,
-        unused: true
-    }
+        unused: true,
+    },
 };
 
 // Assets for the project
@@ -33,28 +33,28 @@ var Assets = {
 };
 
 // Clean the 'dist' directory
-gulp.task('clean', function (cb) {
+gulp.task('clean', function(cb) {
     del([Assets.dest + '/*.js'], cb);
 });
 
 // Run the babel transpiler to convert from ES2015 to ES5
-gulp.task('es6to5', function () {
+gulp.task('es6to5', function() {
     return gulp.src('./' + Assets.main)
         .pipe(babel({
-            presets: ['es2015']
+            presets: ['es2015'],
         }))
         .pipe(gulp.dest('./' + Assets.dest));
 });
 
 // Check the code meets the following standards outlined in .jshintrc
-gulp.task('jshint', function () {
+gulp.task('jshint', function() {
     return gulp.src('./' + Assets.main)
         .pipe(jshint())
         .pipe(jshint.reporter('jshint-stylish'));
 });
 
 // Uglify aka minify the main file
-gulp.task('uglify', ['es6to5'], function () {
+gulp.task('uglify', ['es6to5'], function() {
     return gulp.src('./' + Assets.dest + '/' + Assets.main)
         .pipe(concat(Assets.minified))
         .pipe(uglify(uglifySettings))
@@ -63,17 +63,17 @@ gulp.task('uglify', ['es6to5'], function () {
 });
 
 // Watch for changes to the main file
-gulp.task('watch', function () {
+gulp.task('watch', function() {
     gulp.watch('./' + Assets.main, ['jshint', 'uglify']);
 });
 
 // Update version numbers based on the main file version comment
-gulp.task('version', function () {
+gulp.task('version', function() {
     // SemVer matching is done using (?:\d+\.){2}\d+
 
     var reVersion = /\n\s*\*\s+Version:\s+((?:\d+\.){2}\d+)/;
     var version = fs.readFileSync('./' + Assets.main, {
-        encoding: 'utf8'
+        encoding: 'utf8',
     })
 
     // Match is found in the 2nd element
