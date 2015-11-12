@@ -14,21 +14,6 @@
 
     // Public API
     const _pubSubAPI = {
-        // See subscribe in the documentation below
-        subscribe: (subscriptions, callbacks) => {
-            return _pubSubInstance.subscribe(subscriptions, callbacks);
-        },
-
-        // See unsubscribe in the documentation below
-        unsubscribe: (subscriptions, callbacks) => {
-            return _pubSubInstance.unsubscribe(subscriptions, callbacks);
-        },
-
-        // See publish in the documentation below
-        publish: (subscriptions, ...args) => {
-            return _pubSubInstance.publish(subscriptions, ...args);
-        },
-
         // See clear in the documentation below
         clear: () => {
             return _pubSubInstance.clear();
@@ -46,6 +31,21 @@
         // See getVersion in the documentation below
         getVersion: () => {
             return _pubSubInstance.getVersion();
+        },
+
+        // See publish in the documentation below
+        publish: (subscriptions, ...args) => {
+            return _pubSubInstance.publish(subscriptions, ...args);
+        },
+
+        // See subscribe in the documentation below
+        subscribe: (subscriptions, callbacks) => {
+            return _pubSubInstance.subscribe(subscriptions, callbacks);
+        },
+
+        // See unsubscribe in the documentation below
+        unsubscribe: (subscriptions, callbacks) => {
+            return _pubSubInstance.unsubscribe(subscriptions, callbacks);
         },
     };
 
@@ -112,10 +112,10 @@
      * Check if a variable is a function datatype
      *
      * @param {mixed} value Value to check
-     * @returns {boolean} True the value is a function datatype; otherwise, false
+     * @returns {boolean} True, the value is a function datatype; otherwise, false
      */
     function _isFunction(value) {
-        const tag = _isObject(value) ? _objectToString.call(value) : '';
+        const tag = _isObject(value) ? _objectToString.call(value) : null;
         return tag === _objectStrings.FUNCTION || tag === _objectStrings.GENERATOR;
     }
 
