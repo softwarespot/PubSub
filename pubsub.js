@@ -81,6 +81,9 @@
     // Version number of the module
     const VERSION = '2.2.4';
 
+    // Value of indexOf when a value isn't found
+    var NOT_FOUND = -1;
+
     // Array constants enumeration
     const HANDLE_ID = 0;
     const HANDLE_SUBSCRIPTION = 1;
@@ -345,7 +348,7 @@
 
                 // Check if the callback hasn't already been registered for the event name
                 // Could use include() when ES2015 is widely available
-                if (functions.indexOf(callback) === -1) {
+                if (functions.indexOf(callback) === NOT_FOUND) {
                     // Push the callback function to the event name array
                     functions.push(callback);
 
@@ -415,7 +418,7 @@
                 // If a callback function reference exists for the subscription,
                 // then remove from the array using the index value
                 const index = functions.indexOf(callbacks[i]);
-                if (index !== -1) {
+                if (index !== NOT_FOUND) {
                     functions.splice(index, 1);
                 }
             }
