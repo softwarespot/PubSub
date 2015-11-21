@@ -24,26 +24,8 @@ function _typeof(obj) { return obj && obj.constructor === Symbol ? "symbol" : ty
 
     // Public API
     var _pubSubAPI = {
-        // See subscribe in the documentation below
-        subscribe: function subscribe(subscriptions, callbacks) {
-            return _pubSubInstance.subscribe(subscriptions, callbacks);
-        },
-
-        // See unsubscribe in the documentation below
-        unsubscribe: function unsubscribe(subscriptions, callbacks) {
-            return _pubSubInstance.unsubscribe(subscriptions, callbacks);
-        },
-
-        // See publish in the documentation below
-        publish: function publish(subscriptions) {
-            for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-                args[_key - 1] = arguments[_key];
-            }
-
-            return _pubSubInstance.publish.apply(_pubSubInstance, [subscriptions].concat(args));
-        },
-
         // See clear in the documentation below
+
         clear: function clear() {
             return _pubSubInstance.clear();
         },
@@ -60,6 +42,25 @@ function _typeof(obj) { return obj && obj.constructor === Symbol ? "symbol" : ty
         // See getVersion in the documentation below
         getVersion: function getVersion() {
             return _pubSubInstance.getVersion();
+        },
+
+        // See publish in the documentation below
+        publish: function publish(subscriptions) {
+            for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+                args[_key - 1] = arguments[_key];
+            }
+
+            return _pubSubInstance.publish.apply(_pubSubInstance, [subscriptions].concat(args));
+        },
+
+        // See subscribe in the documentation below
+        subscribe: function subscribe(subscriptions, callbacks) {
+            return _pubSubInstance.subscribe(subscriptions, callbacks);
+        },
+
+        // See unsubscribe in the documentation below
+        unsubscribe: function unsubscribe(subscriptions, callbacks) {
+            return _pubSubInstance.unsubscribe(subscriptions, callbacks);
         }
     };
 
@@ -96,6 +97,9 @@ function _typeof(obj) { return obj && obj.constructor === Symbol ? "symbol" : ty
     // Version number of the module
     var VERSION = '2.2.4';
 
+    // Value of indexOf when a value isn't found
+    var NOT_FOUND = -1;
+
     // Array constants enumeration
     var HANDLE_ID = 0;
     var HANDLE_SUBSCRIPTION = 1;
@@ -127,10 +131,10 @@ function _typeof(obj) { return obj && obj.constructor === Symbol ? "symbol" : ty
      * Check if a variable is a function datatype
      *
      * @param {mixed} value Value to check
-     * @returns {boolean} True the value is a function datatype; otherwise, false
+     * @returns {boolean} True, the value is a function datatype; otherwise, false
      */
     function _isFunction(value) {
-        var tag = _isObject(value) ? _objectToString.call(value) : '';
+        var tag = _isObject(value) ? _objectToString.call(value) : null;
         return tag === _objectStrings.FUNCTION || tag === _objectStrings.GENERATOR;
     }
 
@@ -420,7 +424,7 @@ function _typeof(obj) { return obj && obj.constructor === Symbol ? "symbol" : ty
 
                     // Check if the callback hasn't already been registered for the event name
                     // Could use include() when ES2015 is widely available
-                    if (functions.indexOf(callback) === -1) {
+                    if (functions.indexOf(callback) === NOT_FOUND) {
                         // Push the callback function to the event name array
                         functions.push(callback);
 
@@ -493,7 +497,7 @@ function _typeof(obj) { return obj && obj.constructor === Symbol ? "symbol" : ty
                     // If a callback function reference exists for the subscription,
                     // then remove from the array using the index value
                     var index = functions.indexOf(callbacks[i]);
-                    if (index !== -1) {
+                    if (index !== NOT_FOUND) {
                         functions.splice(index, 1);
                     }
                 }

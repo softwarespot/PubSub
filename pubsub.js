@@ -15,7 +15,7 @@
     // Public API
     const _pubSubAPI = {
         // See clear in the documentation below
-        clear: () => {
+        clear() {
             return _pubSubInstance.clear();
         },
 
@@ -24,27 +24,27 @@
          *
          * @return {class|object} Underlying interface, which is a class in ES2015 or a function object in ES5
          */
-        getInterface: () => {
+        getInterface() {
             return IPubSub;
         },
 
         // See getVersion in the documentation below
-        getVersion: () => {
+        getVersion() {
             return _pubSubInstance.getVersion();
         },
 
         // See publish in the documentation below
-        publish: (subscriptions, ...args) => {
+        publish(subscriptions, ...args) {
             return _pubSubInstance.publish(subscriptions, ...args);
         },
 
         // See subscribe in the documentation below
-        subscribe: (subscriptions, callbacks) => {
+        subscribe(subscriptions, callbacks) {
             return _pubSubInstance.subscribe(subscriptions, callbacks);
         },
 
         // See unsubscribe in the documentation below
-        unsubscribe: (subscriptions, callbacks) => {
+        unsubscribe(subscriptions, callbacks) {
             return _pubSubInstance.unsubscribe(subscriptions, callbacks);
         },
     };
