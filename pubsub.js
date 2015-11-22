@@ -91,12 +91,10 @@
     const HANDLE_MAX = 3;
 
     // Return strings of toString() found on the Object prototype
-    const _objectStrings = {
-        ARRAY: '[object Array]',
-        FUNCTION: '[object Function]',
-        GENERATOR: '[object GeneratorFunction]',
-        STRING: '[object String]',
-    };
+    const _objectStringsArray = '[object Array]';
+    const _objectStringsFunction = '[object Function]';
+    const _objectStringsGenerator = '[object GeneratorFunction]';
+    const _objectStringsString = '[object String]';
 
     // Store the Object prototype toString method
     const _objectToString = global.Object.prototype.toString;
@@ -119,7 +117,7 @@
      */
     function _isFunction(value) {
         const tag = _isObject(value) ? _objectToString.call(value) : null;
-        return tag === _objectStrings.FUNCTION || tag === _objectStrings.GENERATOR;
+        return tag === _objectStringsFunction || tag === _objectStringsGenerator;
     }
 
     /**
@@ -129,7 +127,7 @@
      * @returns {boolean} True, the value is an array datatype; otherwise, false
      */
     const _isArray = _isFunction(global.Array.isArray) ? global.Array.isArray : (value) => {
-        return _objectToString.call(value) === _objectStrings.ARRAY;
+        return _objectToString.call(value) === _objectStringsArray;
     };
 
     /**
@@ -177,7 +175,7 @@
      * @returns {boolean} True, the value is a string datatype; otherwise, false
      */
     function _isString(value) {
-        return (typeof value === 'string' || _objectToString.call(value) === _objectStrings.STRING) && value.trim().length > 0;
+        return (typeof value === 'string' || _objectToString.call(value) === _objectStringsString) && value.trim().length > 0;
     }
 
     /**
