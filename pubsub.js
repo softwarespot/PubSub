@@ -75,7 +75,7 @@
 
     // Append the PubSub API to the global object reference
     global[name] = _pubSubAPI;
-})(window, 'PubSub', ((global) => { // Can't be 'this' with babelJS, as it gets set to 'undefined'
+})(window, 'PubSub', ((global) => {
     // Constants
 
     // Version number of the module
