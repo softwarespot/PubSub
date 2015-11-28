@@ -147,7 +147,7 @@
             handle[HANDLE_ID] === _handleId &&
 
             // Contain a string at the 'subscription position'
-            _isString(handle[HANDLE_SUBSCRIPTION]) &&
+            _isSubscription(handle[HANDLE_SUBSCRIPTION]) &&
 
             // Contain a function at the 'callback position'
             _isFunction(handle[HANDLE_CALLBACK]);
@@ -174,7 +174,7 @@
      * @param {mixed} value Value to check
      * @returns {boolean} True, the value is a string datatype; otherwise, false
      */
-    function _isString(value) {
+    function _isSubscription(value) {
         return (typeof value === 'string' || _objectToString.call(value) === _objectStringsString) && value.trim().length > 0;
     }
 
@@ -226,7 +226,7 @@
                 subscriptions = [subscriptions[HANDLE_SUBSCRIPTION]];
 
                 // If a string has been passed, then convert to an array datatype
-            } else if (_isString(subscriptions)) {
+            } else if (_isSubscription(subscriptions)) {
                 subscriptions = [subscriptions];
             }
 
@@ -299,7 +299,7 @@
          */
         subscribe(subscriptions, callbacks) {
             // Store as to whether or not the first parameter is a string
-            const isStringTypes = _isString(subscriptions) && _isFunction(callbacks);
+            const isStringTypes = _isSubscription(subscriptions) && _isFunction(callbacks);
 
             // If a string and a function datatype, then create an array for each parameter
             if (isStringTypes) {
@@ -323,7 +323,7 @@
                 const subscription = subscriptions[i];
 
                 // The subscription should be a string datatype with a length greater than zero
-                if (!_isString(subscription)) {
+                if (!_isSubscription(subscription)) {
                     continue;
                 }
 
@@ -388,7 +388,7 @@
                 subscriptions = [subscriptions[HANDLE_SUBSCRIPTION]];
 
                 // If a string and function datatype, then create an array for each variable
-            } else if (_isString(subscriptions) && _isFunction(callbacks)) {
+            } else if (_isSubscription(subscriptions) && _isFunction(callbacks)) {
                 callbacks = [callbacks];
                 subscriptions = [subscriptions];
             }

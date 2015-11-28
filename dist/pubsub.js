@@ -2,11 +2,9 @@
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
-function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) arr2[i] = arr[i]; return arr2; } else { return Array.from(arr); } }
-
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-function _typeof(obj) { return obj && obj.constructor === Symbol ? "symbol" : typeof obj; }
+function _typeof(obj) { return obj && typeof Symbol !== "undefined" && obj.constructor === Symbol ? "symbol" : typeof obj; }
 
 /*
  * PubSub module
@@ -91,7 +89,6 @@ function _typeof(obj) { return obj && obj.constructor === Symbol ? "symbol" : ty
     // Append the PubSub API to the global object reference
     global[name] = _pubSubAPI;
 })(window, 'PubSub', (function (global) {
-    // Can't be 'this' with babelJS, as it gets set to 'undefined'
     // Constants
 
     // Version number of the module
@@ -107,12 +104,10 @@ function _typeof(obj) { return obj && obj.constructor === Symbol ? "symbol" : ty
     var HANDLE_MAX = 3;
 
     // Return strings of toString() found on the Object prototype
-    var _objectStrings = {
-        ARRAY: '[object Array]',
-        FUNCTION: '[object Function]',
-        GENERATOR: '[object GeneratorFunction]',
-        STRING: '[object String]'
-    };
+    var _objectStringsArray = '[object Array]';
+    var _objectStringsFunction = '[object Function]';
+    var _objectStringsGenerator = '[object GeneratorFunction]';
+    var _objectStringsString = '[object String]';
 
     // Store the Object prototype toString method
     var _objectToString = global.Object.prototype.toString;
@@ -135,7 +130,7 @@ function _typeof(obj) { return obj && obj.constructor === Symbol ? "symbol" : ty
      */
     function _isFunction(value) {
         var tag = _isObject(value) ? _objectToString.call(value) : null;
-        return tag === _objectStrings.FUNCTION || tag === _objectStrings.GENERATOR;
+        return tag === _objectStringsFunction || tag === _objectStringsGenerator;
     }
 
     /**
@@ -145,7 +140,7 @@ function _typeof(obj) { return obj && obj.constructor === Symbol ? "symbol" : ty
      * @returns {boolean} True, the value is an array datatype; otherwise, false
      */
     var _isArray = _isFunction(global.Array.isArray) ? global.Array.isArray : function (value) {
-        return _objectToString.call(value) === _objectStrings.ARRAY;
+        return _objectToString.call(value) === _objectStringsArray;
     };
 
     /**
@@ -165,7 +160,7 @@ function _typeof(obj) { return obj && obj.constructor === Symbol ? "symbol" : ty
         handle[HANDLE_ID] === _handleId &&
 
         // Contain a string at the 'subscription position'
-        _isString(handle[HANDLE_SUBSCRIPTION]) &&
+        _isSubscription(handle[HANDLE_SUBSCRIPTION]) &&
 
         // Contain a function at the 'callback position'
         _isFunction(handle[HANDLE_CALLBACK]);
@@ -192,8 +187,8 @@ function _typeof(obj) { return obj && obj.constructor === Symbol ? "symbol" : ty
      * @param {mixed} value Value to check
      * @returns {boolean} True, the value is a string datatype; otherwise, false
      */
-    function _isString(value) {
-        return (typeof value === 'string' || _objectToString.call(value) === _objectStrings.STRING) && value.trim().length > 0;
+    function _isSubscription(value) {
+        return (typeof value === 'string' || _objectToString.call(value) === _objectStringsString) && value.trim().length > 0;
     }
 
     /**
@@ -260,7 +255,7 @@ function _typeof(obj) { return obj && obj.constructor === Symbol ? "symbol" : ty
                     subscriptions = [subscriptions[HANDLE_SUBSCRIPTION]];
 
                     // If a string has been passed, then convert to an array datatype
-                } else if (_isString(subscriptions)) {
+                } else if (_isSubscription(subscriptions)) {
                         subscriptions = [subscriptions];
                     }
 
@@ -286,7 +281,7 @@ function _typeof(obj) { return obj && obj.constructor === Symbol ? "symbol" : ty
                 function _publishCallback(callbackFn) {
                     // Queue the callback function, as setTimeout is asynchronous
                     global.setTimeout(function () {
-                        callbackFn.apply(undefined, _toConsumableArray(args));
+                        callbackFn.apply(undefined, args);
                     }, 0);
                 }
 
@@ -379,7 +374,7 @@ function _typeof(obj) { return obj && obj.constructor === Symbol ? "symbol" : ty
             key: 'subscribe',
             value: function subscribe(subscriptions, callbacks) {
                 // Store as to whether or not the first parameter is a string
-                var isStringTypes = _isString(subscriptions) && _isFunction(callbacks);
+                var isStringTypes = _isSubscription(subscriptions) && _isFunction(callbacks);
 
                 // If a string and a function datatype, then create an array for each parameter
                 if (isStringTypes) {
@@ -401,7 +396,7 @@ function _typeof(obj) { return obj && obj.constructor === Symbol ? "symbol" : ty
                     var subscription = subscriptions[i];
 
                     // The subscription should be a string datatype with a length greater than zero
-                    if (!_isString(subscription)) {
+                    if (!_isSubscription(subscription)) {
                         continue;
                     }
 
@@ -469,7 +464,7 @@ function _typeof(obj) { return obj && obj.constructor === Symbol ? "symbol" : ty
                     subscriptions = [subscriptions[HANDLE_SUBSCRIPTION]];
 
                     // If a string and function datatype, then create an array for each variable
-                } else if (_isString(subscriptions) && _isFunction(callbacks)) {
+                } else if (_isSubscription(subscriptions) && _isFunction(callbacks)) {
                         callbacks = [callbacks];
                         subscriptions = [subscriptions];
                     }
