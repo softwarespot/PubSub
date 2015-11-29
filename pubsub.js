@@ -505,5 +505,3 @@
 //      for-loop-vs-indexOf: http://jsperf.com/js-for-loop-vs-array-indexof/8
 //      shift-vs-splice: http://jsperf.com/shift-vs-splice
 //
-shift-vs-splice: http://jsperf.com/shift-vs-splice
-//
