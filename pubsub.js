@@ -16,37 +16,37 @@
     const _pubSubAPI = {
         // See clear in the documentation below
         clear() {
-            return _pubSubInstance.clear();
-        },
+                return _pubSubInstance.clear();
+            },
 
-        /**
-         * Expose the underlying interface to create multiple instances of the module
-         *
-         * @return {class|object} Underlying interface, which is a class in ES2015 or a function object in ES5
-         */
-        getInterface() {
-            return IPubSub;
-        },
+            /**
+             * Expose the underlying interface to create multiple instances of the module
+             *
+             * @return {class|object} Underlying interface, which is a class in ES2015 or a function object in ES5
+             */
+            getInterface() {
+                return IPubSub;
+            },
 
-        // See getVersion in the documentation below
-        getVersion() {
-            return _pubSubInstance.getVersion();
-        },
+            // See getVersion in the documentation below
+            getVersion() {
+                return _pubSubInstance.getVersion();
+            },
 
-        // See publish in the documentation below
-        publish(subscriptions, ...args) {
-            return _pubSubInstance.publish(subscriptions, ...args);
-        },
+            // See publish in the documentation below
+            publish(subscriptions, ...args) {
+                return _pubSubInstance.publish(subscriptions, ...args);
+            },
 
-        // See subscribe in the documentation below
-        subscribe(subscriptions, callbacks) {
-            return _pubSubInstance.subscribe(subscriptions, callbacks);
-        },
+            // See subscribe in the documentation below
+            subscribe(subscriptions, callbacks) {
+                return _pubSubInstance.subscribe(subscriptions, callbacks);
+            },
 
-        // See unsubscribe in the documentation below
-        unsubscribe(subscriptions, callbacks) {
-            return _pubSubInstance.unsubscribe(subscriptions, callbacks);
-        },
+            // See unsubscribe in the documentation below
+            unsubscribe(subscriptions, callbacks) {
+                return _pubSubInstance.unsubscribe(subscriptions, callbacks);
+            },
     };
 
     // Define a 'constructor' function for modules to instantiate, which is a wrapper around the _pubSubAPI
