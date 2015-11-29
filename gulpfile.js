@@ -54,7 +54,8 @@ gulp.task('jscs', function jscsTask() {
         .pipe(jscs({
             fix: true,
         }))
-        .pipe(jscs.reporter());
+        .pipe(jscs.reporter())
+        .pipe(gulp.dest(Assets.source));
 });
 
 // Check the code meets the following standards outlined in .jshintrc
