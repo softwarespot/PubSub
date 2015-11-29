@@ -3,6 +3,7 @@
 var gulp = require('gulp');
 var babel = require('gulp-babel');
 var concat = require('gulp-concat');
+var jscs = require('gulp-jscs');
 var jshint = require('gulp-jshint');
 var rename = require('gulp-rename');
 var replace = require('gulp-replace');
@@ -45,6 +46,15 @@ gulp.task('es6to5', function es6To5Task() {
             presets: ['es2015'],
         }))
         .pipe(gulp.dest(Assets.dest));
+});
+
+// Check the code meets the following standards outlined in .jscsrc
+gulp.task('jscs', function jscsTask() {
+    return gulp.src(Assets.source + Assets.main)
+        .pipe(jscs({
+            fix: true,
+        }))
+        .pipe(jscs.reporter());
 });
 
 // Check the code meets the following standards outlined in .jshintrc
@@ -107,9 +117,10 @@ gulp.task('version', function versionTask() {
 });
 
 // Register the default task
-gulp.task('default', ['version', 'jshint', 'uglify']);
+gulp.task('default', ['version', 'jscs', 'jshint', 'uglify']);
 
 // 'gulp es6to5' to transpile from ES2015 to ES5
+// 'gulp jscs' to check the styling
 // 'gulp jshint' to check the syntax
 // 'gulp uglify' to uglify the main file
 // 'gulp watch' to watch for changes to the main file
