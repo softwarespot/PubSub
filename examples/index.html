@@ -28,16 +28,16 @@
 
     <script>
         /* global PubSub */
-        (function() {
+        (function exampleModule(window) {
             // Note: Do not use anonymous functions if you would like to unsubscribe at a later stage
 
             function fireFirst() {
-                console.log('fireFirst: %o', arguments);
+                window.console.log('fireFirst: %o', arguments);
             }
 
             function fireSecond(arg1, arg2, subscriptions) {
-                console.log('fireSecond Params: %s, %s', arg1, arg2);
-                console.log('fireSecond Subscriptions Sent: ' + subscriptions);
+                window.console.log('fireSecond Params: %s, %s', arg1, arg2);
+                window.console.log('fireSecond Subscriptions Sent: ' + subscriptions);
             }
 
             // Subscribe to the 'search/twitter' subscription using the first function as a reference
@@ -53,8 +53,8 @@
             PubSub.unsubscribe('search/twitter', fireSecond);
 
             // Publish the event
-            // Notice how there is only one console.log() displayed, which is for the fireFirst() function
-            console.log('This should NOT show for the fireSecond function');
+            // Notice how there is only one window.console.log() displayed, which is for the fireFirst() function
+            window.console.log('This should NOT show for the fireSecond function');
             PubSub.publish('search/twitter', 'Example arg1', 'Example arg2');
 
             // Destroy the event for the first function by passing the handle
@@ -62,21 +62,21 @@
 
             // Publish the event
             // Notice no event fired
-            console.log('This should NOT show for any events, as all were unsubscribed previously');
+            window.console.log('This should NOT show for any events, as all were unsubscribed previously');
             PubSub.publish('search/twitter', 'Example arg1', 'Example arg2');
 
             // Test subscribing to multiple subscriptions and unsubscribing
-            console.log('Testing multiple subscriptions:');
+            window.console.log('Testing multiple subscriptions:');
             PubSub.subscribe(['search/github', 'search/js'], [fireFirst, fireSecond]);
 
-            console.log('Events should display below:');
+            window.console.log('Events should display below:');
             PubSub.publish(['search/github', 'search/js'], 'This is the first argument', 'This is the second argument');
             PubSub.unsubscribe(['search/github', 'search/js'], [fireFirst, fireSecond]);
 
-            console.log('Events should NOT display below:');
+            window.console.log('Events should NOT display below:');
             PubSub.publish(['search/github', 'search/js']);
 
-        })();
+        })(window);
     </script>
 
 </body>
