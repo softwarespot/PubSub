@@ -243,19 +243,6 @@
             // but that's up to them I guess!
             args.push(subscriptions.join(','));
 
-            /**
-             * Queue calling the callback function (idea by Nicolas Bevacqua)
-             *
-             * @param {function} callbackFn Callback function to apply the arguments to
-             * @return {undefined}
-             */
-            function _publishCallback(callbackFn) {
-                // Queue the callback function, as setTimeout is asynchronous
-                global.setTimeout(() => {
-                    callbackFn(...args);
-                }, 0);
-            }
-
             // Iterate through all the subscriptions
             for (const subscription of subscriptions) {
                 // The subscription hasn't been created as of yet
@@ -275,7 +262,11 @@
                 for (const callbackFn of functions) {
                     // Call the function with the arguments array using the spread operator
                     // callbackFn(...args); // Synchronous
-                    _publishCallback(callbackFn); // Asynchronous
+
+                    // Queue the callback function, as setTimeout is asynchronous
+                    global.setTimeout(() => {
+                        callbackFn(...args);
+                    }, 0);
 
                     // Increase the number of published subscriptions
                     published++;
