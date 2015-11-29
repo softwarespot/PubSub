@@ -62,7 +62,7 @@ The function will return either a 'handle' or an array of 'handles', depending o
     PubSub.subscribe('subscription', callbackFunction);
 
     // Using an array of strings and an array of callback functions. They must be the same length
-    PubSub.subscribe([subscription1, subscription2, subscriptionN], [callbackFunction1, callbackFunction2, callbackFunctionn]);
+    PubSub.subscribe([subscription1, subscription2, subscriptionN], [callbackFunction1, callbackFunction2, callbackFunctionN]);
 ```
 
 ### Unsubscribe
@@ -75,10 +75,10 @@ The function returns true on successful unsubscription; otherwise, false.
     PubSub.unsubscribe('subscription', callbackFunction);
 
     // Using an array of strings and an array of callback functions. They must be the same length
-    PubSub.unsubscribe(['subscription1', 'subscription2', 'subscriptionN'], [callbackFunction1, callbackFunction2, callbackFunctionn]);
+    PubSub.unsubscribe(['subscription1', 'subscription2', 'subscriptionN'], [callbackFunction1, callbackFunction2, callbackFunctionN);
 
     // Using the 'handle' by subscribe()
-    let subHandle = PubSub.subscribe('subscription', callbackFunction);
+    const subHandle = PubSub.subscribe('subscription', callbackFunction);
 
     // ... further along in the code ...
 
@@ -106,7 +106,7 @@ The function returns the number of subscribers publish to.
         console.log(subscriptionsArg);
     }
 
-    let subHandle = PubSub.subscribe('subscription', callbackFunction);
+    const subHandle = PubSub.subscribe('subscription', callbackFunction);
 
     // ... further along in the code ...
 
@@ -116,11 +116,25 @@ The function returns the number of subscribers publish to.
 
 ### Clear
 
-To clear all subscriptions, use the `clear` function.
+To clear a particular subscription or list of subscriptions, can be done by passing a string, an array of strings or a 'handle' returned by `subscribe`. To clear all subscriptions, simply eliminate the first argument.
 
 ```javascript
     // Clear all subscriptions
     PubSub.clear();
+
+    // Using a string
+    PubSub.clear('subscription');
+
+    // Using an array of strings
+    PubSub.clear(['subscription1', 'subscription2', 'subscriptionN']);
+
+    // Using the 'handle' by subscribe()
+    const subHandle = PubSub.subscribe('subscription', callbackFunction);
+
+    // ... further along in the code ...
+
+    // Clear using the 'handle'
+    PubSub.clear(subHandle);
 ```
 
 ### Interface
@@ -130,10 +144,10 @@ The module uses an underlying interface which is exposed via the `getInterface` 
 ```javascript
     // Retrieve the module's interface
     // 'subscribe', 'unsubscribe', 'publish' and 'clear'
-    let interface = PubSub.getInterface();
+    const interface = PubSub.getInterface();
 
     // Create a new instance of the interface
-    let myPubSub = new interface();
+    const myPubSub = new interface();
 
     // Publish to those who have subscribed to a subscription (see above for more details)
     // This does not publish to those subscribed to the global module
@@ -149,7 +163,7 @@ To retrieve the version number of the module, use `getVersion`.
 
 ```javascript
     // Retrieve the version number of the module
-    let version = PubSub.getVersion();
+    const version = PubSub.getVersion();
 
     // Display in the console
     console.log(version);
