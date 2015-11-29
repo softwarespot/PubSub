@@ -381,21 +381,22 @@ function _typeof(obj) { return obj && typeof Symbol !== "undefined" && obj.const
                 // Return an array of opaque 'PubSub' handles i.e. [handle id, subscription, callback]
                 var handles = [];
 
-                // Filter al elements that aren't a valid callback function
+                // Filter all elements that aren't a valid callback function
                 callbacks.filter(function (callback, index) {
                     if (_isFunction(callback)) {
                         return true;
                     }
 
-                    // Remove the subscription string
+                    // Remove the subscription
                     subscriptions.splice(index, 1);
 
                     return false;
                 });
 
-                // Filter all elements that aren't a valid subscription
+                // Filter all elements that aren't a valid subscription and where the callback function doesn't exist
                 subscriptions.filter(function (subscription, index) {
-                    if (_isSubscription(subscription)) {
+                    // If a valid subscription and the callback function doesn't exist. Could use include() when ES2015 is widely available
+                    if (_isSubscription(subscription) && _this3._subscribers[subscription].indexOf(callbacks[index]) === IS_NOT_FOUND) {
                         return true;
                     }
 
@@ -420,15 +421,11 @@ function _typeof(obj) { return obj && typeof Symbol !== "undefined" && obj.const
                     // Store the callback
                     var callback = callbacks[index];
 
-                    // Check if the callback hasn't already been registered for the subscription
-                    // Could use include() when ES2015 is widely available
-                    if (functions.indexOf(callback) === IS_NOT_FOUND) {
-                        // Push the callback function to the subscription array
-                        functions.push(callback);
+                    // Push the callback function to the subscription array
+                    functions.push(callback);
 
-                        // An opaque 'PubSub' handle
-                        handles.push([_handleId, subscription, callback]);
-                    }
+                    // An opaque 'PubSub' handle
+                    handles.push([_handleId, subscription, callback]);
                 });
 
                 // If an error occurred as no opaque 'PubSub' handles were pushed to the handles array
