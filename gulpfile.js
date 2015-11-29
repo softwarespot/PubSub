@@ -39,7 +39,7 @@ gulp.task('clean', function cleanTask(cb) {
 });
 
 // Run the babel transpiler to convert from ES2015 to ES5
-gulp.task('es6to5', function es6to5Task() {
+gulp.task('es6to5', function es6To5Task() {
     return gulp.src(Assets.source + Assets.main)
         .pipe(babel({
             presets: ['es2015'],
