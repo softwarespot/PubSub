@@ -82,8 +82,11 @@
     // Version number of the module
     const VERSION = '2.2.4';
 
+    // Cache an empty array
+    const ARRAY_EMPTY = [];
+
     // Value of indexOf when a value isn't found
-    var IS_NOT_FOUND = -1;
+    const IS_NOT_FOUND = -1;
 
     // Array constants enumeration
     const HANDLE_ID = 0;
@@ -190,6 +193,17 @@
     }
 
     /**
+     * Check if a subscription string is subscribed to i.e. contains more than one callback function
+     *
+     * @param {string} subscription Subscription string value to check
+     * @param {object} subscribers Subscription object
+     * @return {boolean} True, the subscription is subscribed to; otherwise, false
+     */
+    function _isSubscribed(subscription, subscribers) {
+        return _isSubscription(subscription) && subscribers.hasOwnProperty(subscription) && subscribers[subscription].length > 0;
+    }
+
+    /**
      * Convert a subscription argument to a valid array
      *
      * @param {array|handle|string} subscriptions An array of subscription strings, a single subscription string or an opaque handle
@@ -240,7 +254,9 @@
             }
 
             // Filter all elements that aren't a valid subscription or currently subscribed to with callback functions
-            subscriptions.filter(this._isSubscribed)
+            subscriptions.filter((subscription) => {
+                return _isSubscribed(subscription, this._subscribers);
+            })
 
             // Iterate through all the subscription strings
             .forEach((subscription) => {
@@ -290,7 +306,9 @@
             args.push(subscriptions.join(','));
 
             // Filter all elements that aren't a valid subscription or currently subscribed to with callback functions
-            subscriptions.filter(this._isSubscribed)
+            subscriptions.filter((subscription) => {
+                return _isSubscribed(subscription, this._subscribers);
+            })
 
             // Iterate through all the subscription strings
             .forEach((subscription) => {
@@ -361,7 +379,7 @@
             // Filter all elements that aren't a valid subscription and where the callback function doesn't exist
             subscriptions.filter((subscription, index) => {
                 // If a valid subscription and the callback function doesn't exist. Could use include() when ES2015 is widely available
-                if (_isSubscription(subscription) && this._subscribers[subscription].indexOf(callbacks[index]) === IS_NOT_FOUND) {
+                if (_isSubscription(subscription) && (this._subscribers[subscription] || ARRAY_EMPTY).indexOf(callbacks[index]) === IS_NOT_FOUND) {
                     return true;
                 }
 
@@ -376,7 +394,7 @@
 
                 // If an array for the event name doesn't exist, then generate a new empty array
                 // This cannot be done on the function datatype for obvious reasons (it's an array)
-                if (!this._isSubscribed(subscription)) {
+                if (!_isSubscribed(subscription, this._subscribers)) {
                     this._subscribers[subscription] = _isArray(this._subscribers[subscription]) ? this._subscribers[subscription] : [];
                 }
 
@@ -443,7 +461,7 @@
 
             // Filter all elements that aren't a valid subscription or currently subscribed to with callback functions
             subscriptions.filter((subscription, index) => {
-                if (this._isSubscribed(subscription)) {
+                if (_isSubscribed(subscription, this._subscribers)) {
                     return true;
                 }
 
@@ -468,16 +486,6 @@
 
             return true;
         }
-
-        /**
-         * Check if a subscription string is subscribed to i.e. contains more than one callback function
-         *
-         * @param {string} subscription Subscription string value to check
-         * @return {boolean} True, the subscription is subscribed to; otherwise, false
-         */
-        _isSubscribed(subscription) {
-            return _isSubscription(subscription) && this._subscribers.hasOwnProperty(subscription) && this._subscribers[subscription].length > 0;
-        }
     };
 })(window));
 
@@ -496,4 +504,6 @@
 //      forEach-vs-for-loop: http://jsperf.com/array-foreach-vs-for-loop/5
 //      for-loop-vs-indexOf: http://jsperf.com/js-for-loop-vs-array-indexof/8
 //      shift-vs-splice: http://jsperf.com/shift-vs-splice
+//
+shift-vs-splice: http://jsperf.com/shift-vs-splice
 //

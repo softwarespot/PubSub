@@ -8,6 +8,7 @@ function _typeof(obj) { return obj && typeof Symbol !== "undefined" && obj.const
 
 /*
  * PubSub module
+ *
  * https://github.com/softwarespot/pubsub
  * Author: softwarespot
  * Licensed under the MIT license
@@ -93,6 +94,9 @@ function _typeof(obj) { return obj && typeof Symbol !== "undefined" && obj.const
 
     // Version number of the module
     var VERSION = '2.2.4';
+
+    // Cache an empty array
+    var ARRAY_EMPTY = [];
 
     // Value of indexOf when a value isn't found
     var IS_NOT_FOUND = -1;
@@ -202,6 +206,17 @@ function _typeof(obj) { return obj && typeof Symbol !== "undefined" && obj.const
     }
 
     /**
+     * Check if a subscription string is subscribed to i.e. contains more than one callback function
+     *
+     * @param {string} subscription Subscription string value to check
+     * @param {object} subscribers Subscription object
+     * @return {boolean} True, the subscription is subscribed to; otherwise, false
+     */
+    function _isSubscribed(subscription, subscribers) {
+        return _isSubscription(subscription) && subscribers.hasOwnProperty(subscription) && subscribers[subscription].length > 0;
+    }
+
+    /**
      * Convert a subscription argument to a valid array
      *
      * @param {array|handle|string} subscriptions An array of subscription strings, a single subscription string or an opaque handle
@@ -260,7 +275,9 @@ function _typeof(obj) { return obj && typeof Symbol !== "undefined" && obj.const
                 }
 
                 // Filter all elements that aren't a valid subscription or currently subscribed to with callback functions
-                subscriptions.filter(this._isSubscribed)
+                subscriptions.filter(function (subscription) {
+                    return _isSubscribed(subscription, _this._subscribers);
+                })
 
                 // Iterate through all the subscription strings
                 .forEach(function (subscription) {
@@ -322,7 +339,9 @@ function _typeof(obj) { return obj && typeof Symbol !== "undefined" && obj.const
                 args.push(subscriptions.join(','));
 
                 // Filter all elements that aren't a valid subscription or currently subscribed to with callback functions
-                subscriptions.filter(this._isSubscribed)
+                subscriptions.filter(function (subscription) {
+                    return _isSubscribed(subscription, _this2._subscribers);
+                })
 
                 // Iterate through all the subscription strings
                 .forEach(function (subscription) {
@@ -396,7 +415,7 @@ function _typeof(obj) { return obj && typeof Symbol !== "undefined" && obj.const
                 // Filter all elements that aren't a valid subscription and where the callback function doesn't exist
                 subscriptions.filter(function (subscription, index) {
                     // If a valid subscription and the callback function doesn't exist. Could use include() when ES2015 is widely available
-                    if (_isSubscription(subscription) && _this3._subscribers[subscription].indexOf(callbacks[index]) === IS_NOT_FOUND) {
+                    if (_isSubscription(subscription) && (_this3._subscribers[subscription] || ARRAY_EMPTY).indexOf(callbacks[index]) === IS_NOT_FOUND) {
                         return true;
                     }
 
@@ -411,7 +430,7 @@ function _typeof(obj) { return obj && typeof Symbol !== "undefined" && obj.const
 
                     // If an array for the event name doesn't exist, then generate a new empty array
                     // This cannot be done on the function datatype for obvious reasons (it's an array)
-                    if (!_this3._isSubscribed(subscription)) {
+                    if (!_isSubscribed(subscription, _this3._subscribers)) {
                         _this3._subscribers[subscription] = _isArray(_this3._subscribers[subscription]) ? _this3._subscribers[subscription] : [];
                     }
 
@@ -477,7 +496,7 @@ function _typeof(obj) { return obj && typeof Symbol !== "undefined" && obj.const
 
                 // Filter all elements that aren't a valid subscription or currently subscribed to with callback functions
                 subscriptions.filter(function (subscription, index) {
-                    if (_this4._isSubscribed(subscription)) {
+                    if (_isSubscribed(subscription, _this4._subscribers)) {
                         return true;
                     }
 
@@ -501,19 +520,6 @@ function _typeof(obj) { return obj && typeof Symbol !== "undefined" && obj.const
                 });
 
                 return true;
-            }
-
-            /**
-             * Check if a subscription string is subscribed to i.e. contains more than one callback function
-             *
-             * @param {string} subscription Subscription string value to check
-             * @return {boolean} True, the subscription is subscribed to; otherwise, false
-             */
-
-        }, {
-            key: '_isSubscribed',
-            value: function _isSubscribed(subscription) {
-                return _isSubscription(subscription) && this._subscribers.hasOwnProperty(subscription) && this._subscribers[subscription].length > 0;
             }
         }]);
 
