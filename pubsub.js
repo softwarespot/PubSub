@@ -82,7 +82,7 @@
     const VERSION = '2.2.4';
 
     // Value of indexOf when a value isn't found
-    var NOT_FOUND = -1;
+    var IS_NOT_FOUND = -1;
 
     // Array constants enumeration
     const HANDLE_ID = 0;
@@ -154,6 +154,16 @@
     }
 
     /**
+     * Check if a variable is null
+     *
+     * @param {mixed} value Value to check
+     * @returns {boolean} True, the value is null; otherwise, false
+     */
+    function _isNull(value) {
+        return value === null;
+    }
+
+    /**
      * Check if a variable is an object
      *
      * @param {mixed} value Value to check
@@ -179,6 +189,26 @@
     }
 
     /**
+     * Convert a subscription argument to a valid array
+     *
+     * @param {array|handle|string} subscriptions An array of subscription strings, a single subscription string or an opaque handle
+     * returned by the subscribe function
+     * @return {array|null} Subscription array; otherwise, null on error
+     */
+    function _subscriptionsToArray(subscriptions) {
+        // Set the following variable(s), if it's an opaque 'PubSub' handle returned from subscribe()
+        if (_isHandle(subscriptions)) {
+            // Convert to an array datatype
+            subscriptions = [subscriptions[HANDLE_SUBSCRIPTION]];
+        } else if (_isSubscription(subscriptions)) {
+            // If a string datatype has been passed, then convert to an array datatype
+            subscriptions = [subscriptions];
+        }
+
+        return _isArray(subscriptions) ? subscriptions : null;
+    }
+
+    /**
      * PubSub class
      */
     return class PubSub {
@@ -192,12 +222,34 @@
         }
 
         /**
-         * Clear the internal subscribers store
+         * Clear the internal subscribers storage
          *
+         * @param {array|handle|string} subscriptions An array of subscription strings, a single subscription string or an opaque handle
+         * returned by the subscribe function
          * @return {undefined}
          */
-        clear() {
-            this._subscribers = {};
+        clear(subscriptions) {
+            // Convert the subscriptions argument to an array
+            subscriptions = _subscriptionsToArray(subscriptions);
+
+            // If an invalid subscription argument is passed, then clear the subscribers object literal instead
+            if (_isNull(subscriptions)) {
+                this._subscribers = {};
+                return;
+            }
+
+            // Filter all elements that aren't a valid subscription or currently subscribed to with callback functions
+            subscriptions.filter(this._isSubscribed)
+
+            // Iterate through all the subscription strings
+            .forEach((subscription) => {
+                // Retrieve the callback functions for the subscription
+                const functions = this._subscribers[subscription];
+
+                // Clear all functions for the following subscription string
+                const length = functions.length;
+                functions.splice(0, length);
+            });
         }
 
         /**
@@ -220,21 +272,14 @@
          * @return {number} Number of subscribers published to; otherwise zero on error
          */
         publish(subscriptions, ...args) {
-            // Set the following variable(s), if it's an opaque 'PubSub' handle returned from subscribe()
-            if (_isHandle(subscriptions)) {
-                // Convert to an array datatype
-                subscriptions = [subscriptions[HANDLE_SUBSCRIPTION]];
-
-                // If a string has been passed, then convert to an array datatype
-            } else if (_isSubscription(subscriptions)) {
-                subscriptions = [subscriptions];
-            }
+            // Convert the subscriptions argument to an array
+            subscriptions = _subscriptionsToArray(subscriptions);
 
             // Store the number of subscriptions published
             let published = 0;
 
             // If not an array, then the subscription was an invalid array, handle or string
-            if (!_isArray(subscriptions)) {
+            if (_isNull(subscriptions)) {
                 return published;
             }
 
@@ -243,41 +288,33 @@
             // but that's up to them I guess!
             args.push(subscriptions.join(','));
 
-            // Iterate through all the subscriptions
-            for (const subscription of subscriptions) {
-                // The subscription hasn't been created as of yet
-                if (!this._subscribers.hasOwnProperty(subscription)) {
-                    continue;
-                }
+            // Filter all elements that aren't a valid subscription or currently subscribed to with callback functions
+            subscriptions.filter(this._isSubscribed)
 
-                // Retrieve the callback functions for the subscription
-                const functions = this._subscribers[subscription];
-
-                // There are no callback functions assigned to the subscription
-                if (!functions.length) {
-                    continue;
-                }
+            // Iterate through all the subscription strings
+            .forEach((subscription) => {
 
                 // Iterate through all the functions for the particular subscription
-                for (const callbackFn of functions) {
+                this._subscribers[subscription].forEach((fn) => {
                     // Call the function with the arguments array using the spread operator
-                    // callbackFn(...args); // Synchronous
+                    // fn(...args); // Synchronous
 
                     // Queue the callback function, as setTimeout is asynchronous
                     global.setTimeout(() => {
-                        callbackFn(...args);
+                        fn(...args);
                     }, 0);
 
                     // Increase the number of published subscriptions
                     published++;
-                }
-            }
+                });
+            });
 
             // Return the number of subscribers published to
             return published;
         }
 
         /**
+         *
          * Subscribe to a subscription with a callback function
          *
          * Note: It's best practice not to make this an anonymous function as you then can't unsubscribe,
@@ -308,43 +345,59 @@
             // Return an array of opaque 'PubSub' handles i.e. [handle id, subscription, callback]
             const handles = [];
 
-            // Iterate through all the subscriptions. Must be a for loop
-            for (let i = 0, length = subscriptions.length; i < length; i++) {
-                // Store the subscription
-                const subscription = subscriptions[i];
-
-                // The subscription should be a string datatype with a length greater than zero
-                if (!_isSubscription(subscription)) {
-                    continue;
+            // Filter al elements that aren't a valid callback function
+            callbacks.filter((callback, index) => {
+                if (_isFunction(callback)) {
+                    return true;
                 }
 
-                // Store the callback
-                const callback = callbacks[i];
+                // Remove the subscription string
+                subscriptions.splice(index, 1);
 
-                // The callback should be a function datatype
-                if (!_isFunction(callback)) {
-                    continue;
+                return false;
+            });
+
+            // Filter all elements that aren't a valid subscription
+            subscriptions.filter((subscription, index) => {
+                if (_isSubscription(subscription)) {
+                    return true;
                 }
+
+                // Remove the callback function from the callback functions array
+                callbacks.splice(index, 1);
+
+                return false;
+            })
+
+            // Iterate through all the subscription strings
+            .forEach((subscription, index) => {
 
                 // If an array for the event name doesn't exist, then generate a new empty array
                 // This cannot be done on the function datatype for obvious reasons (it's an array)
-                if (!this._subscribers.hasOwnProperty(subscription)) {
-                    this._subscribers[subscription] = [];
+                if (!this._isSubscribed(subscription)) {
+                    this._subscribers[subscription] = _isArray(this._subscribers[subscription]) ? this._subscribers[subscription] : [];
                 }
 
                 // Retrieve the callbacks for the subscription
                 const functions = this._subscribers[subscription];
 
-                // Check if the callback hasn't already been registered for the event name
+                // Store the callback
+                const callback = callbacks[index];
+
+                // Check if the callback hasn't already been registered for the subscription
                 // Could use include() when ES2015 is widely available
-                if (functions.indexOf(callback) === NOT_FOUND) {
-                    // Push the callback function to the event name array
+                if (functions.indexOf(callback) === IS_NOT_FOUND) {
+                    // Push the callback function to the subscription array
                     functions.push(callback);
 
                     // An opaque 'PubSub' handle
-                    handles.push([_handleId, subscription, callback]);
+                    handles.push([
+                        _handleId,
+                        subscription,
+                        callback,
+                    ]);
                 }
-            }
+            });
 
             // If an error occurred as no opaque 'PubSub' handles were pushed to the handles array
             if (handles.length === 0) {
@@ -377,42 +430,55 @@
                 // setting the callbacks variable
                 callbacks = [subscriptions[HANDLE_CALLBACK]];
                 subscriptions = [subscriptions[HANDLE_SUBSCRIPTION]];
-
-                // If a string and function datatype, then create an array for each variable
             } else if (_isSubscription(subscriptions) && _isFunction(callbacks)) {
+                // If a string and function datatype, then create an array for each variable
                 callbacks = [callbacks];
                 subscriptions = [subscriptions];
             }
 
             // If either of the arguments are not an array or the lengths simply mismatch, then return false
-            if (!_isArray(subscriptions) || !_isArray(callbacks) || subscriptions.length !== callbacks.length) {
+            if (!_isArray(subscriptions) ||
+                !_isArray(callbacks) ||
+                subscriptions.length !== callbacks.length) {
                 return false;
             }
 
-            // Iterate through all the subscriptions. Must be a for loop
-            for (let i = 0, length = subscriptions.length; i < length; i++) {
-                // The subscription hasn't been created as of yet
-                if (!this._subscribers.hasOwnProperty(subscriptions[i])) {
-                    continue;
+            // Filter all elements that aren't a valid subscription or currently subscribed to with callback functions
+            subscriptions.filter((subscription, index) => {
+                if (this._isSubscribed(subscription)) {
+                    return true;
                 }
 
+                // Remove the callback function from the callback functions array
+                callbacks.splice(index, 1);
+
+                return false;
+            })
+
+            // Iterate through all the subscription strings
+            .forEach((subscription, index) => {
                 // Retrieve the callback functions for the subscription
-                const functions = this._subscribers[subscriptions[i]];
-
-                // There are no callback functions assigned to the subscription
-                if (!functions.length) {
-                    continue;
-                }
+                const functions = this._subscribers[subscription];
 
                 // If a callback function reference exists for the subscription,
                 // then remove from the array using the index value
-                const index = functions.indexOf(callbacks[i]);
-                if (index !== NOT_FOUND) {
-                    functions.splice(index, 1);
+                const indexOf = functions.indexOf(callbacks[index]);
+                if (indexOf !== IS_NOT_FOUND) {
+                    functions.splice(indexOf, 1);
                 }
-            }
+            });
 
             return true;
+        }
+
+        /**
+         * Check if a subscription string is subscribed to i.e. contains more than one callback function
+         *
+         * @param {string} subscription Subscription string value to check
+         * @return {boolean} True, the subscription is subscribed to; otherwise, false
+         */
+        _isSubscribed(subscription) {
+            return _isSubscription(subscription) && this._subscribers.hasOwnProperty(subscription) && this._subscribers[subscription].length > 0;
         }
     };
 })(window));
