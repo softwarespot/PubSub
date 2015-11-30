@@ -12,6 +12,14 @@ var del = require('del');
 var fs = require('fs');
 var merge = require('merge2');
 
+// Assets for the project
+var Assets = {
+    dest: './dist',
+    main: 'pubsub.js',
+    minified: 'pubsub.min.js',
+    source: './',
+};
+
 // See the uglify documentation for more details
 var _uglifySettings = {
     compress: {
@@ -24,14 +32,6 @@ var _uglifySettings = {
         unsafe: true,
         unused: true,
     },
-};
-
-// Assets for the project
-var Assets = {
-    dest: './dist',
-    main: 'pubsub.js',
-    minified: 'pubsub.min.js',
-    source: './',
 };
 
 // Clean the 'dist' directory
@@ -83,13 +83,14 @@ gulp.task('watch', function watchTask() {
 gulp.task('version', function versionTask() {
     // SemVer matching is done using (?:\d+\.){2}\d+
 
+    var VERSION_NUMBER = 1;
     var reVersion = /\n\s*\*\s+Version:\s+((?:\d+\.){2}\d+)/;
     var version = fs.readFileSync(Assets.source + Assets.main, {
         encoding: 'utf8',
     })
 
     // Match is found in the 2nd element
-    .match(reVersion)[1];
+    .match(reVersion)[VERSION_NUMBER];
 
     var streams = merge();
 
