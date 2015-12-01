@@ -61,7 +61,7 @@ The function will return either a 'handle' or an array of 'handles', depending o
     // Using a string and callback function
     PubSub.subscribe('subscription', callbackFunction);
 
-    // Using an array of strings and an array of callback functions. They must be the same length
+    // Using an array of strings and an array of callback functions. They must be the same length to work correctly
     PubSub.subscribe([subscription1, subscription2, subscriptionN], [callbackFunction1, callbackFunction2, callbackFunctionN]);
 ```
 
@@ -77,7 +77,7 @@ The function returns true on successful unsubscription; otherwise, false.
     // Using an array of strings and an array of callback functions. They must be the same length
     PubSub.unsubscribe(['subscription1', 'subscription2', 'subscriptionN'], [callbackFunction1, callbackFunction2, callbackFunctionN);
 
-    // Using the 'handle' by subscribe()
+    // Using the 'handle' from subscribe()
     const subHandle = PubSub.subscribe('subscription', callbackFunction);
 
     // ... further along in the code ...
@@ -98,11 +98,11 @@ The function returns the number of subscribers publish to.
     // Using an array of strings
     PubSub.publish(['subscription1', 'subscription2', 'subscriptionN'], arg1, arg2, argN ... [args are optional]);
 
-    // Using the 'handle' by subscribe()
+    // Using the 'handle' from subscribe()
 
     // Callback function that will be invoked when the subscription is published to
     function callBackFunction(arg1, arg2, argN, subscriptionsArg) {
-        // Display the subscriptions that were published to
+        // Display the subscriptions that were published to. Note: This is a delimited string using the comma (,) character
         console.log(subscriptionsArg);
     }
 
@@ -128,7 +128,7 @@ To clear a particular subscription or list of subscriptions, can be done by pass
     // Using an array of strings
     PubSub.clear(['subscription1', 'subscription2', 'subscriptionN']);
 
-    // Using the 'handle' by subscribe()
+    // Using the 'handle' from subscribe()
     const subHandle = PubSub.subscribe('subscription', callbackFunction);
 
     // ... further along in the code ...
