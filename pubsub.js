@@ -17,7 +17,7 @@
     const _pubSubAPI = {
         // See clear in the documentation below
         clear(subscriptions) {
-                return _pubSubInstance.clear();
+                return _pubSubInstance.clear(subscriptions);
             },
 
         /**

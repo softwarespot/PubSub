@@ -26,7 +26,7 @@ function _typeof(obj) { return obj && typeof Symbol !== "undefined" && obj.const
         // See clear in the documentation below
 
         clear: function clear(subscriptions) {
-            return _pubSubInstance.clear();
+            return _pubSubInstance.clear(subscriptions);
         },
 
         /**
