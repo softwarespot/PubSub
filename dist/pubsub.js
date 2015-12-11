@@ -25,7 +25,7 @@ function _typeof(obj) { return obj && typeof Symbol !== "undefined" && obj.const
     var _pubSubAPI = {
         // See clear in the documentation below
 
-        clear: function clear() {
+        clear: function clear(subscriptions) {
             return _pubSubInstance.clear();
         },
 
