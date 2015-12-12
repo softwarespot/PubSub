@@ -95,9 +95,6 @@ function _typeof(obj) { return obj && typeof Symbol !== "undefined" && obj.const
     // Version number of the module
     var VERSION = '2.2.4';
 
-    // Cache an empty array
-    var ARRAY_EMPTY = [];
-
     // Value of indexOf when a value isn't found
     var IS_NOT_FOUND = -1;
 
@@ -415,7 +412,7 @@ function _typeof(obj) { return obj && typeof Symbol !== "undefined" && obj.const
                 // Filter all elements that aren't a valid subscription and where the callback function doesn't exist
                 subscriptions.filter(function (subscription, index) {
                     // If a valid subscription and the callback function doesn't exist. Could use include() when ES2015 is widely available
-                    if (_isSubscription(subscription) && (_this3._subscribers[subscription] || ARRAY_EMPTY).indexOf(callbacks[index]) === IS_NOT_FOUND) {
+                    if (_isSubscription(subscription) && (_this3._subscribers[subscription] || []).indexOf(callbacks[index]) === IS_NOT_FOUND) {
                         return true;
                     }
 

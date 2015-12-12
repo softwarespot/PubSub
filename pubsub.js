@@ -82,9 +82,6 @@
     // Version number of the module
     const VERSION = '2.2.4';
 
-    // Cache an empty array
-    const ARRAY_EMPTY = [];
-
     // Value of indexOf when a value isn't found
     const IS_NOT_FOUND = -1;
 
@@ -379,7 +376,7 @@
             // Filter all elements that aren't a valid subscription and where the callback function doesn't exist
             subscriptions.filter((subscription, index) => {
                 // If a valid subscription and the callback function doesn't exist. Could use include() when ES2015 is widely available
-                if (_isSubscription(subscription) && (this._subscribers[subscription] || ARRAY_EMPTY).indexOf(callbacks[index]) === IS_NOT_FOUND) {
+                if (_isSubscription(subscription) && (this._subscribers[subscription] || []).indexOf(callbacks[index]) === IS_NOT_FOUND) {
                     return true;
                 }
 
