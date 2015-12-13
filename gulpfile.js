@@ -44,6 +44,7 @@ gulp.task('es6to5', function es6To5Task() {
     return gulp.src(Assets.source + Assets.main)
         .pipe(babel({
             presets: ['es2015'],
+            plugins: ['transform-es2015-modules-umd'],
         }))
         .pipe(gulp.dest(Assets.dest));
 });
