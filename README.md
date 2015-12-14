@@ -46,8 +46,6 @@ If you use bower, then just copy and paste the following command to the shell wi
 
 Otherwise just include `pubsub.min.js` somewhere in your document. The following module also supports AMD or Node.js module type loaders.
 
-**Note:** The module will throw an error if the name `PubSub` is found in the global space.
-
 ## Documentation
 
 The following documentation outlines in detail about using the following module.

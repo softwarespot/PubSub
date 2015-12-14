@@ -1,18 +1,4 @@
-'use strict'
-
-/**
- * PubSub module
- *
- * https://github.com/softwarespot/pubsub
- * Author: softwarespot
- * Licensed under the MIT license
- * Version: 2.2.4
- */
-
-// Constants
-
-// Version number of the module
-;
+'use strict';
 
 (function (global, factory) {
     if (typeof define === "function" && define.amd) {

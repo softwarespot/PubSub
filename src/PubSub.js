@@ -1,13 +1,9 @@
-'use strict';
-
-/**
- * PubSub module
- *
- * https://github.com/softwarespot/pubsub
- * Author: softwarespot
- * Licensed under the MIT license
- * Version: 2.2.4
- */
+// PubSub module
+//
+// https://github.com/softwarespot/pubsub
+// Author: softwarespot
+// Licensed under the MIT license
+// Version: 2.2.4
 
 // Constants
 
