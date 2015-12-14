@@ -14,10 +14,10 @@ var merge = require('merge2');
 
 // Assets for the project
 var Assets = {
-    dest: './dist',
-    main: 'pubsub.js',
-    minified: 'pubsub.min.js',
-    source: './',
+    dest: './dist/',
+    main: 'PubSub.js',
+    minified: 'PubSub.min.js',
+    source: './src/',
 };
 
 // See the uglify documentation for more details
