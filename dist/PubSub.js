@@ -56,40 +56,40 @@
     var _handleId = '|>|_|85|_|8_|\\/|0|)|_|13';
     var _handleError = [_handleId];
 
-    function isFunction(value) {
+    function _isFunction(value) {
         var tag = _objectToString.call(value);
 
         return tag === _objectStringsFunction || tag === _objectStringsGenerator;
     }
 
-    var isArray = isFunction(window.Array.isArray) ? window.Array.isArray : function (value) {
+    var _isArray = _isFunction(window.Array._isArray) ? window.Array._isArray : function (value) {
         return _objectToString.call(value) === _objectStringsArray;
     };
 
-    function isSubscription(value) {
+    function _isSubscription(value) {
         return (typeof value === 'string' || _objectToString.call(value) === _objectStringsString) && value.trim().length > 0;
     }
 
-    function isHandle(handle) {
-        return isArray(handle) && handle.length === HANDLE_MAX && handle[HANDLE_ID] === _handleId && isSubscription(handle[HANDLE_SUBSCRIPTION]) && isFunction(handle[HANDLE_CALLBACK]);
+    function _isHandle(handle) {
+        return _isArray(handle) && handle.length === HANDLE_MAX && handle[HANDLE_ID] === _handleId && _isSubscription(handle[HANDLE_SUBSCRIPTION]) && _isFunction(handle[HANDLE_CALLBACK]);
     }
 
-    function isNull(value) {
+    function _isNull(value) {
         return value === null;
     }
 
-    function isSubscribed(subscription, subscribers) {
-        return isSubscription(subscription) && subscribers.hasOwnProperty(subscription) && subscribers[subscription].length > 0;
+    function _isSubscribed(subscription, subscribers) {
+        return _isSubscription(subscription) && subscribers.hasOwnProperty(subscription) && subscribers[subscription].length > 0;
     }
 
-    function subscriptionsToArray(subscriptions) {
-        if (isHandle(subscriptions)) {
+    function _subscriptionsToArray(subscriptions) {
+        if (_isHandle(subscriptions)) {
             subscriptions = [subscriptions[HANDLE_SUBSCRIPTION]];
-        } else if (isSubscription(subscriptions)) {
+        } else if (_isSubscription(subscriptions)) {
             subscriptions = [subscriptions];
         }
 
-        return isArray(subscriptions) ? subscriptions : null;
+        return _isArray(subscriptions) ? subscriptions : null;
     }
 
     var PubSub = (function () {
@@ -104,15 +104,15 @@
             value: function clear(subscriptions) {
                 var _this = this;
 
-                subscriptions = subscriptionsToArray(subscriptions);
+                subscriptions = _subscriptionsToArray(subscriptions);
 
-                if (isNull(subscriptions)) {
+                if (_isNull(subscriptions)) {
                     this._subscribers = {};
                     return;
                 }
 
                 subscriptions.filter(function (subscription) {
-                    return isSubscribed(subscription, _this._subscribers);
+                    return _isSubscribed(subscription, _this._subscribers);
                 }).forEach(function (subscription) {
                     var functions = _this._subscribers[subscription];
                     var length = functions.length;
@@ -133,16 +133,16 @@
                     args[_key - 1] = arguments[_key];
                 }
 
-                subscriptions = subscriptionsToArray(subscriptions);
+                subscriptions = _subscriptionsToArray(subscriptions);
                 var published = 0;
 
-                if (isNull(subscriptions)) {
+                if (_isNull(subscriptions)) {
                     return published;
                 }
 
                 args.push(subscriptions.join(','));
                 subscriptions.filter(function (subscription) {
-                    return isSubscribed(subscription, _this2._subscribers);
+                    return _isSubscribed(subscription, _this2._subscribers);
                 }).forEach(function (subscription) {
                     _this2._subscribers[subscription].forEach(function (fn) {
                         window.setTimeout(function () {
@@ -158,20 +158,20 @@
             value: function subscribe(subscriptions, callbacks) {
                 var _this3 = this;
 
-                var isStringTypes = isSubscription(subscriptions) && isFunction(callbacks);
+                var isStringTypes = _isSubscription(subscriptions) && _isFunction(callbacks);
 
                 if (isStringTypes) {
                     callbacks = [callbacks];
                     subscriptions = [subscriptions];
                 }
 
-                if (!isArray(subscriptions) || !isArray(callbacks) || subscriptions.length !== callbacks.length) {
+                if (!_isArray(subscriptions) || !_isArray(callbacks) || subscriptions.length !== callbacks.length) {
                     return _handleError;
                 }
 
                 var handles = [];
                 callbacks.filter(function (callback, index) {
-                    if (isFunction(callback)) {
+                    if (_isFunction(callback)) {
                         return true;
                     }
 
@@ -179,15 +179,15 @@
                     return false;
                 });
                 subscriptions.filter(function (subscription, index) {
-                    if (isSubscription(subscription) && (_this3._subscribers[subscription] || []).indexOf(callbacks[index]) === IS_NOT_FOUND) {
+                    if (_isSubscription(subscription) && (_this3._subscribers[subscription] || []).indexOf(callbacks[index]) === IS_NOT_FOUND) {
                         return true;
                     }
 
                     callbacks.splice(index, DELETE_ITEMS_COUNT);
                     return false;
                 }).forEach(function (subscription, index) {
-                    if (!isSubscribed(subscription, _this3._subscribers)) {
-                        _this3._subscribers[subscription] = isArray(_this3._subscribers[subscription]) ? _this3._subscribers[subscription] : [];
+                    if (!_isSubscribed(subscription, _this3._subscribers)) {
+                        _this3._subscribers[subscription] = _isArray(_this3._subscribers[subscription]) ? _this3._subscribers[subscription] : [];
                     }
 
                     var functions = _this3._subscribers[subscription];
@@ -211,20 +211,20 @@
                     return false;
                 }
 
-                if (isHandle(subscriptions)) {
+                if (_isHandle(subscriptions)) {
                     callbacks = [subscriptions[HANDLE_CALLBACK]];
                     subscriptions = [subscriptions[HANDLE_SUBSCRIPTION]];
-                } else if (isSubscription(subscriptions) && isFunction(callbacks)) {
+                } else if (_isSubscription(subscriptions) && _isFunction(callbacks)) {
                     callbacks = [callbacks];
                     subscriptions = [subscriptions];
                 }
 
-                if (!isArray(subscriptions) || !isArray(callbacks) || subscriptions.length !== callbacks.length) {
+                if (!_isArray(subscriptions) || !_isArray(callbacks) || subscriptions.length !== callbacks.length) {
                     return false;
                 }
 
                 subscriptions.filter(function (subscription, index) {
-                    if (isSubscribed(subscription, _this4._subscribers)) {
+                    if (_isSubscribed(subscription, _this4._subscribers)) {
                         return true;
                     }
 
