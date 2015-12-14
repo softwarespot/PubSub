@@ -14,10 +14,10 @@ var merge = require('merge2');
 
 // Assets for the project
 var Assets = {
-    dest: './dist',
-    main: 'pubsub.js',
-    minified: 'pubsub.min.js',
-    source: './',
+    dest: './dist/',
+    main: 'PubSub.js',
+    minified: 'PubSub.min.js',
+    source: './src/',
 };
 
 // See the uglify documentation for more details
@@ -44,6 +44,7 @@ gulp.task('es6to5', function es6To5Task() {
     return gulp.src(Assets.source + Assets.main)
         .pipe(babel({
             presets: ['es2015'],
+            plugins: ['transform-es2015-modules-umd'],
         }))
         .pipe(gulp.dest(Assets.dest));
 });
@@ -84,7 +85,7 @@ gulp.task('version', function versionTask() {
     // SemVer matching is done using (?:\d+\.){2}\d+
 
     var VERSION_NUMBER = 1;
-    var reVersion = /\n\s*\*\s+Version:\s+((?:\d+\.){2}\d+)/;
+    var reVersion = /\n\/{2}\sVersion:\s((?:\d+\.){2}\d+)/;
     var version = fs.readFileSync(Assets.source + Assets.main, {
         encoding: 'utf8',
     })

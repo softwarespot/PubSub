@@ -7,6 +7,7 @@
     "url": "https://github.com/softwarespot/PubSub.git"
   },
   "devDependencies": {
+    "babel-plugin-transform-es2015-modules-umd": "^6.3.13",
     "babel-preset-es2015": "^6.1.18",
     "del": "^2.1.0",
     "gulp": "~3.9.0",
