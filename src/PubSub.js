@@ -1,3 +1,5 @@
+'use strict';
+
 // PubSub module
 //
 // https://github.com/softwarespot/pubsub

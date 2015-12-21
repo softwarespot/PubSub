@@ -10,7 +10,7 @@ PubSub is a JavaScript module based around the Publish–Subscribe pattern. If y
 
 ```html
     <!--Use the minified version for better performance-->
-    <script src="pubsub.min.js"></script>
+    <script src="PubSub_es5.min.js"></script>
 
     <script>
         // Call the following function when
