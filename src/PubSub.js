@@ -33,7 +33,7 @@ const _objectStringsGenerator = '[object GeneratorFunction]';
 const _objectStringsString = '[object String]';
 
 // Store the Object prototype toString method
-const _objectToString = window.Object.prototype.toString;
+const _nativeObjectToString = window.Object.prototype.toString;
 
 // Unique identifier (advanced leet speak for PubSub_Module)
 const _handleId = '|>|_|85|_|8_|\\/|0|)|_|13';
@@ -52,7 +52,7 @@ const _handleError = [_handleId];
  * @returns {boolean} True, the value is a function datatype; otherwise, false
  */
 function _isFunction(value) {
-    const tag = _objectToString.call(value);
+    const tag = _nativeObjectToString.call(value);
     return tag === _objectStringsFunction || tag === _objectStringsGenerator;
 }
 
@@ -63,7 +63,7 @@ function _isFunction(value) {
  * @returns {boolean} True, the value is an array datatype; otherwise, false
  */
 const _isArray = _isFunction(window.Array._isArray) ? window.Array._isArray : (value) => {
-    return _objectToString.call(value) === _objectStringsArray;
+    return _nativeObjectToString.call(value) === _objectStringsArray;
 };
 
 /**
@@ -73,7 +73,7 @@ const _isArray = _isFunction(window.Array._isArray) ? window.Array._isArray : (v
  * @returns {boolean} True, the value is a string datatype; otherwise, false
  */
 function _isSubscription(value) {
-    return (typeof value === 'string' || _objectToString.call(value) === _objectStringsString) && value.trim().length > 0;
+    return (typeof value === 'string' || _nativeObjectToString.call(value) === _objectStringsString) && value.trim().length > 0;
 }
 
 /**
