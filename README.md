@@ -10,7 +10,7 @@ PubSub is a JavaScript module based around the Publish–Subscribe pattern. If y
 
 ```html
     <!--Use the minified version for better performance-->
-    <script src="PubSub_es5.min.js"></script>
+    <script src="dist/PubSub_es5.min.js"></script>
 
     <script>
         // Call the following function when
@@ -44,7 +44,7 @@ If you use bower, then just copy and paste the following command to the shell wi
     bower install pubsub-module
 ```
 
-Otherwise just include `pubsub.min.js` somewhere in your document. The following module also supports AMD or Node.js module type loaders.
+Otherwise just include `dist/PubSub_es5.min.js` somewhere in your document. The following module also supports AMD or Node.js module type loaders.
 
 ## Documentation
 
