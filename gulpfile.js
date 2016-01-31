@@ -102,7 +102,7 @@ gulp.task('version', function versionTask() {
     streams.add(
         gulp.src(Assets.src + '/' + Assets.main)
         .pipe(replace(reVersion, '$1' + pkg.version))
-        .pipe(gulp.dest(Assets.source))
+        .pipe(gulp.dest(Assets.src))
     );
 
     // Update the README.md version number

@@ -44,6 +44,15 @@ const _handleError = [_handleId];
 // Helper methods
 
 /**
+ * Create an empty object that doesn't inherit from Object.prototype
+ *
+ * @return {object} An empty object that hasn't inherited properties from Object.prototype
+ */
+function _create() {
+    return window.Object.create(null);
+}
+
+/**
  * Check if a variable is a function datatype
  *
  * @param {mixed} value Value to check
@@ -148,7 +157,7 @@ class PubSub {
      * @return {undefined}
      */
     constructor() {
-        this._subscribers = {};
+        this._subscribers = _create();
     }
 
     /**
@@ -164,7 +173,7 @@ class PubSub {
 
         // If an invalid subscription argument is passed, then clear the subscribers object literal instead
         if (_isNull(subscriptions)) {
-            this._subscribers = {};
+            this._subscribers = _create();
             return;
         }
 
