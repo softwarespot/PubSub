@@ -11,6 +11,7 @@
     "babel-preset-es2015": "^6.3.13",
     "del": "^2.2.0",
     "eslint-config-airbnb": "^4.0.0",
+    "eslint-plugin-react": "^3.16.1",
     "gulp": "~3.9.0",
     "gulp-babel": "^6.1.1",
     "gulp-concat": "^2.6.0",
@@ -20,8 +21,5 @@
     "gulp-replace": "^0.5.4",
     "gulp-uglify": "^1.5.1",
     "merge2": "^1.0.0"
-  },
-  "dependencies": {
-    "eslint-plugin-react": "^3.16.1"
   }
 }
