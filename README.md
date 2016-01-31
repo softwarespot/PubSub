@@ -169,13 +169,13 @@ To retrieve the version number of the module, use `getVersion`.
 
 ## Contribute
 
-To contribute to the project, you will first need to install [gulp](http://gulpjs.com) globally on your system. Once installation has completed, change the working directory to the plugin's location and run the following command:
+To contribute to the project, you will first need to install [gulp](http://gulpjs.com) globally on your system. Once installation has completed, change the working directory to the module's location and run the following command:
 
 ```shell
     npm install
 ```
 
-After installation of the local modules, you're ready to start contributing to the project. Before you submit your PR, please don't forget to call `gulp`, which will run against [ESlint](http://eslint.org) for any errors, but will also minify the plugin.
+After installation of the local modules, you're ready to start contributing to the project. Before you submit your PR, please don't forget to call `gulp`, which will run against [ESlint](http://eslint.org) for any errors, but will also minify the module and transpile using [babel](https://babeljs.io).
 
 ##### Watch
 Call the following command to start 'watching' for any changes to the main JavaScript file(s). This will automatically invoke ESLint and Uglify.
@@ -196,7 +196,7 @@ Call the following command to invoke Uglify, which will minify the main JavaScri
 ```
 
 ##### Build
-Call the following command to invoke both ESLint and Uglify.
+Call the following command to invoke babel, ESLint and Uglify.
 ```shell
     gulp
 ```
