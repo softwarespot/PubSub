@@ -1,5 +1,3 @@
-'use strict';
-
 // PubSub module
 //
 // https://github.com/softwarespot/pubsub
@@ -62,9 +60,7 @@ function _isFunction(value) {
  * @param {mixed} value Value to check
  * @returns {boolean} True, the value is an array datatype; otherwise, false
  */
-const _isArray = _isFunction(window.Array._isArray) ? window.Array._isArray : (value) => {
-    return _nativeObjectToString.call(value) === _objectStringsArray;
-};
+const _isArray = _isFunction(window.Array._isArray) ? window.Array._isArray : (value) => _nativeObjectToString.call(value) === _objectStringsArray;
 
 /**
  * Check if a variable is a string datatype
@@ -173,9 +169,7 @@ class PubSub {
         }
 
         // Filter all elements that aren't a valid subscription or currently subscribed to with callback functions
-        subscriptions.filter((subscription) => {
-            return _isSubscribed(subscription, this._subscribers);
-        })
+        subscriptions.filter((subscription) => _isSubscribed(subscription, this._subscribers))
 
         // Iterate through all the subscription strings
         .forEach((subscription) => {
@@ -225,13 +219,10 @@ class PubSub {
         args.push(subscriptions.join(','));
 
         // Filter all elements that aren't a valid subscription or currently subscribed to with callback functions
-        subscriptions.filter((subscription) => {
-            return _isSubscribed(subscription, this._subscribers);
-        })
+        subscriptions.filter((subscription) => _isSubscribed(subscription, this._subscribers))
 
         // Iterate through all the subscription strings
         .forEach((subscription) => {
-
             // Iterate through all the functions for the particular subscription
             this._subscribers[subscription].forEach((fn) => {
                 // Call the function with the arguments array using the spread operator
@@ -310,7 +301,6 @@ class PubSub {
 
         // Iterate through all the subscription strings
         .forEach((subscription, index) => {
-
             // If an array for the event name doesn't exist, then generate a new empty array
             // This cannot be done on the function datatype for obvious reasons (it's an array)
             if (!_isSubscribed(subscription, this._subscribers)) {
@@ -413,34 +403,22 @@ class PubSub {
 const _pubSubInterface = new PubSub();
 
 // See clear in the documentation
-export const clear = (subscriptions) => {
-    return _pubSubInterface.clear(subscriptions);
-};
+export const clear = (subscriptions) => _pubSubInterface.clear(subscriptions);
 
 // Expose the underlying interface to create multiple instances of the module
-export const getInterface = () => {
-    return PubSub;
-};
+export const getInterface = () => PubSub;
 
 // See getVersion in the documentation
-export const getVersion = () => {
-    return _pubSubInterface.getVersion();
-};
+export const getVersion = () => _pubSubInterface.getVersion();
 
 // See publish in the documentation
-export const publish = (subscriptions, ...args) => {
-    return _pubSubInterface.publish(subscriptions, ...args);
-};
+export const publish = (subscriptions, ...args) => _pubSubInterface.publish(subscriptions, ...args);
 
 // See subscribe in the documentation
-export const subscribe = (subscriptions, callbacks) => {
-    return _pubSubInterface.subscribe(subscriptions, callbacks);
-};
+export const subscribe = (subscriptions, callbacks) => _pubSubInterface.subscribe(subscriptions, callbacks);
 
 // See unsubscribe in the documentation
-export const unsubscribe = (subscriptions, callbacks) => {
-    return _pubSubInterface.unsubscribe(subscriptions, callbacks);
-};
+export const unsubscribe = (subscriptions, callbacks) => _pubSubInterface.unsubscribe(subscriptions, callbacks);
 
 //
 // PubSub pattern in JavaScript
