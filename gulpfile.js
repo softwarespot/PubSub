@@ -15,7 +15,7 @@ var pkg = require('./package.json');
 // Assets for the project
 var Assets = {
     dest: './dist/',
-    main: './src/PubSub.js',
+    main: 'PubSub.js',
     minified: 'PubSub.min.js',
     minifiedES5: 'PubSub_es5.min.js',
     package: './package.json',
@@ -45,7 +45,7 @@ gulp.task('clean', function cleanTask(cb) {
 
 // Run the babel transpiler to convert from ES2015 to ES5, as well as minifying
 gulp.task('es2015to5', function es2015To5Task() {
-    return gulp.src(Assets.main)
+    return gulp.src(Assets.src + '/' + Assets.main)
         .pipe(babel({
             presets: ['es2015'],
             plugins: ['transform-es2015-modules-umd'],
@@ -62,7 +62,7 @@ gulp.task('eslint', function esLintTask() {
         return file.eslint !== undefined && file.eslint !== null && file.eslint.fixed;
     }
 
-    return gulp.src(Assets.main)
+    return gulp.src(Assets.src + '/' + Assets.main)
         .pipe(eslint({
             fix: true,
             useEslintrc: '.eslintrc',
@@ -74,11 +74,11 @@ gulp.task('eslint', function esLintTask() {
 // Uglify aka minify the main file
 gulp.task('uglify', function uglifyTask() {
     // Copy the main file to the source directory
-    return gulp.src(Assets.main)
+    return gulp.src(Assets.src + '/' + Assets.main)
         .pipe(gulp.dest(Assets.dest));
 
     // Uglify right now is unable to uglify ES2015
-    // return gulp.src(Assets.main)
+    // return gulp.src(Assets.src + '/' + Assets.main)
     //     .pipe(uglify(_uglifySettings))
     //     .pipe(rename(Assets.minified))
     //     .pipe(gulp.dest(Assets.dest));
@@ -86,7 +86,7 @@ gulp.task('uglify', function uglifyTask() {
 
 // Watch for changes to the main file
 gulp.task('watch', function watchTask() {
-    gulp.watch(Assets.main, ['eslint', 'uglify']);
+    gulp.watch(Assets.src + '/' + Assets.main, ['eslint', 'uglify']);
 });
 
 // Update version numbers based on the main file version comment
@@ -100,7 +100,7 @@ gulp.task('version', function versionTask() {
 
     // Update the main js file version number
     streams.add(
-        gulp.src(Assets.main)
+        gulp.src(Assets.src + '/' + Assets.main)
         .pipe(replace(reVersion, '$1' + pkg.version))
         .pipe(gulp.dest(Assets.source))
     );
