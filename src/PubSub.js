@@ -30,8 +30,14 @@ const _objectStringsFunction = '[object Function]';
 const _objectStringsGenerator = '[object GeneratorFunction]';
 const _objectStringsString = '[object String]';
 
-// Store the Object prototype toString method
-const _nativeObjectToString = window.Object.prototype.toString;
+// Cache native objects
+const _nativeArray = window.Array;
+
+const _nativeObject = window.Object;
+const _nativeObjectCreate = _nativeObject.create;
+const _nativeObjectToString = _nativeObject.prototype.toString;
+
+const _setTimeout = window.setTimeout;
 
 // Unique identifier (advanced leet speak for PubSub_Module)
 const _handleId = '|>|_|85|_|8_|\\/|0|)|_|13';
@@ -49,7 +55,7 @@ const _handleError = [_handleId];
  * @return {object} An empty object that hasn't inherited properties from Object.prototype
  */
 function _create() {
-    return window.Object.create(null);
+    return _nativeObjectCreate(null);
 }
 
 /**
@@ -69,7 +75,7 @@ function _isFunction(value) {
  * @param {mixed} value Value to check
  * @returns {boolean} True, the value is an array datatype; otherwise, false
  */
-const _isArray = _isFunction(window.Array._isArray) ? window.Array._isArray : (value) => _nativeObjectToString.call(value) === _objectStringsArray;
+const _isArray = _isFunction(_nativeArray.isArray) ? _nativeArray.isArray : (value) => _nativeObjectToString.call(value) === _objectStringsArray;
 
 /**
  * Check if a variable is a string datatype
@@ -238,7 +244,7 @@ class PubSub {
                 // fn(...args); // Synchronous
 
                 // Queue the callback function, as setTimeout is asynchronous
-                window.setTimeout(() => {
+                _setTimeout(() => {
                     fn(...args);
                 }, 0);
 
