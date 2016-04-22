@@ -25,27 +25,27 @@ const HANDLE_MAX = 3;
 // Fields
 
 // Return strings of toString() found on the Object prototype
-const _objectStringsArray = '[object Array]';
-const _objectStringsFunction = '[object Function]';
-const _objectStringsGenerator = '[object GeneratorFunction]';
-const _objectStringsString = '[object String]';
+const objectStringsArray = '[object Array]';
+const objectStringsFunction = '[object Function]';
+const objectStringsGenerator = '[object GeneratorFunction]';
+const objectStringsString = '[object String]';
 
 // Cache native objects
-const _nativeArray = window.Array;
+const nativeArray = window.Array;
 
-const _nativeObject = window.Object;
-const _nativeObjectCreate = _nativeObject.create;
-const _nativeObjectToString = _nativeObject.prototype.toString;
+const nativeObject = window.Object;
+const nativeObjectCreate = nativeObject.create;
+const nativeObjectToString = nativeObject.prototype.toString;
 
-const _setTimeout = window.setTimeout;
+const setTimeout = window.setTimeout;
 
-// Unique identifier (advanced leet speak for PubSub_Module)
-const _handleId = '|>|_|85|_|8_|\\/|0|)|_|13';
+// Unique identifier (advanced leet speak for PubSubModule)
+const handleId = '|>||85||8|\\/|0|)||13';
 
 // Generic handle for an error
 // This is an array so the reference can be used as a
 // way of verifying that it's an error
-const _handleError = [_handleId];
+const handleError = [handleId];
 
 // Helper methods
 
@@ -54,8 +54,8 @@ const _handleError = [_handleId];
  *
  * @return {object} An empty object that hasn't inherited properties from Object.prototype
  */
-function _create() {
-    return _nativeObjectCreate(null);
+function create() {
+    return nativeObjectCreate(null);
 }
 
 /**
@@ -64,9 +64,9 @@ function _create() {
  * @param {mixed} value Value to check
  * @returns {boolean} True, the value is a function datatype; otherwise, false
  */
-function _isFunction(value) {
-    const tag = _nativeObjectToString.call(value);
-    return tag === _objectStringsFunction || tag === _objectStringsGenerator;
+function isFunction(value) {
+    const tag = nativeObjectToString.call(value);
+    return tag === objectStringsFunction || tag === objectStringsGenerator;
 }
 
 /**
@@ -75,7 +75,7 @@ function _isFunction(value) {
  * @param {mixed} value Value to check
  * @returns {boolean} True, the value is an array datatype; otherwise, false
  */
-const _isArray = _isFunction(_nativeArray.isArray) ? _nativeArray.isArray : (value) => _nativeObjectToString.call(value) === _objectStringsArray;
+const isArray = isFunction(nativeArray.isArray) ? nativeArray.isArray : (value) => nativeObjectToString.call(value) === objectStringsArray;
 
 /**
  * Check if a variable is a string datatype
@@ -83,8 +83,8 @@ const _isArray = _isFunction(_nativeArray.isArray) ? _nativeArray.isArray : (val
  * @param {mixed} value Value to check
  * @returns {boolean} True, the value is a string datatype; otherwise, false
  */
-function _isSubscription(value) {
-    return (typeof value === 'string' || _nativeObjectToString.call(value) === _objectStringsString) && value.trim().length > 0;
+function isSubscription(value) {
+    return (typeof value === 'string' || nativeObjectToString.call(value) === objectStringsString) && value.trim().length > 0;
 }
 
 /**
@@ -93,21 +93,21 @@ function _isSubscription(value) {
  * @param {mixed} handle Handle to check
  * @returns {boolean} True, the handle is an opaque handle; otherwise, false
  */
-function _isHandle(handle) {
+function isHandle(handle) {
     // The opaque 'PubSub' handle must be an array
-    return _isArray(handle) &&
+    return isArray(handle) &&
 
         // Have a length equal to that of HANDLE_MAX
         handle.length === HANDLE_MAX &&
 
         // Contain a handle at the 'id position'
-        handle[HANDLE_ID] === _handleId &&
+        handle[HANDLE_ID] === handleId &&
 
         // Contain a string at the 'subscription position'
-        _isSubscription(handle[HANDLE_SUBSCRIPTION]) &&
+        isSubscription(handle[HANDLE_SUBSCRIPTION]) &&
 
         // Contain a function at the 'callback position'
-        _isFunction(handle[HANDLE_CALLBACK]);
+        isFunction(handle[HANDLE_CALLBACK]);
 }
 
 /**
@@ -116,7 +116,7 @@ function _isHandle(handle) {
  * @param {mixed} value Value to check
  * @returns {boolean} True, the value is null; otherwise, false
  */
-function _isNull(value) {
+function isNull(value) {
     return value === null;
 }
 
@@ -127,8 +127,8 @@ function _isNull(value) {
  * @param {object} subscribers Subscription object
  * @return {boolean} True, the subscription is subscribed to; otherwise, false
  */
-function _isSubscribed(subscription, subscribers) {
-    return _isSubscription(subscription) && subscribers.hasOwnProperty(subscription) && subscribers[subscription].length > 0;
+function isSubscribed(subscription, subscribers) {
+    return isSubscription(subscription) && subscribers.hasOwnProperty(subscription) && subscribers[subscription].length > 0;
 }
 
 /**
@@ -138,17 +138,17 @@ function _isSubscribed(subscription, subscribers) {
  * returned by the subscribe function
  * @return {array|null} Subscription array; otherwise, null on error
  */
-function _subscriptionsToArray(subscriptions) {
+function subscriptionsToArray(subscriptions) {
     // Set the following variable(s), if it's an opaque 'PubSub' handle returned from subscribe()
-    if (_isHandle(subscriptions)) {
+    if (isHandle(subscriptions)) {
         // Convert to an array datatype
         subscriptions = [subscriptions[HANDLE_SUBSCRIPTION]];
-    } else if (_isSubscription(subscriptions)) {
+    } else if (isSubscription(subscriptions)) {
         // If a string datatype has been passed, then convert to an array datatype
         subscriptions = [subscriptions];
     }
 
-    return _isArray(subscriptions) ? subscriptions : null;
+    return isArray(subscriptions) ? subscriptions : null;
 }
 
 // Interface
@@ -163,7 +163,7 @@ class PubSub {
      * @return {undefined}
      */
     constructor() {
-        this._subscribers = _create();
+        this.subscribers = create();
     }
 
     /**
@@ -175,21 +175,21 @@ class PubSub {
      */
     clear(subscriptions) {
         // Convert the subscriptions argument to an array
-        subscriptions = _subscriptionsToArray(subscriptions);
+        subscriptions = subscriptionsToArray(subscriptions);
 
         // If an invalid subscription argument is passed, then clear the subscribers object literal instead
-        if (_isNull(subscriptions)) {
-            this._subscribers = _create();
+        if (isNull(subscriptions)) {
+            this.subscribers = create();
             return;
         }
 
         // Filter all elements that aren't a valid subscription or currently subscribed to with callback functions
-        subscriptions.filter((subscription) => _isSubscribed(subscription, this._subscribers))
+        subscriptions.filter((subscription) => isSubscribed(subscription, this.subscribers))
 
         // Iterate through all the subscription strings
         .forEach((subscription) => {
             // Retrieve the callback functions for the subscription
-            const functions = this._subscribers[subscription];
+            const functions = this.subscribers[subscription];
 
             // Clear all functions for the following subscription string
             const length = functions.length;
@@ -218,13 +218,13 @@ class PubSub {
      */
     publish(subscriptions, ...args) {
         // Convert the subscriptions argument to an array
-        subscriptions = _subscriptionsToArray(subscriptions);
+        subscriptions = subscriptionsToArray(subscriptions);
 
         // Store the number of subscriptions published
         let published = 0;
 
         // If not an array, then the subscription was an invalid array, handle or string
-        if (_isNull(subscriptions)) {
+        if (isNull(subscriptions)) {
             return published;
         }
 
@@ -234,17 +234,17 @@ class PubSub {
         args.push(subscriptions.join(','));
 
         // Filter all elements that aren't a valid subscription or currently subscribed to with callback functions
-        subscriptions.filter((subscription) => _isSubscribed(subscription, this._subscribers))
+        subscriptions.filter((subscription) => isSubscribed(subscription, this.subscribers))
 
         // Iterate through all the subscription strings
         .forEach((subscription) => {
             // Iterate through all the functions for the particular subscription
-            this._subscribers[subscription].forEach((fn) => {
-                // Call the function with the arguments array using the spread operator
+            this.subscribers[subscription].forEach((fn) => {
+                // Call the function with the arguments array using the spread operators
                 // fn(...args); // Synchronous
 
                 // Queue the callback function, as setTimeout is asynchronous
-                _setTimeout(() => {
+                setTimeout(() => {
                     fn(...args);
                 }, 0);
 
@@ -271,7 +271,7 @@ class PubSub {
      */
     subscribe(subscriptions, callbacks) {
         // Store as to whether or not the first parameter is a string
-        const isStringTypes = _isSubscription(subscriptions) && _isFunction(callbacks);
+        const isStringTypes = isSubscription(subscriptions) && isFunction(callbacks);
 
         // If a string and a function datatype, then create an array for each parameter
         if (isStringTypes) {
@@ -280,10 +280,10 @@ class PubSub {
         }
 
         // If either of the arguments are not an array or the lengths mismatch, then return a handle error
-        if (!_isArray(subscriptions) ||
-            !_isArray(callbacks) ||
+        if (!isArray(subscriptions) ||
+            !isArray(callbacks) ||
             subscriptions.length !== callbacks.length) {
-            return _handleError;
+            return handleError;
         }
 
         // Return an array of opaque 'PubSub' handles i.e. [handle id, subscription, callback]
@@ -291,7 +291,7 @@ class PubSub {
 
         // Filter all elements that aren't a valid callback function
         callbacks.filter((callback, index) => {
-            if (_isFunction(callback)) {
+            if (isFunction(callback)) {
                 return true;
             }
 
@@ -304,7 +304,7 @@ class PubSub {
         // Filter all elements that aren't a valid subscription and where the callback function doesn't exist
         subscriptions.filter((subscription, index) => {
             // If a valid subscription and the callback function doesn't exist. Could use include() when ES2015 is widely available
-            if (_isSubscription(subscription) && (this._subscribers[subscription] || []).indexOf(callbacks[index]) === IS_NOT_FOUND) {
+            if (isSubscription(subscription) && (this.subscribers[subscription] || []).indexOf(callbacks[index]) === IS_NOT_FOUND) {
                 return true;
             }
 
@@ -318,12 +318,12 @@ class PubSub {
         .forEach((subscription, index) => {
             // If an array for the event name doesn't exist, then generate a new empty array
             // This cannot be done on the function datatype for obvious reasons (it's an array)
-            if (!_isSubscribed(subscription, this._subscribers)) {
-                this._subscribers[subscription] = _isArray(this._subscribers[subscription]) ? this._subscribers[subscription] : [];
+            if (!isSubscribed(subscription, this.subscribers)) {
+                this.subscribers[subscription] = isArray(this.subscribers[subscription]) ? this.subscribers[subscription] : [];
             }
 
             // Retrieve the callbacks for the subscription
-            const functions = this._subscribers[subscription];
+            const functions = this.subscribers[subscription];
 
             // Store the callback
             const callback = callbacks[index];
@@ -333,7 +333,7 @@ class PubSub {
 
             // An opaque 'PubSub' handle
             handles.push([
-                _handleId,
+                handleId,
                 subscription,
                 callback,
             ]);
@@ -341,7 +341,7 @@ class PubSub {
 
         // If an error occurred as no opaque 'PubSub' handles were pushed to the handles array
         if (handles.length === 0) {
-            return isStringTypes ? _handleError : [_handleError];
+            return isStringTypes ? handleError : [handleError];
         }
 
         // If a string was passed as the first parameter, then return a single handle instead of an array of handles
@@ -360,32 +360,32 @@ class PubSub {
      */
     unsubscribe(subscriptions, callbacks) {
         // If the reference is equal to the handle error array, then an error occurred with previously subscribing
-        if (subscriptions === _handleError) {
+        if (subscriptions === handleError) {
             return false;
         }
 
         // Set the following variable(s), if it's an opaque 'PubSub' handle returned from subscribe()
-        if (_isHandle(subscriptions)) {
+        if (isHandle(subscriptions)) {
             // Do not swap these around, otherwise it will cause an error with overwriting subscriptions before
             // setting the callbacks variable
             callbacks = [subscriptions[HANDLE_CALLBACK]];
             subscriptions = [subscriptions[HANDLE_SUBSCRIPTION]];
-        } else if (_isSubscription(subscriptions) && _isFunction(callbacks)) {
+        } else if (isSubscription(subscriptions) && isFunction(callbacks)) {
             // If a string and function datatype, then create an array for each variable
             callbacks = [callbacks];
             subscriptions = [subscriptions];
         }
 
         // If either of the arguments are not an array or the lengths simply mismatch, then return false
-        if (!_isArray(subscriptions) ||
-            !_isArray(callbacks) ||
+        if (!isArray(subscriptions) ||
+            !isArray(callbacks) ||
             subscriptions.length !== callbacks.length) {
             return false;
         }
 
         // Filter all elements that aren't a valid subscription or currently subscribed to with callback functions
         subscriptions.filter((subscription, index) => {
-            if (_isSubscribed(subscription, this._subscribers)) {
+            if (isSubscribed(subscription, this.subscribers)) {
                 return true;
             }
 
@@ -398,7 +398,7 @@ class PubSub {
         // Iterate through all the subscription strings
         .forEach((subscription, index) => {
             // Retrieve the callback functions for the subscription
-            const functions = this._subscribers[subscription];
+            const functions = this.subscribers[subscription];
 
             // If a callback function reference exists for the subscription,
             // then remove from the array using the index value
@@ -415,25 +415,25 @@ class PubSub {
 // Public API
 
 // Create an instance of the PubSub interface
-const _pubSubInterface = new PubSub();
+const pubSubInterface = new PubSub();
 
 // See clear in the documentation
-export const clear = (subscriptions) => _pubSubInterface.clear(subscriptions);
+export const clear = (subscriptions) => pubSubInterface.clear(subscriptions);
 
 // Expose the underlying interface to create multiple instances of the module
 export const getInterface = () => PubSub;
 
 // See getVersion in the documentation
-export const getVersion = () => _pubSubInterface.getVersion();
+export const getVersion = () => pubSubInterface.getVersion();
 
 // See publish in the documentation
-export const publish = (subscriptions, ...args) => _pubSubInterface.publish(subscriptions, ...args);
+export const publish = (subscriptions, ...args) => pubSubInterface.publish(subscriptions, ...args);
 
 // See subscribe in the documentation
-export const subscribe = (subscriptions, callbacks) => _pubSubInterface.subscribe(subscriptions, callbacks);
+export const subscribe = (subscriptions, callbacks) => pubSubInterface.subscribe(subscriptions, callbacks);
 
 // See unsubscribe in the documentation
-export const unsubscribe = (subscriptions, callbacks) => _pubSubInterface.unsubscribe(subscriptions, callbacks);
+export const unsubscribe = (subscriptions, callbacks) => pubSubInterface.unsubscribe(subscriptions, callbacks);
 
 //
 // PubSub pattern in JavaScript
@@ -444,7 +444,7 @@ export const unsubscribe = (subscriptions, callbacks) => _pubSubInterface.unsubs
 //      Peter Higgins, URL: https://github.com/phiggins42/bloody-jquery-plugins/blob/master/pubsub.js
 //      PubSubJS, handle/token concept, URL: https://github.com/mroderick/PubSubJS/blob/master/src/pubsub.js
 //      PubSub, subscription array concept, URL: https://github.com/drublic/PubSub/
-//      PubSub Wikipedia, URL: https://en.wikipedia.org/wiki/Publish%E2%80%93subscribe_pattern
+//      PubSub Wikipedia, URL: https://en.wikipedia.org/wiki/Publish%E2%80%93subscribepattern
 //
 // Performance tests:
 //      forEach-vs-for-loop: http://jsperf.com/array-foreach-vs-for-loop/5
